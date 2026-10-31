@@ -111,7 +111,9 @@ Returns workflow status, agent status, and the plan summary.
     {"step_id": "parse", "owner": "parser", "status": "completed"},
     {"step_id": "retrieve_candidates", "owner": "analysis-agents", "status": "completed"},
     {"step_id": "round_0", "owner": "chair", "status": "completed"},
-    {"step_id": "round_1_2", "owner": "chair", "status": "in_progress"},
+    {"step_id": "round_1_2", "owner": "chair", "status": "completed"},
+    {"step_id": "adjudicate", "owner": "chair", "status": "completed"},
+    {"step_id": "explain", "owner": "explanation", "status": "completed"},
     {"step_id": "human_approval", "owner": "reviewer", "status": "pending"}
   ]
 }
@@ -119,7 +121,7 @@ Returns workflow status, agent status, and the plan summary.
 
 ### GET `/ai/results/{task_id}`
 
-Returns the persisted final recommendation, alternatives, votes, dissent, decision method, and limitations. It returns `404` until a result is published.
+Returns the persisted `ai.results` payload: final recommendation, `final_ranking`, alternatives, votes, dissent, `disagreement`, adjudication, measured `evidence`, generated `explanation`, and limitations. It returns `404` until a result is published.
 
 ### WebSocket `/ai/tasks/{task_id}/stream`
 
@@ -240,9 +242,13 @@ Each analysis agent publishes one message to the Chair. Agents do not consume ot
   "status": "completed",
   "candidate_property_ids": ["property-2001", "property-2007", "property-2012"],
   "candidate_set_hash": "sha256:abc123...",
+  "scoring_version": "matcher-v1",
+  "prompt_version": "matching-prompt-v1",
+  "model": "none",
   "ranked_properties": [
     {
       "property_id": "property-2001",
+      "rank": 1,
       "score": 0.91,
       "score_breakdown": {
         "budget": 0.95,
@@ -251,22 +257,38 @@ Each analysis agent publishes one message to the Chair. Agents do not consume ot
         "rating": 0.82,
         "availability": 1.0
       },
-      "reasons": ["within budget", "parking", "rating 4.8"]
+      "reasons": ["within budget", "parking", "rating 4.8"],
+      "evidence_ids": ["property-2001", "availability-2001-20261120"]
     }
   ],
   "confidence": 0.84,
   "evidence_ids": ["property-2001", "availability-2001-20261120"],
   "reflection": {
-    "status": "passed",
-    "concerns": []
+    "cycle": 1,
+    "checks": {
+      "constraint": {"result": "pass", "note": "dates, budget, capacity, amenities satisfied for top 3"},
+      "evidence": {"result": "pass", "note": "all reasons map to evidence_ids"},
+      "risk": {"result": "pass", "note": "no risk flags in top 3"},
+      "conflict": {"result": "na", "note": "no other agent output visible in Round 0"},
+      "action": {"result": "pass", "note": "no external action proposed"}
+    },
+    "decision": "keep",
+    "changed_top_1": false,
+    "before_top_1": "property-2001",
+    "after_top_1": "property-2001"
   },
-  "risks": [],
   "latency_ms": 182,
   "error": null
 }
 ```
 
+The example shows one ranked entry for brevity. A real Round 0 response contains **at least 10** `ranked_properties` (or every candidate if fewer than 10 exist), ordered by `score` descending with contiguous `rank` values starting at 1. This is required for precision@10 and recall@10 in all four configurations.
+
+`scoring_version` is required in every Round 0 response (for example `matcher-v1`, `risk-rules-v1`, `fairness-v1`). It identifies which versioned scoring rule produced the ranking so a self-improvement change such as `matcher-v2` can be compared against `matcher-v1` on the same 50 requests (§7.5.4).
+
 `status` is `completed`, `timeout`, or `error`. A timeout or error includes a non-null `error` object. `score` and `confidence` range from `0` to `1`, and ranked properties must come from the candidate list.
+
+The `reflection` object, the agent-specific fields (`risk_flags` for Risk, `audit_findings` for the Fairness Auditor), and the ten harness validation rules are defined in `docs/api/agent_payloads.md` §3, §5 and §7. That file is the source of truth for field-level detail inside agent payloads; this file defines the envelope, topics, direction, deadlines and Chair behavior.
 
 The example score uses the versioned weights `budget=0.30`, `location=0.25`, `amenities=0.20`, `rating=0.15`, and `availability=0.10`. The weights are stored with the model/configuration version and must be included in the trace when changed.
 
@@ -281,6 +303,7 @@ The Chair publishes targeted questions after comparing Round 0. The Fairness Aud
   "attempt": 1,
   "plan_id": "plan-01JAI001",
   "trigger": "score_disagreement",
+  "original_property_id": "property-2001",
   "challenger_property_id": "property-2007",
   "questions": [
     {
@@ -303,6 +326,8 @@ The Chair publishes targeted questions after comparing Round 0. The Fairness Aud
 }
 ```
 
+`original_property_id` is the Chair's current top-1 property before the challenge (the Matching agent's Round 0 top-1). `challenger_property_id` is the competing top-1 from the agent that disagreed. A Round 2 vote of `keep_original` or `switch_to_challenger` therefore refers to exactly one of these two property IDs.
+
 ## `debate.round.2` Payload
 
 Each expected agent publishes its own response and vote to the Chair. An agent that received no targeted question still publishes Round 2 with an empty `responses` array and a vote. The Chair, not the agents, calculates totals and makes the final adjudication.
@@ -323,14 +348,17 @@ Each expected agent publishes its own response and vote to the Chair. An agent t
   ],
   "vote": {
     "choice": "keep_original",
-    "reason": "The original recommendation satisfies the dates and availability evidence."
+    "property_id": "property-2001",
+    "reason": "The original recommendation satisfies the dates and availability evidence.",
+    "evidence_ids": ["availability-2001-20261120"]
   },
+  "revised_ranking": null,
   "confidence": 0.88,
   "deadline_at": "2026-10-30T10:00:30Z"
 }
 ```
 
-The allowed vote choices are `keep_original`, `switch_to_challenger`, and `abstain`. Every vote must include a reason.
+The allowed vote choices are `keep_original`, `switch_to_challenger`, and `abstain`. Every vote must include a reason. Unless the choice is `abstain`, `vote.property_id` must equal the Round 1 `original_property_id` or `challenger_property_id`, and `vote.evidence_ids` must reference at least one stored record or Round 0/1 message (§7.2). `revised_ranking` is set only when the challenge changed the agent's ranking (see `agent_payloads.md` §4).
 
 ## `ai.results` Payload
 
@@ -345,6 +373,10 @@ The allowed vote choices are `keep_original`, `switch_to_challenger`, and `absta
     "reasons": ["within budget", "parking", "rating 4.8"],
     "confidence": 0.84
   },
+  "final_ranking": [
+    "property-2001", "property-2044", "property-2007", "property-2012", "property-2019",
+    "property-2023", "property-2031", "property-2038", "property-2052", "property-2060"
+  ],
   "alternatives": [
     {"property_id": "property-2007", "score": 0.76, "rejection_reason": "higher nightly price"}
   ],
@@ -352,17 +384,58 @@ The allowed vote choices are `keep_original`, `switch_to_challenger`, and `absta
   "dissent": [
     {"agent_id": "fairness", "reason": "Candidate has limited historical data", "severity": "medium"}
   ],
+  "disagreement": {
+    "top1_distinct": 2,
+    "top10_overlap": 0.54,
+    "max_score_gap": 0.18,
+    "challenge_required": true
+  },
   "adjudication": {
     "method": "rule_forced",
     "deadlock": true,
-    "decision_rule": "safety_then_majority"
+    "decision_rule": "safety_then_majority",
+    "tie_break_applied": "lower_risk_penalty",
+    "risk_penalty": {"property-2001": 0.05, "property-2007": 0.12}
+  },
+  "evidence": {
+    "scoring_versions": {"matching": "matcher-v1", "risk": "risk-rules-v1", "fairness": "fairness-v1"},
+    "score_breakdown": {"budget": 0.95, "location": 0.88, "amenities": 1.0, "rating": 0.82, "availability": 1.0},
+    "evidence_ids": ["property-2001", "availability-2001-20261120", "review-8812"]
+  },
+  "explanation": {
+    "text": "Property 2001 is within your $250 budget, has parking and a kitchen, and is rated 4.8. Property 2007 was also considered but costs more per night. One reviewer agent noted that 2001 has limited review history, so please check recent reviews before booking.",
+    "source": "llm",
+    "model": "explanation-prompt-v1",
+    "generated": true
   },
   "limitations": [],
   "approval_required": true
 }
 ```
 
-`adjudication.method` is `consensus` when agents converge and `rule_forced` when the Chair applies the documented decision rule after disagreement or deadlock. A forced decision must include the rule and dissent. This makes the required deadlock case visible and reproducible.
+- `final_ranking` contains at least 10 property IDs in order (or every candidate if fewer than 10). It is the list used to compute precision@10, recall@10 and the mean rank of the human top choice for every configuration.
+- `disagreement` is computed by the Chair from the Round 0 responses. Field definitions and the `challenge_required` threshold are in `agent_payloads.md` §6.
+- `evidence` holds measured values only: scores, scoring versions and IDs of stored records. `explanation` holds generated plain-language text only. The explanation is never used as input to scoring, voting or adjudication (§13.6).
+
+### Adjudication and tie-break rule
+
+`adjudication.method` is one of:
+
+| Method | When |
+|---|---|
+| `single_agent` | `single_agent` configuration; no vote is held and the Matching ranking is used |
+| `consensus` | every non-abstaining vote chooses the same property |
+| `majority` | one property has strictly more non-abstaining votes than the other; dissenting votes are listed in `dissent` |
+| `rule_forced` | votes are tied, or no valid vote was cast; `deadlock` is `true` |
+
+The Chair applies `safety_then_majority` in this order:
+
+1. **Safety gate.** A property that fails a hard constraint (dates, budget, capacity, required amenities) in the Chair's code check, or that has a `high` severity Risk flag, cannot be the final recommendation if any candidate without those problems exists. If every option fails, the Chair records this in `limitations`.
+2. **Majority.** Among the remaining options, the property with more non-abstaining votes wins.
+3. **Tie-break.** On a tie — for example a 1–1 split in `debate_without_auditor`, or 1–1–1 with an abstention in `full_debate` — the Chair chooses the property with the **lower total risk penalty** from the Risk agent's `risk_flags`. If still tied, it chooses the higher Round 0 Matching score. If still tied, it keeps `original_property_id`.
+4. **No valid votes.** If every agent abstained or timed out, the Chair keeps `original_property_id`, sets `deadlock: true`, and adds a limitation.
+
+The rule is deterministic, so a tied debate in the 50-request benchmark produces the same result on every rerun and does not need a person present. `tie_break_applied` names the step that decided the outcome. A forced decision always includes the dissent note, and `approval_required` stays `true`, so a human still approves or rejects every result.
 
 ## Plan, Timeout, and Safety Rules
 
@@ -378,6 +451,8 @@ The allowed vote choices are `keep_original`, `switch_to_challenger`, and `absta
 - A retry increments `attempt` and creates a new `debate_id` and idempotency namespace. Messages from an earlier attempt remain auditable but cannot update the current attempt.
 - Chair state is recoverable: offsets and events remain in Kafka, and the Chair resumes by reading from the last committed offset. The Chair commits an offset only after persisting the message and updating durable debate state; otherwise the message is replayed safely.
 - If a permitted partial result is published after a timeout, `limitations` identifies the missing agent and `approval_required` remains `true`.
+- **Explanation step.** After adjudication and before publishing `ai.results`, the Chair calls the Explanation skill as the `explain` plan step. It receives only the already-decided recommendation, alternatives, dissent, limitations and `evidence`; it cannot change the ranking, the vote or the decision. Explanation does not consume `ai.results`, so there is no loop: `ai.results` is published once, with the explanation already inside it.
+- The `explain` step has its own deadline (`explain_deadline_ms`, default 5000). If the LLM call times out or fails, the Chair fills `explanation.text` from a fixed template built from `evidence` (budget, amenities, rating, top risk), sets `explanation.source` to `template_fallback`, adds `explanation_fallback` to `limitations`, and still publishes the result. A slow explanation never blocks the debate (§13.10).
 - Agents cannot approve recommendations or perform booking, availability, messaging, or other external actions.
 - Only an authenticated human can approve, edit, or reject a result.
 - Plans, events, responses, votes, dissent notes, errors, deadlines, and approval decisions are persisted by `trace_id` in MongoDB `debates` and `event_traces` collections. The Chair owns the debate-state record; the platform analytics service reads the event-trace records for dashboards.

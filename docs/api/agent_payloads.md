@@ -14,7 +14,7 @@ This file defines what each agent puts inside `payload` of the debate events. Th
 | Matching | E | `ai.parsed`, `debate.round.1` | `debate.round.0`, `debate.round.2` |
 | Review & Risk | E | `ai.parsed`, `debate.round.1` | `debate.round.0`, `debate.round.2` |
 | Fairness Auditor | E | `ai.parsed`, `debate.round.1` | `debate.round.0`, `debate.round.2` |
-| Explanation | D | `ai.results` (internal to Chair) | `explanation` field of `ai.results` |
+| Explanation | D | Chair (internal, after adjudication) | `explanation` field of `ai.results` |
 
 Design rule: **scores are computed by deterministic code; the LLM only parses the request, writes reasons, and answers challenges.** This keeps rankings reproducible from stored messages (§13.5) and keeps measured evidence separate from generated text (§13.6).
 

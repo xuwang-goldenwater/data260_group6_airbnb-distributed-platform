@@ -22,14 +22,14 @@ The Property service's availability result is informational only. The Booking wo
 
 ## Shared Conventions
 
-Final authentication, pagination, error-body, event-envelope, retry and dead-letter rules follow `docs/api/00_conventions.md`. Until C finalizes that file, this document follows the conventions already used in `docs/api/ai.md`, `docs/api/review.md` and `docs/api/user_property.md`:
+Authentication, pagination, error-body, event-envelope, retry and dead-letter rules follow `docs/api/00_conventions.md`:
 
 - JSON bodies use `snake_case`; timestamps are UTC ISO 8601; dates are `YYYY-MM-DD`.
 - `check_in` is inclusive and `check_out` is exclusive (a stay of 2026-11-20 → 2026-11-22 uses the nights of the 20th and 21st).
 - IDs are server-generated: `res-` + ULID for reservations.
 - Every endpoint requires `Authorization: Bearer <JWT>`. The guest or host identity always comes from the JWT subject, never from the request body.
 - Mutating endpoints require an `Idempotency-Key: <uuid>` header.
-- Kafka messages use the shared §6.2 envelope.
+- Kafka messages use the shared envelope in `docs/api/00_conventions.md` and must validate against `shared/envelope.schema.json`.
 
 ### Common Error Body
 
@@ -555,7 +555,7 @@ All events use the shared §6.2 envelope. **Kafka key = `property_id`** for ever
 | `booking.requested` | Booking API | Booking worker | `property_id` | New request to process |
 | `booking.updated` | Booking worker, Booking API, completion job | WebSocket gateway, Analytics, Messaging | `property_id` | Any status change |
 | `property.availability.updated` | Booking worker, Booking API | Property service cache worker, WebSocket gateway | `property_id` | Nights held or released; invalidate cached availability |
-| `booking.dlq` | Booking consumers | Operations / platform dashboard | original key | Permanently failed messages (final name per `00_conventions.md`) |
+| `platform.dlq` | All booking consumers | Operations / platform dashboard | original key | Permanently failed messages; original event and failure metadata are preserved |
 
 ## `booking.requested`
 
@@ -643,7 +643,7 @@ All events use the shared §6.2 envelope. **Kafka key = `property_id`** for ever
 Auto-commit is off. The worker commits the Kafka offset only after the MySQL transaction commits.
 
 ```text
-1. Validate the envelope and payload           → invalid: send to booking.dlq, commit offset
+1. Validate the envelope and payload           → invalid: send to platform.dlq, commit offset
 2. BEGIN
 3.   If idempotency_key in processed_events    → COMMIT, commit offset, stop (duplicate)
 4.   SELECT … FROM reservations WHERE reservation_id = ? FOR UPDATE
@@ -676,9 +676,9 @@ Exactly one reservation holds the nights. The demo is `make test-double-booking`
 
 | Failure | Behavior |
 |---|---|
-| Malformed envelope or payload (missing field, wrong type, key ≠ `payload.property_id`) | Not retryable. Sent to `booking.dlq` immediately with the original event, `trace_id` and reason; offset committed. |
-| Transient error (MySQL deadlock, lock-wait timeout, connection lost) | Retried in place up to 3 times with backoff 200 ms, 1 s, 5 s. Still failing → `booking.dlq`. |
-| Reservation ID not found | Retried once after 1 s (covers a read-replica lag), then `booking.dlq`. |
+| Malformed envelope or payload (missing field, wrong type, key ≠ `payload.property_id`) | Not retryable. Sent to `platform.dlq` immediately with the original event, `trace_id` and reason; offset committed. |
+| Transient error (MySQL deadlock, lock-wait timeout, connection lost) | Retried in place up to 3 times with backoff 200 ms, 1 s, 5 s. Still failing → `platform.dlq`. |
+| Reservation ID not found | Retried once after 1 s (covers a read-replica lag), then `platform.dlq`. |
 | Duplicate delivery | Detected by `processed_events`; acknowledged with no change. |
 
 A DLQ message contains:
@@ -739,7 +739,7 @@ Error codes: `VALIDATION_ERROR`, `UNAUTHORIZED`, `PROPERTY_NOT_FOUND`, `RESERVAT
 
 # Cross-Review Items
 
-1. C: confirm the DLQ topic name (`booking.dlq` vs one shared `platform.dlq`) and the envelope's optional fields.
+1. C: the shared DLQ topic is `platform.dlq`; the envelope and DLQ metadata are defined in `docs/api/00_conventions.md`.
 2. A: confirm `property.availability.updated` payload and the two internal endpoints above.
 3. E: confirm the `/internal/reservations/{id}` response fields match what the Review service needs.
 4. C: confirm Analytics consumes `booking.updated` for the platform dashboard, and the query endpoint the host dashboard will call for views/saves.

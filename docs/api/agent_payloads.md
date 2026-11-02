@@ -171,7 +171,7 @@ Requested additions to D's `ai.results`:
 
 ## 7. Validation rules (harness, §7.5.1)
 
-The Chair validates every agent payload before using it. A failed check returns error code `INVALID_AGENT_OUTPUT` (`422` on REST), the message is retried once, then moved to `ai.dlq` with the original `trace_id` and reason.
+The Chair validates every agent payload before using it. A failed check returns error code `INVALID_AGENT_OUTPUT` (`422` on REST), the message is retried once, then moved to `platform.dlq` with the original `trace_id` and reason.
 
 | # | Check | Failure code detail |
 |---|---|---|

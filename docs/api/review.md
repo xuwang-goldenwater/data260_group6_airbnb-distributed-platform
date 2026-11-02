@@ -8,7 +8,7 @@ Status: draft for team review
 
 The Review service lets a guest review a completed stay, lets the host respond once, and serves reviews to the client, the Property service and the Review & Risk agent. It owns the MongoDB `reviews` collection and publishes `review.created` and `review.responded`.
 
-Error body and auth header follow `docs/api/00_conventions.md`. Until C finalizes that file, this document uses the same error body as `docs/api/ai.md`.
+Error body, auth header, pagination, event envelope, retry, and DLQ behavior follow `docs/api/00_conventions.md`.
 
 ## Why MongoDB (§3.2)
 

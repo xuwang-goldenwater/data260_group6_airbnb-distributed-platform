@@ -14,7 +14,7 @@ The Property Service does not confirm reservations. Availability returned by thi
 
 ## Shared Conventions
 
-The final authentication, pagination, error-body, event-envelope, retry, and dead-letter conventions will follow `docs/api/00_conventions.md`.
+Authentication, pagination, error-body, event-envelope, retry, and dead-letter conventions follow `docs/api/00_conventions.md`.
 
 Until that file is finalized, this document follows the conventions already used in `docs/api/ai.md`:
 

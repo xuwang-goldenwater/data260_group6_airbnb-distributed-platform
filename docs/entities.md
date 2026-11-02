@@ -51,6 +51,8 @@ erDiagram
     PROPERTY ||--o{ RESERVATION : is_booked
     RESERVATION ||--o{ AVAILABILITY_BLOCK : holds
     RESERVATION ||--o{ RESERVATION_STATUS_HISTORY : records
+```
+```
 
 ## Guest
 

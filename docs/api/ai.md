@@ -177,11 +177,11 @@ Only an authenticated human can approve, edit, or reject. The service takes the 
 | `debate.round.2` | Each agent | Chair | `trace_id` | Each agent publishes its answer and vote |
 | `ai.results` | Chair | AI API, WebSocket gateway, analytics | `trace_id` | Publish recommendation, votes, dissent, and adjudication |
 | `ai.approvals` | AI API | Audit and analytics | `trace_id` | Persist approved, edited, or rejected decision |
-| `ai.dlq` | Failed consumer | Operations | original key | Preserve permanently failed messages |
+| `platform.dlq` | Failed consumer | Operations/platform dashboard | original key | Preserve permanently failed messages and failure metadata |
 
 The Parser consumes `ai.requests` first and publishes `ai.parsed`. Analysis agents subscribe only to `ai.parsed`, not to both topics, so they do not need a cross-topic join or an in-memory cache of two messages. The `property_pool_ref` is passed through unchanged. Each agent queries the same fixed 200-property pool with the same normalized filters. The query uses deterministic filtering and ordering, so agents can independently obtain the same candidate list without a new Chair-to-agent topic. The Parser does not query properties and is not a Round 0 debating agent.
 
-Every consumer validates the envelope, uses bounded retries, and deduplicates with `idempotency_key`. Permanently invalid messages go to `ai.dlq` with the original event and failure reason.
+Every consumer validates the shared envelope, uses bounded retries, and deduplicates with `idempotency_key`. Permanently invalid messages go to `platform.dlq` with the original event and failure reason.
 
 ## `ai.requests` Payload
 

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://data260-group6.example/schemas/event-envelope-1.0.json",
+  "title": "Data260 Shared Kafka Event Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_type", "trace_id", "timestamp", "actor_id", "entity", "payload",
+    "idempotency_key", "attempt", "event_id", "producer", "schema_version"
+  ],
+  "properties": {
+    "event_type": {"type": "string", "minLength": 1, "maxLength": 100, "pattern": "^[a-z][a-z0-9]*(\\.[a-z0-9_-]+)+$"},
+    "trace_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "entity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entity_type", "entity_id"],
+      "properties": {
+        "entity_type": {"type": "string", "minLength": 1, "maxLength": 64},
+        "entity_id": {"type": "string", "minLength": 1, "maxLength": 128}
+      }
+    },
+    "payload": {"type": "object"},
+    "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 256},
+    "attempt": {"type": "integer", "minimum": 1},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "producer": {"type": "string", "minLength": 1, "maxLength": 128},
+    "schema_version": {"type": "string", "const": "1.0"}
+  }
+}

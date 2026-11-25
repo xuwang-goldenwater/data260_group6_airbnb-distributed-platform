@@ -21,6 +21,7 @@ CITIES = [("San Jose", 37.3382, -121.8863, "95113"),
           ("Monterey", 36.6002, -121.8947, "93940"),
           ("San Francisco", 37.7749, -122.4194, "94103")]
 TYPES = ["apartment", "house", "condo", "cabin", "room"]
+LOW_REVIEW_COUNTS = {43: 2, 44: 0, 48: 1, 52: 2}
 TEXTS = {"positive": "Clean and comfortable stay. The host replied quickly and parking was easy.",
          "cleanliness": "Cleanliness was disappointing: dirty bedding and dust in the room.",
          "missing_amenity": "The listed kitchen was missing an advertised cooking appliance.",
@@ -102,9 +103,11 @@ def build(seed, anchor):
                           availability="available", status="active", rating=0.0, review_count=0,
                           version=1, created_datetime=initial, updated_datetime=stamp(anchor)))
     # Controlled, comparable candidates; labels are fixture intentions, not evaluated AI results.
-    for i in [0, 6, 11, 43]:
+    for i in sorted({0, 6, 11} | set(LOW_REVIEW_COUNTS)):
         props[i].update(capacity=4, nightly_price=180.0, amenities=["kitchen", "parking", "wifi"])
         props[i]["location"].update(city="San Jose", latitude=37.3382, longitude=-121.8863, postal_code="95113")
+        if i in LOW_REVIEW_COUNTS:
+            props[i]["created_datetime"] = stamp(anchor-timedelta(days=30))
     # Non-active properties exercise search exclusion. No reservations reference these.
     for i, status in [(197, "draft"), (198, "suspended"), (199, "archived")]:
         props[i]["status"] = status
@@ -161,14 +164,17 @@ def build(seed, anchor):
         return r
 
     for i, p in enumerate(props[:197]):
-        count = 2 if i == 43 else (8 if i in [0, 6, 11] else 3+i % 6)
+        count = LOW_REVIEW_COUNTS.get(i, 10 if i == 6 else (8 if i in [0, 11] else 3+i % 6))
         for j in range(count):
             start = anchor-timedelta(days=10+j*5)
             r = reserve(p, "completed", start)
-            tag = "positive" if i in [0, 43] else (
-                ["cleanliness", "cancellation", "missing_amenity"][j % 3] if i == 6 else (
+            tag = "positive" if i == 0 or i in LOW_REVIEW_COUNTS else (
+                (["cleanliness", "cancellation", "missing_amenity"][j] if j < 3 else "positive") if i == 6 else (
                     "positive" if j % 3 else list(TEXTS)[1+i % 6]))
             rating = 5 if tag == "positive" else 2
+            if i == 6:
+                # 7x4 + 3x5 = 43 / 10. Complaints cannot be inferred from the aggregate alone.
+                rating = 4 if j < 7 else 5
             response = "Thank you for your feedback. This is a synthetic host response." if j % 2 == 0 else None
             reviews.append(dict(review_id=opaque("rev-", len(reviews)+1), reservation_id=r["reservation_id"],
                                 property_id=p["property_id"], guest_id=r["guest_id"], host_id=p["host_id"],
@@ -177,7 +183,7 @@ def build(seed, anchor):
                                 response_datetime=stamp(start+timedelta(days=5)) if response else None,
                                 trace_id=f"tr-review-{len(reviews)+1:06d}"))
         future_status = ["requested", "pending_host", "confirmed", "rejected", "declined", "cancelled"][i % 6]
-        if i == 43:
+        if i in LOW_REVIEW_COUNTS:
             future_status = "requested"  # low-review candidate stays available for the shared scenario
         # A rejected request overlaps an existing confirmed stay to provide real conflict evidence.
         if future_status == "rejected":
@@ -350,11 +356,12 @@ def main():
         data = build(args.seed, args.anchor_date)
         counts = validate(data, args.anchor_date)
         blobs = {name+".json": encoded(rows) for name, rows in data.items()}
-        manifest = dict(generator_version="1.1", seed=args.seed, anchor_date=args.anchor_date.isoformat(),
-                        pool_id="benchmark-200-properties-v1", dataset_version="seed-v1.1-"+args.anchor_date.isoformat(),
+        manifest = dict(generator_version="1.2", seed=args.seed, anchor_date=args.anchor_date.isoformat(),
+                        pool_id="benchmark-200-properties-v1", dataset_version="seed-v1.2-"+args.anchor_date.isoformat(),
                         counts=counts, sha256={name: hashlib.sha256(blob).hexdigest() for name, blob in blobs.items()},
                         scenarios={"strong_candidate": "property-2001", "risk_complaints": "property-2007",
                                    "few_reviews_candidate": "property-2044", "occupied_dates_property": "property-2002",
+                                   "low_review_candidates": [f"property-{2001+i}" for i in LOW_REVIEW_COUNTS],
                                    "check_in": (args.anchor_date+timedelta(days=7)).isoformat(),
                                    "check_out": (args.anchor_date+timedelta(days=9)).isoformat()},
                         notes=["All data are synthetic; no real listings or accounts.",

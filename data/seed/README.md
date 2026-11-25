@@ -60,12 +60,21 @@ Use the manifest's dates (anchor +7 through +9, checkout exclusive):
 - `property-2001`: San Jose, $180/night, capacity 4, parking/kitchen/wifi,
   eight positive reviews. Its future `requested` row does not hold nights.
 - `property-2007`: Comparable basic constraints, with cleanliness,
-  cancellation-related and missing-amenity complaint evidence. Its completed
+  cancellation-related and missing-amenity complaint evidence. Its aggregate
+  rating is exactly 4.3 from ten genuine seed review rows (seven 4-star and
+  three 5-star). Three 4-star rows contain complaint text/tags, representing
+  mixed reviews whose risks are not obvious from the overall stars. Its completed
   stays remain valid: cancellation text describes a threatened cancellation,
   not a cancelled reservation being reviewed.
 - `property-2044`: Comparable search constraints and two positive reviews,
   allowing investigation of low-review-count ranking. Its future requested
   reservation holds no nights, so it is available on the manifest dates.
+- `property-2045`, `property-2049`, `property-2053`: Additional new San Jose
+  listings with 0, 1 and 2 reviews respectively. Like property-2044 they cost
+  $180/night, accommodate four guests, include parking/kitchen/wifi, and have
+  no held nights on the demo dates. All four low-review listings were created
+  anchor minus 30 days. A zero-review property's rating is 0.0 (no evidence),
+  not an invented average; minimum-rating filters need a team decision for new listings.
 - `property-2002`: Pending-host reservation holds the manifest dates.
 - `property-2198/2199/2200`: Draft/suspended/archived search-exclusion fixtures.
 
@@ -74,6 +83,13 @@ labels, fairness verdicts or recorded AI outputs. Review tags are fixture labels
 from the documented vocabulary with matching text; E should align the eventual
 `tagger-v1` implementation. Geographic details are synthetic demonstration data,
 not verified addresses. No property photos are fetched or embedded.
+
+These four low-review candidates support constructing at least three Fairness
+Auditor experiments. They do not prove three changed outcomes: D/E must run
+the comparison and record actual before/after rankings and evidence. Candidate
+counts may change from the previous snapshot; recompute them using identical
+filters and booking availability on both sides. Review IDs and reservation IDs
+may be reassigned after regeneration, so replace the shared snapshot together.
 
 ## Consistency and integration
 
@@ -94,7 +110,7 @@ Dashboards compute their own medians from the same status history.
 `response_rate` is answered pending-host requests divided by all requests that
 reached pending-host, rounded to four decimals. This seed definition includes
 pending unanswered requests; B/C should confirm the eventual metric window.
-Generator/dataset version 1.1 distinguishes this snapshot from the original.
+Generator/dataset version 1.2 distinguishes this snapshot from prior versions.
 Rating averages
 are stored to four decimal places and counts exactly match the review fixtures.
 

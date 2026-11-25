@@ -135,6 +135,32 @@ class SeedTests(unittest.TestCase):
             self.assertNotEqual(bad.returncode, 0)
             self.assertIn("Checksum mismatch", bad.stderr)
 
+    def test_low_review_candidates_cover_demo_filters(self):
+        props = {p["property_id"]: p for p in self.data["properties"]}
+        for pid, count in {"property-2044": 2, "property-2045": 0,
+                           "property-2049": 1, "property-2053": 2}.items():
+            p = props[pid]
+            self.assertEqual(p["review_count"], count)
+            self.assertEqual(p["status"], "active")
+            self.assertEqual(p["location"]["city"], "San Jose")
+            self.assertLessEqual(p["nightly_price"], 250)
+            self.assertGreaterEqual(p["capacity"], 2)
+            self.assertTrue({"parking", "kitchen"} <= set(p["amenities"]))
+            self.assertFalse(any(b["property_id"] == pid and b["night_date"] >= self.anchor.isoformat()
+                                 for b in self.data["availability_blocks"]))
+            if not count:
+                self.assertEqual(p["rating"], 0.0)
+
+    def test_risk_candidate_has_normal_consistent_stars_and_text_evidence(self):
+        p = next(p for p in self.data["properties"] if p["property_id"] == "property-2007")
+        rows = [v for v in self.data["reviews"] if v["property_id"] == p["property_id"]]
+        self.assertEqual(len(rows), 10)
+        self.assertEqual(p["rating"], 4.3)
+        self.assertEqual(sum(v["rating"] for v in rows)/len(rows), p["rating"])
+        tags = {tag for row in rows for tag in row["tags"]}
+        self.assertTrue({"cleanliness", "cancellation", "missing_amenity"} <= tags)
+        self.assertTrue(all(row["review_text"] for row in rows))
+
 
 if __name__ == "__main__":
     unittest.main()

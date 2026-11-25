@@ -49,8 +49,30 @@ def price_total(price, nights, fee):
     return float(Decimal(str(price)) * nights + Decimal(str(fee)))
 
 
+def parsed_timestamp(value):
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def response_metrics(reservations, history):
+    """Profile mean response time; dashboards can compute medians from history."""
+    by_reservation = {r["reservation_id"]: r for r in reservations}
+    pending, durations, eligible = {}, defaultdict(list), Counter()
+    for row in history:
+        rid = row["reservation_id"]
+        host = by_reservation[rid]["host_id"]
+        if row["to_status"] == "pending_host":
+            pending[rid] = parsed_timestamp(row["changed_datetime"])
+            eligible[host] += 1
+        elif row["from_status"] == "pending_host" and row["to_status"] in {"confirmed", "declined"}:
+            durations[host].append(int((parsed_timestamp(row["changed_datetime"])-pending[rid]).total_seconds()/60))
+    return {host: (round(len(durations[host])/total, 4),
+                   round(sum(durations[host])/len(durations[host])) if durations[host] else None)
+            for host, total in eligible.items()}
+
+
 def build(seed, anchor):
     rng = random.Random(seed)
+    timing_rng = random.Random(seed+100000)  # avoid changing unrelated listing/save fixtures
     old = anchor - timedelta(days=900)
     initial = stamp(old)
     guests = [dict(guest_id=f"guest-{1001+i}", first_name=f"Demo{i+1}", last_name="Guest",
@@ -96,23 +118,35 @@ def build(seed, anchor):
         path = ["requested"] + [x for x in TRANSITIONS[status] if x not in {None, "requested"}]
         if status != "requested":
             path.append(status)
+        cancelled_by = None
+        if status == "cancelled":
+            cancelled_by = "host" if sum(x["status"] == "cancelled" for x in reservations) % 2 else "guest"
         r = dict(reservation_id=opaque("res-", n), property_id=p["property_id"],
                  guest_id=guest["guest_id"], host_id=p["host_id"], check_in=start.isoformat(),
                  check_out=end.isoformat(), nights=nights, guest_count=2,
                  nightly_price=p["nightly_price"], cleaning_fee=p["cleaning_fee"],
                  total_price=price_total(p["nightly_price"], nights, p["cleaning_fee"]), status=status,
                  status_reason={"rejected": "DATES_UNAVAILABLE", "declined": "HOST_DECLINED",
-                                "cancelled": "GUEST_CANCELLED"}.get(status),
+                                "cancelled": "HOST_CANCELLED" if cancelled_by == "host" else "GUEST_CANCELLED"}.get(status),
                  message_to_host="Synthetic booking for development.",
-                 cancelled_by="guest" if status == "cancelled" else None,
+                 cancelled_by=cancelled_by,
                  trace_id=f"tr-seed-{n:06d}", publish_pending=False, version=len(path),
                  created_datetime=stamp(created, 8), updated_datetime=stamp(created, 8))
         previous = None
+        current_time = parsed_timestamp(stamp(created, 8))
         for j, state in enumerate(path):
-            when = stamp(end+timedelta(days=1), 8) if state == "completed" else stamp(created, 8+j)
-            actor = guest["guest_id"] if state in {"requested", "cancelled"} else (
+            if state == "completed":
+                current_time = parsed_timestamp(stamp(end+timedelta(days=1), 8))
+            elif state in {"confirmed", "declined"}:
+                minutes = 10 if n == 1 else (1440 if n == 2 else timing_rng.randint(10, 1440))
+                current_time += timedelta(minutes=minutes)
+            elif j:
+                current_time += timedelta(hours=1)
+            when = current_time.isoformat().replace("+00:00", "Z")
+            actor = (p["host_id"] if cancelled_by == "host" else guest["guest_id"]) if state == "cancelled" else (
+                guest["guest_id"] if state == "requested" else (
                 p["host_id"] if state in {"confirmed", "declined"} else (
-                    "completion-job" if state == "completed" else "booking-worker"))
+                    "completion-job" if state == "completed" else "booking-worker")))
             history.append(dict(id=len(history)+1, reservation_id=r["reservation_id"],
                                 from_status=previous, to_status=state, actor_id=actor,
                                 reason=r["status_reason"] if state == status else None,
@@ -177,10 +211,11 @@ def build(seed, anchor):
     bookings = Counter(r["guest_id"] for r in reservations)
     for g in guests:
         g.update(saved_properties_count=saves[g["guest_id"]], booking_count=bookings[g["guest_id"]])
-    # Derived from host decision history; pending requests are excluded from the denominator.
+    # Responded / all pending-host transitions; mean minutes for profile, not dashboard median.
+    metrics = response_metrics(reservations, history)
     for h in hosts:
-        decisions = [r for r in reservations if r["host_id"] == h["host_id"] and r["status"] in {"confirmed", "declined", "cancelled", "completed"}]
-        h.update(response_rate=1.0 if decisions else 0.0, response_time=60 if decisions else None)
+        rate, minutes = metrics.get(h["host_id"], (0.0, None))
+        h.update(response_rate=rate, response_time=minutes)
     data = dict(guests=guests, hosts=hosts, properties=props, saved_properties=saved,
                 reservations=reservations, availability_blocks=blocks,
                 reservation_status_history=history, reviews=reviews, conversations=conversations, messages=messages)
@@ -231,6 +266,17 @@ def validate(data, anchor):
         require([h["from_status"] for h in rows] == [None]+path[:-1], "Broken history chain")
         require(r["version"] == len(rows) and r["updated_datetime"] == rows[-1]["changed_datetime"], "History/version mismatch")
         require(r["created_datetime"] <= r["updated_datetime"], "Reversed timestamps")
+        if r["status"] == "cancelled":
+            require(r["cancelled_by"] in {"host", "guest"}, "Invalid cancellation actor")
+            require(r["status_reason"] == r["cancelled_by"].upper()+"_CANCELLED", "Cancellation reason mismatch")
+            expected_actor = r["host_id"] if r["cancelled_by"] == "host" else r["guest_id"]
+            require(rows[-1]["actor_id"] == expected_actor and rows[-1]["reason"] == r["status_reason"], "Cancellation history mismatch")
+        else:
+            require(r["cancelled_by"] is None, "Unexpected cancellation actor")
+        for before, after in zip(rows, rows[1:]):
+            if before["to_status"] == "pending_host" and after["to_status"] in {"confirmed", "declined"}:
+                minutes = (parsed_timestamp(after["changed_datetime"])-parsed_timestamp(before["changed_datetime"])).total_seconds()/60
+                require(10 <= minutes <= 1440 and after["actor_id"] == r["host_id"], "Invalid host response time/actor")
         if r["status"] in HELD:
             for j in range(r["nights"]):
                 expected_blocks.add((r["property_id"], (start+timedelta(days=j)).isoformat(), r["reservation_id"]))
@@ -272,6 +318,10 @@ def validate(data, anchor):
         require(m["reservation_id"] == c["reservation_id"], "Message booking mismatch")
         require(m["delivery_status"] in {"queued", "sent", "failed"} and 1 <= len(m["body"]) <= 4000, "Invalid message")
     require({r["status"] for r in res.values()} == STATUSES, "Missing status coverage")
+    require({r["cancelled_by"] for r in res.values() if r["status"] == "cancelled"} == {"guest", "host"}, "Missing cancellation actor coverage")
+    metrics = response_metrics(data["reservations"], data["reservation_status_history"])
+    for h in hosts.values():
+        require((h["response_rate"], h["response_time"]) == metrics.get(h["host_id"], (0.0, None)), "Host response aggregate mismatch")
     return {name: len(rows) for name, rows in data.items()}
 
 
@@ -300,8 +350,8 @@ def main():
         data = build(args.seed, args.anchor_date)
         counts = validate(data, args.anchor_date)
         blobs = {name+".json": encoded(rows) for name, rows in data.items()}
-        manifest = dict(generator_version="1.0", seed=args.seed, anchor_date=args.anchor_date.isoformat(),
-                        pool_id="benchmark-200-properties-v1", dataset_version="seed-v1-"+args.anchor_date.isoformat(),
+        manifest = dict(generator_version="1.1", seed=args.seed, anchor_date=args.anchor_date.isoformat(),
+                        pool_id="benchmark-200-properties-v1", dataset_version="seed-v1.1-"+args.anchor_date.isoformat(),
                         counts=counts, sha256={name: hashlib.sha256(blob).hexdigest() for name, blob in blobs.items()},
                         scenarios={"strong_candidate": "property-2001", "risk_complaints": "property-2007",
                                    "few_reviews_candidate": "property-2044", "occupied_dates_property": "property-2002",
@@ -310,7 +360,7 @@ def main():
                         notes=["All data are synthetic; no real listings or accounts.",
                                "Conversations are a proposed helper fixture, not a finalized storage schema.",
                                "No credentials, Kafka history, AI benchmark labels or evaluated AI results are seeded.",
-                               "booking_count counts all reservation rows; confirm dashboard semantics with A/B.",
+                               "booking_count counts all reservation rows (B confirmed); dashboards query reservations directly.",
                                "Historical completed-night blocks are retained as documented in booking.md.",
                                "Use this dataset_version consistently; API example version 2026-10-30 is illustrative."])
         blobs["manifest.json"] = encoded(manifest)

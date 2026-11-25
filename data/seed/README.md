@@ -84,8 +84,18 @@ requests have a conflicting confirmed stay. Declined/cancelled/requested records
 hold no nights. Completed-night blocks are retained per booking.md.
 
 `booking_count` counts all reservation records (including unsuccessful requests).
-A/B must confirm that definition before using it for dashboard totals. Host
-response fields reflect the seed's one-hour decision transitions. Rating averages
+A/B agreed that dashboards compute counts from reservations directly. Host
+cancellations alternate with guest cancellations (16 each), with matching
+`cancelled_by`, `status_reason`, and final status-history actor/reason.
+Host decisions vary from 10 to 1440 minutes after `pending_host`, including
+both endpoints. Host `response_time` is the rounded arithmetic mean in minutes
+of that host's approve/decline transitions, as specified by the Host API.
+Dashboards compute their own medians from the same status history.
+`response_rate` is answered pending-host requests divided by all requests that
+reached pending-host, rounded to four decimals. This seed definition includes
+pending unanswered requests; B/C should confirm the eventual metric window.
+Generator/dataset version 1.1 distinguishes this snapshot from the original.
+Rating averages
 are stored to four decimal places and counts exactly match the review fixtures.
 
 These are **data files, not database migrations or executable API requests**.

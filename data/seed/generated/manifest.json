@@ -12,13 +12,13 @@
     "reviews": 1089,
     "saved_properties": 360
   },
-  "dataset_version": "seed-v1-2026-11-24",
-  "generator_version": "1.0",
+  "dataset_version": "seed-v1.1-2026-11-24",
+  "generator_version": "1.1",
   "notes": [
     "All data are synthetic; no real listings or accounts.",
     "Conversations are a proposed helper fixture, not a finalized storage schema.",
     "No credentials, Kafka history, AI benchmark labels or evaluated AI results are seeded.",
-    "booking_count counts all reservation rows; confirm dashboard semantics with A/B.",
+    "booking_count counts all reservation rows (B confirmed); dashboards query reservations directly.",
     "Historical completed-night blocks are retained as documented in booking.md.",
     "Use this dataset_version consistently; API example version 2026-10-30 is illustrative."
   ],
@@ -36,11 +36,11 @@
     "availability_blocks.json": "ccfa16568f0769e01b98598d332bfaee3500655e4d6034d40ec6a81ddeb87c9d",
     "conversations.json": "69ffd212f10dfd8b2c2cd85bb7cf6247fe4d18996d99148adac5f261c86962f0",
     "guests.json": "d0cf17e408efc77687cbbb9f1806c3e35343d9a4ebeabae5ff1c18c107908d7e",
-    "hosts.json": "a0db3a3c6c20290607c27f38f05aefd9ca2d1f92cbac4cf76fddc6e678c70a2c",
+    "hosts.json": "8c0625030f95d084826296e41af1b3d0f8dd1f71c745f03c157837876085dc22",
     "messages.json": "efb1ce87ac0fa9c42df338fa4b78dc10985450ce471633c84c2db16dc9d5cd60",
     "properties.json": "8d84f625c0398b5ade1948ea98b1eec05274122283267f7a456b8badf50769b2",
-    "reservation_status_history.json": "145bf123113e63e9c345fca05a382eae142e53d3ec9777701ff35aacab1a6aef",
-    "reservations.json": "d8f07f9ff2df35aaa12d0ba004fdcf05540b6648da9a55957e2db481f926056f",
+    "reservation_status_history.json": "8071e8fcc826ab907b9f87c5912d3af364efe39e883dfd807de2ea07b3f5811e",
+    "reservations.json": "7a284897c53ca3d0f0ed3e1f20eac260996bc26704203a2f7e6722e39c04dece",
     "reviews.json": "7590257e8d9addc91a81d1f238c6411be86634057f3472b41937dfccc3249f99",
     "saved_properties.json": "0009e876f6e75c1c88a33a65cadd020c16c63f926690ff0fcae85a009d9e81a2"
   }

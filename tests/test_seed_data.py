@@ -1,6 +1,6 @@
 """Run: python3 -m unittest discover -s tests -p 'test_seed_data.py' -v"""
 import copy
-from datetime import date
+from datetime import date, datetime
 import importlib.util
 from pathlib import Path
 import subprocess
@@ -78,6 +78,48 @@ class SeedTests(unittest.TestCase):
         for pid in ["property-2001", "property-2007", "property-2044"]:
             self.assertFalse(any(b["property_id"] == pid and b["night_date"] >= start
                                  for b in self.data["availability_blocks"]))
+
+    def test_both_cancellation_actors_have_matching_history(self):
+        cancellations = [r for r in self.data["reservations"] if r["status"] == "cancelled"]
+        self.assertEqual(sum(r["cancelled_by"] == "host" for r in cancellations), 16)
+        self.assertEqual(sum(r["cancelled_by"] == "guest" for r in cancellations), 16)
+        for r in cancellations:
+            row = next(h for h in self.data["reservation_status_history"]
+                       if h["reservation_id"] == r["reservation_id"] and h["to_status"] == "cancelled")
+            self.assertEqual(row["reason"], r["cancelled_by"].upper()+"_CANCELLED")
+            self.assertEqual(row["actor_id"], r[r["cancelled_by"]+"_id"])
+
+    def test_decision_variation_and_profile_means(self):
+        pending, by_host = {}, {}
+        reservations = {r["reservation_id"]: r for r in self.data["reservations"]}
+        for h in self.data["reservation_status_history"]:
+            rid = h["reservation_id"]
+            when = datetime.fromisoformat(h["changed_datetime"].replace("Z", "+00:00"))
+            if h["to_status"] == "pending_host":
+                pending[rid] = when
+            elif h["from_status"] == "pending_host" and h["to_status"] in {"confirmed", "declined"}:
+                minutes = (when-pending[rid]).total_seconds()/60
+                by_host.setdefault(reservations[rid]["host_id"], []).append(minutes)
+        durations = [x for values in by_host.values() for x in values]
+        self.assertEqual(min(durations), 10)
+        self.assertEqual(max(durations), 1440)
+        self.assertGreater(len(set(durations)), 100)
+        for host in self.data["hosts"]:
+            values = by_host.get(host["host_id"], [])
+            self.assertEqual(host["response_time"], round(sum(values)/len(values)) if values else None)
+
+    def test_bad_cancellation_reason_rejected(self):
+        data = copy.deepcopy(self.data)
+        row = next(r for r in data["reservations"] if r["cancelled_by"] == "host")
+        row["status_reason"] = "GUEST_CANCELLED"
+        with self.assertRaisesRegex(ValueError, "Cancellation reason mismatch"):
+            seed.validate(data, self.anchor)
+
+    def test_bad_host_response_aggregate_rejected(self):
+        data = copy.deepcopy(self.data)
+        data["hosts"][0]["response_time"] += 1
+        with self.assertRaisesRegex(ValueError, "Host response aggregate"):
+            seed.validate(data, self.anchor)
 
     def test_cli_roundtrip_checksums_and_overwrite_guard(self):
         script = str(Path(seed.__file__))

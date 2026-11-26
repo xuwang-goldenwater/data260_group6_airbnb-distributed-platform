@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Debate Panel</title>
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1f; --muted:#6b6b70; --line:#e3e1dc;
+          --accent:#c2410c; --ok:#15803d; --warn:#b45309; --bad:#b91c1c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 system-ui, sans-serif; }
+  header { padding:14px 20px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:center; }
+  header h1 { font-size:16px; margin:0; } header span { color:var(--muted); }
+  main { display:grid; grid-template-columns: 340px 1fr; gap:16px; padding:16px 20px; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; }
+  label { display:block; font-size:12px; color:var(--muted); margin:10px 0 4px; }
+  textarea, input, select { width:100%; font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:6px; }
+  button { font:inherit; padding:7px 12px; border-radius:6px; border:1px solid var(--ink); background:var(--ink); color:#fff; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--ink); }
+  button:disabled { opacity:.4; cursor:default; }
+  .rounds { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+  @media (max-width: 860px) { .rounds { grid-template-columns: 1fr; } }
+  .round h3 { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  .msg { border-left:3px solid var(--line); padding:6px 8px; margin-bottom:8px; background:#fbfaf8; border-radius:0 6px 6px 0; }
+  .msg b { display:block; } .msg small { color:var(--muted); }
+  .msg.timeout { border-color:var(--warn); } .msg.error { border-color:var(--bad); }
+  .plan { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 0; padding:0; list-style:none; }
+  .plan li { padding:3px 8px; border-radius:99px; border:1px solid var(--line); font-size:12px; }
+  .plan li.completed { border-color:var(--ok); color:var(--ok); } .plan li.in_progress { border-color:var(--accent); color:var(--accent); }
+  .plan li.skipped { color:var(--muted); text-decoration:line-through; } .plan li.failed { border-color:var(--bad); color:var(--bad); }
+  .result h2 { margin:0 0 6px; font-size:18px; }
+  .tag { display:inline-block; font-size:11px; padding:2px 7px; border-radius:99px; background:#f1efe9; margin-right:4px; }
+  .limit { color:var(--warn); }
+  .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  pre { white-space:pre-wrap; font-size:12px; background:#fbfaf8; padding:8px; border-radius:6px; max-height:220px; overflow:auto; }
+  #status { color:var(--muted); font-size:12px; margin-top:8px; }
+</style>
+</head>
+<body>
+<header><h1>AI Debate Panel</h1><span>Matching · Risk · Fairness → Chair → human decision</span></header>
+<main>
+  <section class="card">
+    <label for="token">JWT (from scripts/dev_token.py)</label>
+    <input id="token" placeholder="eyJhbGciOi…">
+    <label for="text">Request</label>
+    <textarea id="text" rows="4">Two nights in San Jose under $180, need parking and wifi</textarea>
+    <label for="config">Configuration</label>
+    <select id="config">
+      <option value="full_debate">full_debate (3 agents)</option>
+      <option value="debate_without_auditor">debate_without_auditor</option>
+      <option value="single_agent">single_agent</option>
+    </select>
+    <div class="actions"><button id="start">Start debate</button>
+      <input id="attach" placeholder="or open task id" style="flex:1"><button class="ghost" id="open">Open</button></div>
+    <div id="status"></div>
+    <ul class="plan" id="plan"></ul>
+  </section>
+  <section>
+    <div class="rounds">
+      <div class="card round"><h3>Round 0 · independent</h3><div id="r0"></div></div>
+      <div class="card round"><h3>Round 1 · challenge</h3><div id="r1"></div></div>
+      <div class="card round"><h3>Round 2 · vote</h3><div id="r2"></div></div>
+    </div>
+    <div class="card result" id="result" style="margin-top:16px; display:none"></div>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let task = null, ws = null;
+try { $("token").value = localStorage.getItem("ai_token") || ""; } catch (e) {}
+const hdr = () => ({ "Content-Type": "application/json", "Authorization": "Bearer " + $("token").value.trim() });
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+function status(t) { $("status").textContent = t; }
+function add(col, cls, title, body) {
+  const d = document.createElement("div"); d.className = "msg " + cls;
+  d.innerHTML = "<b>" + esc(title) + "</b><small>" + esc(body) + "</small>"; $(col).appendChild(d);
+}
+async function refreshPlan() {
+  const r = await fetch("/ai/tasks/" + task, { headers: hdr() }); if (!r.ok) return;
+  const t = await r.json();
+  $("plan").innerHTML = t.plan.map(s => `<li class="${esc(s.status)}" title="${esc(s.note || "")}">${esc(s.step_id)}</li>`).join("");
+}
+function onEvent(ev) {
+  const p = ev.payload || {};
+  if (ev.event_type === "ai.parsed") status("parsed: " + JSON.stringify(p.request || p.error));
+  else if (ev.event_type === "debate.round.0") {
+    const top = (p.ranked_properties || [])[0] || {};
+    add("r0", p.status === "error" ? "error" : "", ev.actor_id + " → " + (top.property_id || "error"),
+        top.score != null ? "score " + top.score.toFixed(3) : (p.error || ""));
+  } else if (ev.event_type === "debate.round.1") {
+    add("r1", "", "challenger " + (p.challenger_property_id || "none"), "original " + p.original_property_id + " · voters " + (p.target_agent_ids || []).join(", "));
+  } else if (ev.event_type === "debate.round.2") {
+    const v = p.vote || {};
+    add("r2", "", ev.actor_id + " → " + (v.property_id || v.choice) + " (" + (v.choice || "").replace(/_/g, " ") + ")", v.reason || "");
+  } else if (ev.event_type === "ai.agent_timeout") {
+    add(p.round === 0 ? "r0" : "r2", "timeout", p.agent_id + " timed out", p.message);
+  } else if (ev.event_type === "ai.results") showResult(p);
+  else if (ev.event_type === "ai.approvals") status("decision recorded: " + p.decision + " by " + p.reviewer_id);
+  refreshPlan();
+}
+function showResult(r) {
+  const rec = r.recommendation || {}, ex = r.explanation || {};
+  $("result").style.display = "block";
+  $("result").innerHTML = `
+    <h2>${r.status === "failed" ? "No recommendation" : "Recommend " + esc(rec.property_id)}</h2>
+    <div><span class="tag">${esc((r.adjudication || {}).method || r.status)}</span>
+      <span class="tag">explanation: ${esc(ex.source || "—")}</span></div>
+    <p>${esc(ex.text || r.failure_reason || "")}</p>
+    ${(r.limitations || []).map(l => `<div class="limit">⚠ ${esc(l)}</div>`).join("")}
+    <div>Ranking: ${(r.final_ranking || []).map(esc).join(" › ")}</div>
+    <details><summary>Evidence (measured, separate from the explanation)</summary><pre>${esc(JSON.stringify(r.evidence, null, 2))}</pre></details>
+    <div class="actions">
+      <button id="ap">Approve</button>
+      <select id="alt" style="width:auto">${(r.final_ranking || []).map(id => `<option>${esc(id)}</option>`).join("")}</select>
+      <button class="ghost" id="ed">Edit to selected</button>
+      <button class="ghost" id="rj">Reject</button>
+    </div>`;
+  const send = async (path, body) => {
+    const res = await fetch(`/ai/results/${task}/${path}`, { method: "POST", headers: { ...hdr(), "Idempotency-Key": crypto.randomUUID() }, body: JSON.stringify(body) });
+    const j = await res.json(); status(res.ok ? "saved: " + j.decision : res.status + " " + j.error.code + " — " + j.error.message);
+    refreshPlan();
+  };
+  $("ap").onclick = () => send("approve", { decision: "approved", comment: "approved in panel" });
+  $("ed").onclick = () => { const why = prompt("Reason for the edit?"); if (why) send("edit", { decision: "edited", selected_property_id: $("alt").value, reason: why }); };
+  $("rj").onclick = () => { const why = prompt("Reason for rejecting?"); if (why) send("reject", { decision: "rejected", reason: why }); };
+}
+function open(id) {
+  task = id; ["r0", "r1", "r2"].forEach(c => $(c).innerHTML = ""); $("result").style.display = "none";
+  if (ws) ws.close();
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${proto}://${location.host}/ai/tasks/${id}/stream?until=approval&token=${encodeURIComponent($("token").value.trim())}`);
+  ws.onmessage = m => onEvent(JSON.parse(m.data));
+  ws.onclose = e => { if (e.code >= 4400) status("stream refused: " + e.reason); };
+  status("task " + id);
+}
+$("start").onclick = async () => {
+  try { localStorage.setItem("ai_token", $("token").value.trim()); } catch (e) {}
+  const r = await fetch("/ai/requests", { method: "POST", headers: hdr(), body: JSON.stringify({ request_text: $("text").value, evaluation_config: $("config").value }) });
+  const j = await r.json(); if (!r.ok) return status(r.status + " " + j.error.code + " — " + j.error.message);
+  open(j.task_id);
+};
+$("open").onclick = () => $("attach").value.trim() && open($("attach").value.trim());
+</script>
+</body>
+</html>

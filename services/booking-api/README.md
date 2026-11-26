@@ -11,10 +11,10 @@ Browser ──POST /bookings/create──▶ booking-api ──booking.requested
 
 | Path | What |
 |---|---|
-| `booking_core/` | shared by API and worker: config, DB pool, `dao/` (all SQL), envelope + DLQ, events, producer, outbox, cross-service clients |
-| `booking_api/` | FastAPI app: create/get endpoints, outbox publisher |
+| `booking_core/` | shared by API and worker: config, DB pool, `dao/` (all SQL), envelope + DLQ, events, producer, outbox, `cancellation_policy.py`, cross-service clients |
+| `booking_api/` | FastAPI app: REST endpoints, WebSocket gateway, outbox publisher, completion job |
 | `../booking-worker/booking_worker/` | separate worker process (`worker.py`) and `consumer_utils.py` (retry / DLQ helpers) |
-| `scripts/` | `import_seed.py`, `dev_token.py` |
+| `scripts/` | `import_seed.py`, `dev_token.py`, `complete_stays.py` |
 | `../../db/mysql/02_bookings.sql` | schema |
 
 ## Run it (from the repository root)
@@ -44,11 +44,16 @@ make booking-worker WORKER_ID=worker-2            # terminal 3 (same consumer gr
 G=$(make -s booking-token SUB=guest-1001)
 H=$(make -s booking-token SUB=host-501 ROLE=host)
 
-# 1. async booking: 202 now, the worker decides, /bookings/get shows pending_host
+# 1. async booking: 202 now, worker decides, WebSocket/poll shows pending_host
 curl -s -X POST localhost:8002/bookings/create -H "Authorization: Bearer $G" -H "Idempotency-Key: $(uuidgen)" \
   -d '{"property_id":"property-2001","check_in":"2027-02-10","check_out":"2027-02-12","guest_count":2}'
 curl -s -X POST localhost:8002/bookings/get -H "Authorization: Bearer $G" -d '{"reservation_id":"<id>"}'
 
+# 2. host approves (expected_version from /bookings/get)
+curl -s -X POST localhost:8002/bookings/approve -H "Authorization: Bearer $H" -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"reservation_id":"<id>","expected_version":2}'
+
+make complete-stays                 # confirmed → completed after check_out (BOOKING_CLOCK_DATE=... to move "today")
 make test-booking                   # pytest (uses the isolated database airbnb_booking_test)
 make booking-reset                  # local only: drop + recreate the 5 booking tables and re-import the seed
 ```

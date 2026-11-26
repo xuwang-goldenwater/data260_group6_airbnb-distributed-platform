@@ -1,0 +1,850 @@
+{
+ "02fdf1b6d39cceb577ff7cc75e77692f0663c0ee7f3c9c608603f006406ae8b1": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-12-01",
+   "city": "San Francisco",
+   "guests": 2,
+   "max_nightly_price": 270,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": []
+  },
+  "text": "We're 2 people planning a trip to San Francisco from 2026-11-29 to 2026-12-01. Budget is $270 a night. We'd love an entire apartment."
+ },
+ "077bb0d3db27081ab6d529c02d8f7e0857f6cc6ff2a1532d2ece5c3cafe38145": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-30",
+   "city": "Santa Cruz",
+   "guests": 2,
+   "max_nightly_price": 200,
+   "min_rating": null,
+   "preferred_property_type": "room",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in Santa Cruz from 2026-11-27 to 2026-11-30, 2 of us. Max $200 a night, and we need kitchen. A private room would feel most like home."
+ },
+ "0aa4132bfc2a27e4520f85dd1d0cd2dc2d00f211a54b2c3789ea84e4c3dff0c9": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-12-01",
+   "city": "San Jose",
+   "guests": 6,
+   "max_nightly_price": 370,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting San Jose from 2026-11-29 to 2026-12-01. We can spend up to $370 per night, and we need kitchen and pool. Prefer a whole house so we can all stay together."
+ },
+ "0cad130fa84d7c1b1ab5c31747f466642750d88f5f78da70157927d7f01ea02c": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Santa Cruz",
+   "guests": 3,
+   "max_nightly_price": 290,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in Santa Cruz from 2026-11-26 to 2026-11-28, 3 of us. Max $290 a night, and we need kitchen. An entire apartment would feel most like home."
+ },
+ "0e58257408bf0fd28cb89d78323072103fee9b6f70e5c47ff8fbc36fd7363a6f": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Santa Cruz",
+   "guests": 2,
+   "max_nightly_price": 240,
+   "min_rating": 3.8,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in Santa Cruz from 2026-11-26 to 2026-11-28, 2 of us. Max $240 a night, and we need kitchen, rated at least 3.8. An entire apartment would feel most like home."
+ },
+ "0fc8c9faa9b303ebdf8da7608c1cf2d02aa98f035f2e46dff9adf65fe6b56da9": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-28",
+   "check_out": "2026-11-30",
+   "city": "San Jose",
+   "guests": 1,
+   "max_nightly_price": 250,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "parking"
+   ]
+  },
+  "text": "I'm traveling to San Jose for work, 2026-11-28 to 2026-11-30, just me. Please keep it under $250 per night, and we need parking. An entire apartment would be ideal."
+ },
+ "165f14c879cd138e6275c9af8cd55b1705cebc6b1dd4742d256ecced88e8312c": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-12-01",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 200,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen",
+    "parking"
+   ]
+  },
+  "text": "We're 4 people planning a trip to San Jose from 2026-12-01 to 2026-12-03. Budget is $200 a night, and we need kitchen and parking. We'd love a whole house."
+ },
+ "166d596b0ad2b5b1ca10683c127b699b0cfa7bb2110e29eb2e9731dbcfbcf81a": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-30",
+   "city": "Santa Cruz",
+   "guests": 2,
+   "max_nightly_price": 190,
+   "min_rating": 3.8,
+   "preferred_property_type": "condo",
+   "required_amenities": []
+  },
+  "text": "We're 2 people planning a trip to Santa Cruz from 2026-11-27 to 2026-11-30. Budget is $190 a night, rated at least 3.8. We'd love a condo."
+ },
+ "18c145f096a2850349f705afde28a9045b07536e054235c107c7439ed49245db": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-30",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 230,
+   "min_rating": null,
+   "preferred_property_type": "condo",
+   "required_amenities": [
+    "pool"
+   ]
+  },
+  "text": "We're 4 people planning a trip to San Jose from 2026-11-27 to 2026-11-30. Budget is $230 a night, and we need pool. We'd love a condo."
+ },
+ "1b8986b9ba80b931ae2634d2eb5d4e9db5ad89cb8e24ea17777ea477f17b8747": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-11-30",
+   "city": "San Jose",
+   "guests": 1,
+   "max_nightly_price": 250,
+   "min_rating": null,
+   "preferred_property_type": "condo",
+   "required_amenities": []
+  },
+  "text": "I'm traveling to San Jose for work, 2026-11-29 to 2026-11-30, just me. Please keep it under $250 per night. A condo would be ideal."
+ },
+ "1c9d16ad16d55a21162fcf5f71250bf8ceda843318e0c6150642b30adf73da3a": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-12-01",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 200,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen",
+    "parking"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-12-01 to 2026-12-03, 4 of us. Max $200 a night, and we need kitchen and parking. A whole house would feel most like home."
+ },
+ "1e753f4b41623616d61b0dccb9888caf42241fd20f640e7a9c14c2f8ffcfc28b": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-30",
+   "city": "Monterey",
+   "guests": 2,
+   "max_nightly_price": 290,
+   "min_rating": 3.8,
+   "preferred_property_type": "room",
+   "required_amenities": [
+    "parking",
+    "washer"
+   ]
+  },
+  "text": "We're 2 people planning a trip to Monterey from 2026-11-27 to 2026-11-30. Budget is $290 a night, and we need parking and washer, rated at least 3.8. We'd love a private room."
+ },
+ "35f19ad47720da9fad3dff75d2531070a9a67e3f177b61bcec5c2658cd375a41": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-29",
+   "city": "Monterey",
+   "guests": 6,
+   "max_nightly_price": 400,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting Monterey from 2026-11-27 to 2026-11-29. We can spend up to $400 per night, and we need kitchen and pool. Prefer a cabin so we can all stay together."
+ },
+ "3767935eea4f88cd1b3c5b2e53ab9162d0aaf6b292177d91db6a76d784a6008b": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-12-01",
+   "city": "Monterey",
+   "guests": 6,
+   "max_nightly_price": 360,
+   "min_rating": null,
+   "preferred_property_type": "condo",
+   "required_amenities": [
+    "kitchen",
+    "washer"
+   ]
+  },
+  "text": "Group of 6 friends visiting Monterey from 2026-11-29 to 2026-12-01. We can spend up to $360 per night, and we need kitchen and washer. Prefer a condo so we can all stay together."
+ },
+ "3c1c8d4fbfdd6537272f7aed341616664b64ca4a82ab3c40141cc6c7f5461b42": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-29",
+   "city": "San Francisco",
+   "guests": 6,
+   "max_nightly_price": 390,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting San Francisco from 2026-11-27 to 2026-11-29. We can spend up to $390 per night, and we need kitchen and pool. Prefer an entire apartment so we can all stay together."
+ },
+ "3c4511eb3c71a9e75065b1b39541bab210d5b8f331938c1d27e8494c60069fd1": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Santa Cruz",
+   "guests": 4,
+   "max_nightly_price": 280,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in Santa Cruz from 2026-11-26 to 2026-11-28, 4 of us. Max $280 a night, and we need kitchen. A whole house would feel most like home."
+ },
+ "3cfccc887ab4d388e4e53297f8969ab419fa101442b6b86bab1bf0605b0a4456": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Santa Cruz",
+   "guests": 6,
+   "max_nightly_price": 400,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting Santa Cruz from 2026-11-26 to 2026-11-28. We can spend up to $400 per night, and we need kitchen and pool. Prefer a cabin so we can all stay together."
+ },
+ "3e187c490847e471e37795f770556cc77f917fbcfca4cdae0cbc2b90b32d43d0": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Santa Cruz",
+   "guests": 6,
+   "max_nightly_price": 370,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting Santa Cruz from 2026-11-26 to 2026-11-28. We can spend up to $370 per night, and we need kitchen and pool. Prefer a cabin so we can all stay together."
+ },
+ "57a238a4baed443ed98b420d426cb43b217d1f16c90156ac89026205b739ab42": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-30",
+   "city": "San Jose",
+   "guests": 3,
+   "max_nightly_price": 290,
+   "min_rating": 3.8,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-11-27 to 2026-11-30, 3 of us. Max $290 a night, and we need kitchen, rated at least 3.8. An entire apartment would feel most like home."
+ },
+ "57a885d9f82a4312e8d037aaebcbd95d347d650b93214f47d6b5ed2942d682b2": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-29",
+   "city": "San Francisco",
+   "guests": 2,
+   "max_nightly_price": 290,
+   "min_rating": null,
+   "preferred_property_type": "room",
+   "required_amenities": []
+  },
+  "text": "We're 2 people planning a trip to San Francisco from 2026-11-27 to 2026-11-29. Budget is $290 a night. We'd love a private room."
+ },
+ "5a1f4a3662a4dd5e7825deb944ffaddd4215935ac0170780d30edb24a90ff5c2": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-28",
+   "check_out": "2026-12-01",
+   "city": "Santa Cruz",
+   "guests": 4,
+   "max_nightly_price": 250,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in Santa Cruz from 2026-11-28 to 2026-12-01, 4 of us. Max $250 a night, and we need kitchen. An entire apartment would feel most like home."
+ },
+ "62ea5e9d09753d705850281ad355d399640b615c5c9ff92c7c6711778c25e0d7": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-30",
+   "check_out": "2026-12-02",
+   "city": "San Jose",
+   "guests": 2,
+   "max_nightly_price": 270,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-11-30 to 2026-12-02, 2 of us. Max $270 a night, and we need kitchen. An entire apartment would feel most like home."
+ },
+ "6f9766d4e8bf3280da1209b9755ebde71f7b5330ffab8bb465e43c441eea12d5": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-30",
+   "city": "Santa Cruz",
+   "guests": 3,
+   "max_nightly_price": 190,
+   "min_rating": null,
+   "preferred_property_type": "condo",
+   "required_amenities": []
+  },
+  "text": "We're 3 people planning a trip to Santa Cruz from 2026-11-27 to 2026-11-30. Budget is $190 a night. We'd love a condo."
+ },
+ "773db2f961eecee005e83ce1e9f0cbce54eebd25798ab70d1957f2064f4bd379": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-28",
+   "check_out": "2026-11-29",
+   "city": "San Francisco",
+   "guests": 1,
+   "max_nightly_price": 200,
+   "min_rating": null,
+   "preferred_property_type": "room",
+   "required_amenities": []
+  },
+  "text": "I'm traveling to San Francisco for work, 2026-11-28 to 2026-11-29, just me. Please keep it under $200 per night. A private room would be ideal."
+ },
+ "7b4b796ad5672132fb1e21a08a87ccc2d4355fd72221680251c85c986be8668d": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "San Francisco",
+   "guests": 2,
+   "max_nightly_price": 240,
+   "min_rating": 3.8,
+   "preferred_property_type": "condo",
+   "required_amenities": []
+  },
+  "text": "I'm traveling to San Francisco for work, 2026-11-26 to 2026-11-28, 2 of us. Please keep it under $240 per night, rated at least 3.8. A condo would be ideal."
+ },
+ "7c3b50c8ab393e89c3ad38b30d6be670d3154f1ceccd31b8adc5084bb9d647c7": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-28",
+   "check_out": "2026-12-01",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 220,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": []
+  },
+  "text": "We're 4 people planning a trip to San Jose from 2026-11-28 to 2026-12-01. Budget is $220 a night. We'd love a cabin."
+ },
+ "7c58fc488235009730837f9dbca4d2523af1f66fce5fc13849fb2ce3fc6ccbbd": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-12-01",
+   "city": "San Jose",
+   "guests": 2,
+   "max_nightly_price": 240,
+   "min_rating": null,
+   "preferred_property_type": "condo",
+   "required_amenities": [
+    "parking"
+   ]
+  },
+  "text": "I'm traveling to San Jose for work, 2026-11-29 to 2026-12-01, 2 of us. Please keep it under $240 per night, and we need parking. A condo would be ideal."
+ },
+ "828eea93e532ae0594472085a16a38b601da71bb7b8cc0772b001a00c977310f": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-30",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 250,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-11-30 to 2026-12-03, 4 of us. Max $250 a night, and we need kitchen. A whole house would feel most like home."
+ },
+ "848b9898509d1467c24f5450fe5681394f8484f15b178506d9217f2988559139": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Monterey",
+   "guests": 6,
+   "max_nightly_price": 350,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting Monterey from 2026-11-26 to 2026-11-28. We can spend up to $350 per night, and we need kitchen and pool. Prefer a whole house so we can all stay together."
+ },
+ "861af6f511bc1e4a91b9a581d1f3d4a1f626bedb703913f14fc89c5898f1bdbe": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "San Francisco",
+   "guests": 6,
+   "max_nightly_price": 400,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting San Francisco from 2026-11-26 to 2026-11-28. We can spend up to $400 per night, and we need kitchen and pool. Prefer a whole house so we can all stay together."
+ },
+ "8bbc3d29074ecaffc2f60ddfdfeeb4cd9a0f42564eb7538d77ba5686a0946c8d": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "San Francisco",
+   "guests": 1,
+   "max_nightly_price": 290,
+   "min_rating": 3.8,
+   "preferred_property_type": "condo",
+   "required_amenities": [
+    "parking"
+   ]
+  },
+  "text": "I'm traveling to San Francisco for work, 2026-11-26 to 2026-11-28, just me. Please keep it under $290 per night, and we need parking, rated at least 3.8. A condo would be ideal."
+ },
+ "8c82864baf66ac16194ed2ef8c200e58772f42f0e6d76c95e459ba2254f90ecd": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "San Jose",
+   "guests": 6,
+   "max_nightly_price": 360,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting San Jose from 2026-11-26 to 2026-11-28. We can spend up to $360 per night, and we need kitchen and pool. Prefer a cabin so we can all stay together."
+ },
+ "8d763318fa2ee30bf14cca7e84d3e45863fb9768fb1dc00e3234a4a7e21fc133": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-27",
+   "city": "San Francisco",
+   "guests": 2,
+   "max_nightly_price": 300,
+   "min_rating": 3.8,
+   "preferred_property_type": "room",
+   "required_amenities": [
+    "parking"
+   ]
+  },
+  "text": "I'm traveling to San Francisco for work, 2026-11-26 to 2026-11-27, 2 of us. Please keep it under $300 per night, and we need parking, rated at least 3.8. A private room would be ideal."
+ },
+ "8d7e7a7dec94e0b226f7ff4d6bbc9c2482ea5e0dafdfbc05113b18fe612f57e3": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-30",
+   "check_out": "2026-12-01",
+   "city": "San Francisco",
+   "guests": 1,
+   "max_nightly_price": 260,
+   "min_rating": 3.8,
+   "preferred_property_type": "room",
+   "required_amenities": []
+  },
+  "text": "I'm traveling to San Francisco for work, 2026-11-30 to 2026-12-01, just me. Please keep it under $260 per night, rated at least 3.8. A private room would be ideal."
+ },
+ "8e88410154253c13a2bfc9e35f7930862a2aca93a7f713c4e9c85b982607c5f0": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-12-01",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 200,
+   "min_rating": null,
+   "preferred_property_type": "condo",
+   "required_amenities": [
+    "kitchen",
+    "parking"
+   ]
+  },
+  "text": "I'm traveling to San Jose for work, 2026-12-01 to 2026-12-03, 4 of us. Please keep it under $200 per night, and we need kitchen and parking. A condo would be ideal."
+ },
+ "908954b737f26a1b0abbb5ea6269a5454d013637a4a695c5604753cd2b15fb05": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-28",
+   "check_out": "2026-12-01",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 290,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-11-28 to 2026-12-01, 4 of us. Max $290 a night, and we need kitchen. A cabin would feel most like home."
+ },
+ "93c95de2a9a2cb307794fe7131c38809371fe7cf1f2ed34174cd2320fcc58c59": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-29",
+   "city": "San Jose",
+   "guests": 3,
+   "max_nightly_price": 270,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-11-26 to 2026-11-29, 3 of us. Max $270 a night, and we need kitchen. A cabin would feel most like home."
+ },
+ "ab764abeb21c689828b02d434299458b2e8c28ab448429a4cfc104aded9bc5e3": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-12-01",
+   "city": "San Jose",
+   "guests": 2,
+   "max_nightly_price": 290,
+   "min_rating": null,
+   "preferred_property_type": "room",
+   "required_amenities": [
+    "kitchen",
+    "washer"
+   ]
+  },
+  "text": "We're 2 people planning a trip to San Jose from 2026-11-29 to 2026-12-01. Budget is $290 a night, and we need kitchen and washer. We'd love a private room."
+ },
+ "abf962d1fada115fc87b8ac11ca1212627a08c930006a177c1df185d99f545f5": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-11-30",
+   "city": "San Jose",
+   "guests": 2,
+   "max_nightly_price": 200,
+   "min_rating": 3.8,
+   "preferred_property_type": "room",
+   "required_amenities": [
+    "parking"
+   ]
+  },
+  "text": "I'm traveling to San Jose for work, 2026-11-29 to 2026-11-30, 2 of us. Please keep it under $200 per night, and we need parking, rated at least 3.8. A private room would be ideal."
+ },
+ "b5f889d333a9025a0be7ecadddb65114df00c7f0ff8504c36a8f5ab841c5274e": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-29",
+   "check_out": "2026-12-02",
+   "city": "Monterey",
+   "guests": 2,
+   "max_nightly_price": 270,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": []
+  },
+  "text": "We're 2 people planning a trip to Monterey from 2026-11-29 to 2026-12-02. Budget is $270 a night. We'd love a whole house."
+ },
+ "ba82a8bf15f9162abd1960b85498e3f067c033a65d5c7b3502da507dc7be93ab": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-28",
+   "check_out": "2026-11-30",
+   "city": "Monterey",
+   "guests": 2,
+   "max_nightly_price": 250,
+   "min_rating": null,
+   "preferred_property_type": "room",
+   "required_amenities": [
+    "parking"
+   ]
+  },
+  "text": "We're 2 people planning a trip to Monterey from 2026-11-28 to 2026-11-30. Budget is $250 a night, and we need parking. We'd love a private room."
+ },
+ "bfba9cec8bf848e75c57633054bc4f865e1754667eeeb93d7b50166d86e65ec6": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-28",
+   "city": "San Francisco",
+   "guests": 1,
+   "max_nightly_price": 180,
+   "min_rating": null,
+   "preferred_property_type": "room",
+   "required_amenities": []
+  },
+  "text": "I'm traveling to San Francisco for work, 2026-11-27 to 2026-11-28, just me. Please keep it under $180 per night. A private room would be ideal."
+ },
+ "c0e5e09d6ff30d1cc69d6063506248e6a47c0ab0def9f18fefd0dbc622b6049c": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Santa Cruz",
+   "guests": 6,
+   "max_nightly_price": 300,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting Santa Cruz from 2026-11-26 to 2026-11-28. We can spend up to $300 per night, and we need kitchen and pool. Prefer a cabin so we can all stay together."
+ },
+ "d49e7943c265e7949e28c458f7399b1fc7c0544bb218da269bce58fc1f66eb89": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-12-01",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 200,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen",
+    "parking"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-12-01 to 2026-12-03, 4 of us. Max $200 a night, and we need kitchen and parking. An entire apartment would feel most like home."
+ },
+ "d8da7c7903022a20e73d2a73c81572b3255ef66637ad20b3051c167205f5297c": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-30",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 2,
+   "max_nightly_price": 180,
+   "min_rating": null,
+   "preferred_property_type": "condo",
+   "required_amenities": [
+    "kitchen"
+   ]
+  },
+  "text": "Visiting family in San Jose from 2026-11-30 to 2026-12-03, 2 of us. Max $180 a night, and we need kitchen. A condo would feel most like home."
+ },
+ "db01a6ce2106f4b61a0d300bfd1b7999790d48b007ae0049758dd6f9a0a48536": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "Santa Cruz",
+   "guests": 4,
+   "max_nightly_price": 220,
+   "min_rating": null,
+   "preferred_property_type": "cabin",
+   "required_amenities": [
+    "parking",
+    "pool"
+   ]
+  },
+  "text": "We're 4 people planning a trip to Santa Cruz from 2026-11-26 to 2026-11-28. Budget is $220 a night, and we need parking and pool. We'd love a cabin."
+ },
+ "e6679976f9df2da77ac984e5074e6b148a9a3753972add6619a2a1a1eb1a9251": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-26",
+   "check_out": "2026-11-28",
+   "city": "San Jose",
+   "guests": 1,
+   "max_nightly_price": 270,
+   "min_rating": null,
+   "preferred_property_type": "room",
+   "required_amenities": [
+    "parking"
+   ]
+  },
+  "text": "I'm traveling to San Jose for work, 2026-11-26 to 2026-11-28, just me. Please keep it under $270 per night, and we need parking. A private room would be ideal."
+ },
+ "f289bb1bdb1df28a2cd93c945ece68e72aa0544a47ff5902d4a5073725598245": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-11-27",
+   "check_out": "2026-11-29",
+   "city": "San Jose",
+   "guests": 6,
+   "max_nightly_price": 370,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen",
+    "pool"
+   ]
+  },
+  "text": "Group of 6 friends visiting San Jose from 2026-11-27 to 2026-11-29. We can spend up to $370 per night, and we need kitchen and pool. Prefer a whole house so we can all stay together."
+ },
+ "f37bf845eb665695648acfcd31a0342609ba9670ca91ced74b58aaed4cf78c00": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-12-01",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 200,
+   "min_rating": null,
+   "preferred_property_type": "apartment",
+   "required_amenities": [
+    "kitchen",
+    "parking"
+   ]
+  },
+  "text": "We're 4 people planning a trip to San Jose from 2026-12-01 to 2026-12-03. Budget is $200 a night, and we need kitchen and parking. We'd love an entire apartment."
+ },
+ "fbfd9f25b181cc97d295f55f3a765ff370169d54550ad0a27590a01fb293894e": {
+  "model": "qwen2.5:3b",
+  "prompt_version": "parser-prompt-v1",
+  "request": {
+   "check_in": "2026-12-01",
+   "check_out": "2026-12-03",
+   "city": "San Jose",
+   "guests": 4,
+   "max_nightly_price": 220,
+   "min_rating": null,
+   "preferred_property_type": "house",
+   "required_amenities": [
+    "kitchen",
+    "parking"
+   ]
+  },
+  "text": "Group of 4 friends visiting San Jose from 2026-12-01 to 2026-12-03. We can spend up to $220 per night, and we need kitchen and parking. Prefer a whole house so we can all stay together."
+ }
+}

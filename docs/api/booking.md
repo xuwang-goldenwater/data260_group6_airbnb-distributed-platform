@@ -88,9 +88,9 @@ Allowed transitions are exactly the arrows above. Any other transition returns `
 | Field | Type | Rule |
 |---|---|---|
 | `reservation_id` | VARCHAR(40) PK | `res-` + ULID |
-| `property_id` | VARCHAR(40) | required; existing, `active` property |
-| `guest_id` | VARCHAR(40) | from JWT |
-| `host_id` | VARCHAR(40) | copied from the property, never from the client |
+| `property_id` | VARCHAR(64) ascii_bin | required; existing, `active` property |
+| `guest_id` | VARCHAR(64) ascii_bin | from JWT |
+| `host_id` | VARCHAR(64) ascii_bin | copied from the property, never from the client |
 | `check_in` | DATE | inclusive; not in the past |
 | `check_out` | DATE | exclusive; later than `check_in`; stay ≤ 30 nights |
 | `nights` | INT | `check_out - check_in` |
@@ -116,7 +116,7 @@ One row per held night.
 
 | Field | Type | Rule |
 |---|---|---|
-| `property_id` | VARCHAR(40) | |
+| `property_id` | VARCHAR(64) ascii_bin | |
 | `night_date` | DATE | one night |
 | `reservation_id` | VARCHAR(40) | the reservation holding the night |
 | `created_datetime` | DATETIME(3) | |

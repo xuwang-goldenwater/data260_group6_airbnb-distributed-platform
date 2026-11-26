@@ -20,7 +20,8 @@ BOOKING_API_PORT ?= 8002
 WORKER_ID ?= worker-1
 N ?= 20
 
-.PHONY: booking-venv booking-infra-up booking-topics booking-db booking-seed booking-reset booking-api booking-worker booking-token complete-stays booking-test-db test-booking
+.PHONY: booking-venv booking-infra-up booking-topics booking-db booking-seed booking-reset booking-api booking-worker booking-token complete-stays booking-test-db test-booking \
+        test-double-booking consumer-recovery
 
 booking-venv: ## create .venv (Python 3.11) with Role B dependencies
 	@test -x $(PY) || (command -v uv >/dev/null && uv venv --python 3.11 .venv || python3.11 -m venv .venv)
@@ -75,5 +76,15 @@ booking-test-db: ## create the isolated test database used by tests/booking
 
 test-booking: booking-test-db ## pytest for Role B
 	$(BOOKING_RUN) -m pytest tests/booking -q
+
+test-double-booking: ## ★ task 3.4: N concurrent creates, 2 workers, exactly one wins (N=20)
+	@mkdir -p reports/perf/booking/double_booking
+	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/double_booking.py --n $(N) 2>&1 \
+	  | tee reports/perf/booking/double_booking/run_output.txt
+
+consumer-recovery: ## ★ task 4.3: stop/kill worker, show lag, prove no loss and no duplicates
+	@mkdir -p reports/perf/booking/consumer_recovery
+	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/consumer_recovery.py 2>&1 \
+	  | tee reports/perf/booking/consumer_recovery/run_output.txt
 
 # --- end Role B ---------------------------------------------------------------------------------

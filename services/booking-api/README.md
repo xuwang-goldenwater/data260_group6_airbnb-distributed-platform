@@ -14,7 +14,7 @@ Browser ──POST /bookings/create──▶ booking-api ──booking.requested
 | `booking_core/` | shared by API and worker: config, DB pool, `dao/` (all SQL), envelope + DLQ, events, producer, outbox, `cancellation_policy.py`, cross-service clients |
 | `booking_api/` | FastAPI app: REST endpoints, WebSocket gateway, outbox publisher, completion job |
 | `../booking-worker/booking_worker/` | separate worker process (`worker.py`) and `consumer_utils.py` (retry / DLQ helpers) |
-| `scripts/` | `import_seed.py`, `dev_token.py`, `complete_stays.py` |
+| `scripts/` | `import_seed.py`, `dev_token.py`, `complete_stays.py`, ★ `double_booking.py`, ★ `consumer_recovery.py` |
 | `../../db/mysql/02_bookings.sql` | schema |
 
 ## Run it (from the repository root)
@@ -52,6 +52,12 @@ curl -s -X POST localhost:8002/bookings/get -H "Authorization: Bearer $G" -d '{"
 # 2. host approves (expected_version from /bookings/get)
 curl -s -X POST localhost:8002/bookings/approve -H "Authorization: Bearer $H" -H "Idempotency-Key: $(uuidgen)" \
   -d '{"reservation_id":"<id>","expected_version":2}'
+
+# ★ 3.4 double booking (starts its own API + 2 workers; stop your manual workers first)
+make test-double-booking            # N=20 by default; evidence → reports/perf/booking/double_booking/
+
+# ★ 4.3 consumer recovery (stop your manual workers first)
+make consumer-recovery              # evidence → reports/perf/booking/consumer_recovery/
 
 make complete-stays                 # confirmed → completed after check_out (BOOKING_CLOCK_DATE=... to move "today")
 make test-booking                   # pytest (uses the isolated database airbnb_booking_test)

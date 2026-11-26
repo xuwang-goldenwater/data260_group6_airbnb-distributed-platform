@@ -11,7 +11,8 @@ BOOKING_PYTHONPATH := services/booking-api:services/booking-worker
 BOOKING_RUN := PYTHONPATH=$(BOOKING_PYTHONPATH) $(PY)
 BOOKING_COMPOSE_FILES := -f infra/docker-compose.yml $(if $(BOOKING_MYSQL_3307),-f services/booking-api/infra/compose.mysql-3307.yml)
 COMPOSE ?= docker compose $(BOOKING_COMPOSE_FILES)
-BOOKING_MYSQL := docker compose -f infra/docker-compose.yml exec -T -e MYSQL_PWD=airbnb mysql mysql -uairbnb airbnb
+BOOKING_DB ?= $(or $(MYSQL_DATABASE),airbnb)
+BOOKING_MYSQL := docker compose -f infra/docker-compose.yml exec -T -e MYSQL_PWD=airbnb mysql mysql -uairbnb $(BOOKING_DB)
 BOOKING_KAFKA_BIN := docker compose -f infra/docker-compose.yml exec -T kafka /opt/kafka/bin
 BOOKING_API_PORT ?= 8002
 WORKER_ID ?= worker-1
@@ -38,13 +39,13 @@ booking-db: ## apply db/mysql/02_bookings.sql
 	@$(BOOKING_MYSQL) -e "SHOW TABLES"
 
 booking-seed: ## import seed reservations/history/blocks (idempotent, verified against manifest.json)
-	$(BOOKING_RUN) services/booking-api/scripts/import_seed.py
+	MYSQL_DATABASE=$(BOOKING_DB) $(BOOKING_RUN) services/booking-api/scripts/import_seed.py
 
-booking-reset: ## DESTRUCTIVE (local dev only): empty the 5 booking tables, then re-import the seed
-	@echo "Emptying Role B tables in the local 'airbnb' database (other teams' tables are untouched)..."
-	$(BOOKING_MYSQL) -e "SET FOREIGN_KEY_CHECKS=0; TRUNCATE availability_blocks; TRUNCATE reservation_status_history; \
-	  TRUNCATE processed_events; TRUNCATE idempotency_keys; TRUNCATE reservations; SET FOREIGN_KEY_CHECKS=1;"
-	$(MAKE) booking-seed
+booking-reset: ## DESTRUCTIVE (local dev only): drop + recreate the 5 booking tables, then re-import the seed
+	@echo "Recreating Role B tables in local database '$(BOOKING_DB)' (other teams' tables are untouched)..."
+	$(BOOKING_MYSQL) -e "SET FOREIGN_KEY_CHECKS=0; DROP TABLE IF EXISTS availability_blocks, reservation_status_history, \
+	  processed_events, idempotency_keys, reservations; SET FOREIGN_KEY_CHECKS=1;"
+	$(MAKE) booking-db booking-seed
 
 booking-test-db: ## create the isolated test database used by tests/booking
 	docker compose -f infra/docker-compose.yml exec -T -e MYSQL_PWD=root mysql mysql -uroot -e \

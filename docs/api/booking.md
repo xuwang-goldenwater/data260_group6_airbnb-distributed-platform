@@ -110,6 +110,8 @@ Allowed transitions are exactly the arrows above. Any other transition returns `
 
 Indexes: `(guest_id, created_datetime)`, `(host_id, status, created_datetime)`, `(property_id, check_in)`, `(status, check_out)` for the completion job.
 
+**[impl]** `property_id`, `guest_id`, `host_id` and `actor_id` use `VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin`, the same type as `db/mysql/01_users_properties.sql`. Cross-service IDs have no foreign key; Booking validates them through the Property/User APIs. Schema: `db/mysql/02_bookings.sql`.
+
 ### `availability_blocks` — the double-booking guard
 
 One row per held night.
@@ -135,7 +137,7 @@ Because the primary key is `(property_id, night_date)`, MySQL physically cannot 
 | `reservation_id` | VARCHAR(40) |
 | `from_status` | ENUM NULL |
 | `to_status` | ENUM |
-| `actor_id` | VARCHAR(40) — guest, host, `booking-worker` or `completion-job` |
+| `actor_id` | VARCHAR(64) ascii_bin — guest, host, `booking-worker` or `completion-job` |
 | `reason` | VARCHAR(64) NULL |
 | `trace_id` | VARCHAR(40) |
 | `changed_datetime` | DATETIME(3) |
@@ -145,7 +147,7 @@ Because the primary key is `(property_id, night_date)`, MySQL physically cannot 
 | Field | Type | Rule |
 |---|---|---|
 | `idempotency_key` | VARCHAR(64) | |
-| `actor_id` | VARCHAR(40) | from JWT |
+| `actor_id` | VARCHAR(64) ascii_bin | from JWT |
 | `endpoint` | VARCHAR(64) | e.g. `/bookings/create` |
 | `request_hash` | CHAR(64) | SHA-256 of the normalized body |
 | `response_code` | INT | |

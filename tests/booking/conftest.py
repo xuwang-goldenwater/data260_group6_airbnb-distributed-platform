@@ -37,6 +37,12 @@ def db(settings):
         database.ping()
     except Exception as exc:  # pragma: no cover
         pytest.skip(f"MySQL test database unavailable ({exc}); run `make booking-infra-up booking-test-db`")
+    # Rebuild the booking tables in the isolated test database so schema changes are always picked up.
+    with database.transaction() as conn, conn.cursor() as cur:
+        cur.execute("SET FOREIGN_KEY_CHECKS = 0")
+        for t in TABLES:
+            cur.execute(f"DROP TABLE IF EXISTS {t}")
+        cur.execute("SET FOREIGN_KEY_CHECKS = 1")
     ddl = (ROOT / "db/mysql/02_bookings.sql").read_text()
     statements = [s.strip() for s in "\n".join(l for l in ddl.splitlines() if not l.strip().startswith("--")).split(";")]
     with database.transaction() as conn, conn.cursor() as cur:

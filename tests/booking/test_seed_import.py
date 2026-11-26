@@ -21,15 +21,16 @@ def test_schema_can_be_applied_twice(db):
 
 
 def test_cross_service_ids_match_role_a_column_type(db):
-    """property_id / guest_id / host_id use the same VARCHAR(64) ascii_bin type as db/mysql/01_users_properties.sql."""
+    """property_id / guest_id / host_id (and actor_id) use the same VARCHAR(64) ascii_bin type as db/mysql/01_users_properties.sql."""
     with db.transaction() as conn, conn.cursor() as cur:
         cur.execute("SELECT table_name AS tbl, column_name AS col, character_maximum_length AS n, character_set_name AS cs, "
                     "collation_name AS coll FROM information_schema.columns WHERE table_schema = DATABASE() "
-                    "AND column_name IN ('property_id', 'guest_id', 'host_id')")
+                    "AND column_name IN ('property_id', 'guest_id', 'host_id', 'actor_id')")
         rows = cur.fetchall()
     assert {(r["tbl"], r["col"]) for r in rows} >= {
         ("reservations", "property_id"), ("reservations", "guest_id"), ("reservations", "host_id"),
-        ("availability_blocks", "property_id")}
+        ("availability_blocks", "property_id"), ("reservation_status_history", "actor_id"),
+        ("idempotency_keys", "actor_id")}
     assert all((r["n"], r["cs"], r["coll"]) == (64, "ascii", "ascii_bin") for r in rows), rows
 
 

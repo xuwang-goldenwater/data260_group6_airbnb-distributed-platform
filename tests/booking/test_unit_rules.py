@@ -81,3 +81,10 @@ def test_api_transaction_retry_on_deadlock_only():
     with pytest.raises(pymysql.err.OperationalError):
         retry_transaction(lambda: (_ for _ in ()).throw(pymysql.err.OperationalError(2003, "down")),
                           sleep=lambda s: None)
+
+
+def test_ids_up_to_64_chars_match_role_a_schema():
+    long_id = "property-" + "9" * 55                       # 64 characters, the VARCHAR(64) limit
+    assert validation.create_request({**GOOD, "property_id": long_id}, TODAY).property_id == long_id
+    with pytest.raises(ApiError):
+        validation.create_request({**GOOD, "property_id": long_id + "9"}, TODAY)

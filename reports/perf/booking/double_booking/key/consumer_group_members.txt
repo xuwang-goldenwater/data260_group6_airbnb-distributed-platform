@@ -1,0 +1,3 @@
+GROUP           CONSUMER-ID                                   GROUP-INSTANCE-ID HOST            CLIENT-ID       #PARTITIONS     
+booking-worker  worker-2-a34f3a9e-9105-4194-8ec6-eb32a7652428 worker-2          /192.168.65.1   worker-2        1               
+booking-worker  worker-1-9d52c034-5122-42b0-ad48-343abe1044c0 worker-1          /192.168.65.1   worker-1        2

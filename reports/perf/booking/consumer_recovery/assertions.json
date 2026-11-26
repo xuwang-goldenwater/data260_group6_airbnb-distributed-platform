@@ -1,0 +1,66 @@
+{
+  "property_id": "property-2044",
+  "consumer_group": "booking-worker",
+  "git_rev": "cb2561b",
+  "run_at": "2026-11-26T04:32:05Z",
+  "scenario_A_stopped_before_processing": {
+    "reservation_id": "res-01M8B20BECQAV9DPZT1YAGK0JV",
+    "partition": 2,
+    "status_while_stopped": "requested",
+    "lag_while_stopped": {
+      "current": 447,
+      "end": 448,
+      "lag": 1
+    },
+    "lag_after_restart": {
+      "current": 448,
+      "end": 448,
+      "lag": 0
+    },
+    "worker_processed_log_lines": 1,
+    "status": "pending_host",
+    "publish_pending": 0,
+    "history_rows": {
+      "requested": 1,
+      "pending_host": 1
+    },
+    "availability_blocks": 2,
+    "processed_events_rows": 1,
+    "booking_updated_events": {
+      "booking.updated:res-01M8B20BECQAV9DPZT1YAGK0JV:v2": 1
+    },
+    "ok": true,
+    "passed": true
+  },
+  "scenario_B_crash_after_db_commit": {
+    "reservation_id": "res-01M8B20KZ3RQRAQSMYM3TC55T4",
+    "partition": 2,
+    "crash_exit_code": 137,
+    "booking_updated_before_restart": 0,
+    "lag_after_crash": {
+      "current": 448,
+      "end": 449,
+      "lag": 1
+    },
+    "lag_after_restart": {
+      "current": 449,
+      "end": 449,
+      "lag": 0
+    },
+    "redelivery_logged_as_duplicate": 1,
+    "status": "pending_host",
+    "publish_pending": 0,
+    "history_rows": {
+      "requested": 1,
+      "pending_host": 1
+    },
+    "availability_blocks": 2,
+    "processed_events_rows": 1,
+    "booking_updated_events": {
+      "booking.updated:res-01M8B20KZ3RQRAQSMYM3TC55T4:v2": 1
+    },
+    "ok": true,
+    "passed": true
+  },
+  "passed": true
+}

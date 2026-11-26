@@ -1,0 +1,68 @@
+[20:32:14] started api pid=18241 port=8012
+[20:32:14] started worker-1 pid=18242 env={}
+[20:32:17] warm-up worker stopped (group has committed offsets)
+[20:32:17] A1: worker is stopped; sending a booking request
+[20:32:20] A2: partition 2 lag=1 status=requested
+[20:32:20] A3: restarting worker-1
+[20:32:20] started worker-1 pid=18304 env={}
+[20:32:25] B1: starting worker-1 with WORKER_FAULT=crash_after_db_commit
+[20:32:25] started worker-1 pid=18349 env={'WORKER_FAULT': 'crash_after_db_commit'}
+[20:32:26] B1: worker exited with code 137
+[20:32:29] B2: partition 2 lag=1 booking.updated events so far=0
+[20:32:29] B3: restarting worker-1 without fault injection
+[20:32:29] started worker-1 pid=18377 env={}
+{
+  "property_id": "property-2044",
+  "consumer_group": "booking-worker",
+  "git_rev": "cb2561b",
+  "run_at": "2026-11-26T04:32:05Z",
+  "scenario_A_stopped_before_processing": {
+    "reservation_id": "res-01M8B20BECQAV9DPZT1YAGK0JV",
+    "lag_while_stopped": {
+      "current": 447,
+      "end": 448,
+      "lag": 1
+    },
+    "lag_after_restart": {
+      "current": 448,
+      "end": 448,
+      "lag": 0
+    },
+    "history_rows": {
+      "requested": 1,
+      "pending_host": 1
+    },
+    "availability_blocks": 2,
+    "processed_events_rows": 1,
+    "booking_updated_events": {
+      "booking.updated:res-01M8B20BECQAV9DPZT1YAGK0JV:v2": 1
+    },
+    "passed": true
+  },
+  "scenario_B_crash_after_db_commit": {
+    "reservation_id": "res-01M8B20KZ3RQRAQSMYM3TC55T4",
+    "crash_exit_code": 137,
+    "lag_after_crash": {
+      "current": 448,
+      "end": 449,
+      "lag": 1
+    },
+    "lag_after_restart": {
+      "current": 449,
+      "end": 449,
+      "lag": 0
+    },
+    "history_rows": {
+      "requested": 1,
+      "pending_host": 1
+    },
+    "availability_blocks": 2,
+    "processed_events_rows": 1,
+    "booking_updated_events": {
+      "booking.updated:res-01M8B20KZ3RQRAQSMYM3TC55T4:v2": 1
+    },
+    "passed": true
+  },
+  "passed": true
+}
+[20:32:34] RESULT: PASS — no lost and no duplicated booking

@@ -1,0 +1,61 @@
+2026-11-25 20:31:35,687 INFO [booking-api] booking.api booking-api ready precheck=False property_source=seed spread_partitions=False
+2026-11-25 20:31:43,410 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA8QN4KMKTXGXKG8RXGQ trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWK
+2026-11-25 20:31:43,411 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA8QN4KMKTXGXKG8RXGQ property_id=property-2001 guest_id=guest-1020 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWK
+2026-11-25 20:31:43,412 INFO [booking-api] booking.api POST /bookings/create -> 202 38.9ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWK
+2026-11-25 20:31:43,418 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA98GGHBTQA4YHBJDADB trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWE
+2026-11-25 20:31:43,418 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA98GGHBTQA4YHBJDADB property_id=property-2001 guest_id=guest-1005 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWE
+2026-11-25 20:31:43,419 INFO [booking-api] booking.api POST /bookings/create -> 202 45.9ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWE
+2026-11-25 20:31:43,419 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA98GGHBTQA4YHBJDADA trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWF
+2026-11-25 20:31:43,419 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA98GGHBTQA4YHBJDADA property_id=property-2001 guest_id=guest-1008 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWF
+2026-11-25 20:31:43,419 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA95ARRKAD6F3WPXTMSC trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023Q
+2026-11-25 20:31:43,420 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA95ARRKAD6F3WPXTMSC property_id=property-2001 guest_id=guest-1014 trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023Q
+2026-11-25 20:31:43,420 INFO [booking-api] booking.api POST /bookings/create -> 202 47.3ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWF
+2026-11-25 20:31:43,420 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9A75R7QF3243HTZY2A trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023P
+2026-11-25 20:31:43,421 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9A75R7QF3243HTZY2A property_id=property-2001 guest_id=guest-1003 trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023P
+2026-11-25 20:31:43,421 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9A75R7QF3243HTZY2B trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWJ
+2026-11-25 20:31:43,421 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9CJ6EW153EN5WSX1YK trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7ED
+2026-11-25 20:31:43,421 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9CJ6EW153EN5WSX1YK property_id=property-2001 guest_id=guest-1015 trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7ED
+2026-11-25 20:31:43,421 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA99R2W97BX2M083MPEX trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWG
+2026-11-25 20:31:43,421 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA8NRRP6SK2FS7ZE6RAS trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023N
+2026-11-25 20:31:43,421 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9CJ6EW153EN5WSX1YM trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWH
+2026-11-25 20:31:43,421 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9FA2T9HQ8C3NC339Q6 trace_id=tr-01M8B1ZA8H8HJT804B08JMAZCS
+2026-11-25 20:31:43,421 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9A75R7QF3243HTZY2B property_id=property-2001 guest_id=guest-1013 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWJ
+2026-11-25 20:31:43,420 INFO [booking-api] booking.api POST /bookings/create -> 202 48.2ms trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023Q
+2026-11-25 20:31:43,421 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA99R2W97BX2M083MPEX property_id=property-2001 guest_id=guest-1004 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWG
+2026-11-25 20:31:43,421 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9CJ6EW153EN5WSX1YJ trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWP
+2026-11-25 20:31:43,421 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA8NRRP6SK2FS7ZE6RAS property_id=property-2001 guest_id=guest-1018 trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023N
+2026-11-25 20:31:43,421 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9CJ6EW153EN5WSX1YM property_id=property-2001 guest_id=guest-1001 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWH
+2026-11-25 20:31:43,421 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9FA2T9HQ8C3NC339Q6 property_id=property-2001 guest_id=guest-1012 trace_id=tr-01M8B1ZA8H8HJT804B08JMAZCS
+2026-11-25 20:31:43,422 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9CJ6EW153EN5WSX1YJ property_id=property-2001 guest_id=guest-1009 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWP
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 49.5ms trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023P
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 46.5ms trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7ED
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 49.1ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWJ
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 49.3ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWG
+2026-11-25 20:31:43,422 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9EKQ26J7J3222ED66N trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWM
+2026-11-25 20:31:43,422 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9EKQ26J7J3222ED66N property_id=property-2001 guest_id=guest-1017 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWM
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 50.7ms trace_id=tr-01M8B1ZA8CZ2B9DWC51P43023N
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 49.6ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWH
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 45.6ms trace_id=tr-01M8B1ZA8H8HJT804B08JMAZCS
+2026-11-25 20:31:43,422 INFO [booking-api] booking.api POST /bookings/create -> 202 49.1ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWP
+2026-11-25 20:31:43,423 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9FA2T9HQ8C3NC339Q4 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWQ
+2026-11-25 20:31:43,423 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9FA2T9HQ8C3NC339Q4 property_id=property-2001 guest_id=guest-1016 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWQ
+2026-11-25 20:31:43,423 INFO [booking-api] booking.api POST /bookings/create -> 202 49.5ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWM
+2026-11-25 20:31:43,423 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9GRXWMTW1C69HHNY0D trace_id=tr-01M8B1ZA8G6BDCCKZTXWXHTJGN
+2026-11-25 20:31:43,423 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9FA2T9HQ8C3NC339Q7 trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7EC
+2026-11-25 20:31:43,423 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9EKQ26J7J3222ED66P trace_id=tr-01M8B1ZA8KFD0TJHGCNHX3E61G
+2026-11-25 20:31:43,423 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9GRXWMTW1C69HHNY0D property_id=property-2001 guest_id=guest-1006 trace_id=tr-01M8B1ZA8G6BDCCKZTXWXHTJGN
+2026-11-25 20:31:43,423 INFO [booking-api] booking.api POST /bookings/create -> 202 49.7ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWQ
+2026-11-25 20:31:43,423 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9FA2T9HQ8C3NC339Q7 property_id=property-2001 guest_id=guest-1007 trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7EC
+2026-11-25 20:31:43,423 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9EKQ26J7J3222ED66P property_id=property-2001 guest_id=guest-1010 trace_id=tr-01M8B1ZA8KFD0TJHGCNHX3E61G
+2026-11-25 20:31:43,423 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9FA2T9HQ8C3NC339Q5 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWN
+2026-11-25 20:31:43,423 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9JGGMBGV201T8D76GH trace_id=tr-01M8B1ZA8PH28D3NZTK7QKE3YZ
+2026-11-25 20:31:43,423 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B1ZA9D3J7JAM4Q98EGB5MP trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7EB
+2026-11-25 20:31:43,423 INFO [booking-api] booking.api POST /bookings/create -> 202 47.3ms trace_id=tr-01M8B1ZA8G6BDCCKZTXWXHTJGN
+2026-11-25 20:31:43,423 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9FA2T9HQ8C3NC339Q5 property_id=property-2001 guest_id=guest-1011 trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWN
+2026-11-25 20:31:43,424 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9JGGMBGV201T8D76GH property_id=property-2001 guest_id=guest-1019 trace_id=tr-01M8B1ZA8PH28D3NZTK7QKE3YZ
+2026-11-25 20:31:43,424 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B1ZA9D3J7JAM4Q98EGB5MP property_id=property-2001 guest_id=guest-1002 trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7EB
+2026-11-25 20:31:43,424 INFO [booking-api] booking.api POST /bookings/create -> 202 48.6ms trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7EC
+2026-11-25 20:31:43,424 INFO [booking-api] booking.api POST /bookings/create -> 202 45.2ms trace_id=tr-01M8B1ZA8KFD0TJHGCNHX3E61G
+2026-11-25 20:31:43,424 INFO [booking-api] booking.api POST /bookings/create -> 202 50.6ms trace_id=tr-01M8B1ZA8DHZBNAV9XN2K4JPWN
+2026-11-25 20:31:43,424 INFO [booking-api] booking.api POST /bookings/create -> 202 42.2ms trace_id=tr-01M8B1ZA8PH28D3NZTK7QKE3YZ
+2026-11-25 20:31:43,424 INFO [booking-api] booking.api POST /bookings/create -> 202 49.6ms trace_id=tr-01M8B1ZA8FWACQ6EQ042JKE7EB

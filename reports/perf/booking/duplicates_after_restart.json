@@ -1,0 +1,17 @@
+{
+  "requests": 120,
+  "accepted": 120,
+  "killed_worker": "worker-2",
+  "worker2_processed_before_kill": 15,
+  "worker2_processed_after_restart": 29,
+  "redeliveries_detected_as_duplicate": 1,
+  "final_status_counts": {
+    "pending_host": 120
+  },
+  "duplicate_history_rows": 0,
+  "reservations_with_wrong_block_count": 0,
+  "processed_events_rows": 120,
+  "booking_updated_events_on_topic": 120,
+  "booking_updated_duplicate_keys_on_topic": 0,
+  "duplicate_db_side_effects": 0
+}

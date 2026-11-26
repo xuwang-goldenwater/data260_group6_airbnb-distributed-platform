@@ -2,7 +2,7 @@
 
 Owner: Ayushi Shringi
 Role: B — Booking & Availability
-Status: draft for team review
+Status: implemented on `b/booking-service` (changes made during implementation are marked **[impl]**)
 
 ## Scope
 
@@ -28,7 +28,8 @@ Authentication, pagination, error-body, event-envelope, retry and dead-letter ru
 - `check_in` is inclusive and `check_out` is exclusive (a stay of 2026-11-20 → 2026-11-22 uses the nights of the 20th and 21st).
 - IDs are server-generated: `res-` + ULID for reservations.
 - Every endpoint requires `Authorization: Bearer <JWT>`. The guest or host identity always comes from the JWT subject, never from the request body.
-- Mutating endpoints require an `Idempotency-Key: <uuid>` header.
+- Mutating endpoints require an `Idempotency-Key: <uuid>` header (missing → `400 VALIDATION_ERROR`). **[impl]** A replayed response carries the header `Idempotent-Replayed: true`.
+- **[impl]** JWT: HS256 signed with `JWT_SECRET`; claims `sub` (identity), `role` (`guest` | `host` | `service`), `exp` (required), `iss` (checked only when `JWT_ISSUER` is set). Until Role A ships the issuer, `services/booking-api/scripts/dev_token.py` mints dev tokens.
 - Kafka messages use the shared envelope in `docs/api/00_conventions.md` and must validate against `shared/envelope.schema.json`.
 
 ### Common Error Body
@@ -407,17 +408,19 @@ Response `200`:
 }
 ```
 
-Range ≤ 366 days → else `400`. Public read (auth optional). Reservation and guest identities are not exposed.
+Range ≤ 366 days → else `400`. `to_date` is inclusive. Public read (auth optional; an invalid token is still `401`). Reservation and guest identities are not exposed.
 
 ## WebSocket `/bookings/stream`
 
-The client authenticates with `Authorization: Bearer <JWT>` during the handshake. The server pushes every `booking.updated` event for reservations where the user is the guest or the host. The message is the shared event envelope (see `booking.updated` below).
+The client authenticates with `Authorization: Bearer <JWT>` during the handshake. **[impl]** Browsers cannot set WebSocket headers, so `?token=<JWT>` is also accepted; an invalid token closes the socket with code `4401`. The gateway consumes `booking.updated` and `property.availability.updated` in consumer group `booking-status` (`BOOKING_WS_CONSUMER_GROUP`; give each API instance its own group when running several). The server pushes every `booking.updated` event for reservations where the user is the guest or the host. The message is the shared event envelope (see `booking.updated` below).
 
 The client can also subscribe to a property's calendar to see "dates just taken" live while on the detail page:
 
 ```json
 { "action": "subscribe_calendar", "property_id": "property-2001" }
 ```
+
+**[impl]** The server answers `{"type": "ack", "action": "subscribe_calendar", "property_id": ...}`; `unsubscribe_calendar` is also supported.
 
 The server then forwards `property.availability.updated` for that property. After a disconnect, the client calls `/bookings/get` or `/bookings/calendar` to recover state, so a missed push never leaves the UI wrong.
 
@@ -474,9 +477,16 @@ Response `200`:
 
 If Analytics is unavailable, `views` and `saves` are returned as `null` and the rest of the dashboard still loads.
 
+**[impl] Window semantics.** Window = the last `days` days (UTC).
+- Guest: `bookings_in_window`, `status_summary` (current status) and `total_spent` (confirmed + completed) count reservations *created* in the window; `upcoming` = requested / pending_host / confirmed with `check_in ≥ today` (max 10).
+- Host: `requests`, `confirmed`, `declined` and `cancellations` count status-history transitions *that happened* in the window (cancellations split by `cancelled_by`); `revenue` = total price of reservations confirmed in the window that are still confirmed/completed; `occupancy_rate` = nights in `[today − days, today)` held by confirmed/completed stays ÷ (active properties × days); `median_response_minutes` = median time from `pending_host` to `confirmed`/`declined` for decisions in the window (`null` if none); `average_rating` = review-count-weighted mean of the host's property ratings. A `property_id` that is not the caller's → `403 NOT_PROPERTY_HOST`.
+- Both responses add an optional `sources` object saying where cross-service values came from (`seed`, `user-service`, `analytics-service`, `unavailable`). The host's property list comes from the seed pool until Role A exposes a "properties by host" endpoint.
+
 # Internal Service Interfaces
 
 Internal endpoints require service authentication and are not exposed to the browser.
+
+**[impl] Service authentication:** `Authorization: Bearer <JWT with role=service>` (same `JWT_SECRET`), or `X-Service-Token: <BOOKING_SERVICE_TOKEN>` when that variable is set. No credentials → `401 UNAUTHORIZED`; a guest/host token → `403 FORBIDDEN`.
 
 ## GET `/internal/reservations/{reservation_id}`
 
@@ -678,24 +688,44 @@ Exactly one reservation holds the nights. The demo is `make test-double-booking`
 
 | Failure | Behavior |
 |---|---|
-| Malformed envelope or payload (missing field, wrong type, key ≠ `payload.property_id`) | Not retryable. Sent to `platform.dlq` immediately with the original event, `trace_id` and reason; offset committed. |
-| Transient error (MySQL deadlock, lock-wait timeout, connection lost) | Retried in place up to 3 times with backoff 200 ms, 1 s, 5 s. Still failing → `platform.dlq`. |
-| Reservation ID not found | Retried once after 1 s (covers a read-replica lag), then `platform.dlq`. |
+| Malformed envelope or payload (missing field, wrong type, key ≠ `payload.property_id`) | Not retryable. Sent to `platform.dlq` immediately with the original event, `trace_id` and reason; offset committed. **[impl]** `error_code` is one of `INVALID_JSON`, `INVALID_EVENT_ENVELOPE`, `INVALID_PAYLOAD`, `UNKNOWN_EVENT_TYPE`, `EVENT_KEY_MISMATCH`, or `PAYLOAD_MISMATCH` (payload disagrees with the stored reservation). |
+| Transient error (MySQL deadlock, lock-wait timeout, connection lost) | Retried in place up to 3 times with backoff 200 ms, 1 s, 5 s. Still failing → `platform.dlq` (`error_code = TRANSIENT_RETRY_EXHAUSTED`, `retry_count = 3`). |
+| Reservation ID not found | Retried once after 1 s (covers a read-replica lag), then `platform.dlq` (`RESERVATION_NOT_FOUND`). |
+| **[impl]** DLQ write itself fails (Kafka down) | Offset is **not** committed; the worker seeks back and re-reads the record. |
 | Duplicate delivery | Detected by `processed_events`; acknowledged with no change. |
 
-A DLQ message contains:
+**[impl] DLQ record — aligned with `docs/api/00_conventions.md`** (the earlier shorter example used `failure_reason` / `attempts` / `consumer` / `failed_datetime`; conventions win). The record is itself a shared envelope (`event_type: "platform.dlq"`, so it validates against `shared/envelope.schema.json`), keyed by the original record key, and its `payload` carries the conventions fields:
 
 ```json
 {
-  "original_topic": "booking.requested",
-  "original_event": { "...": "full original envelope" },
-  "failure_reason": "MISSING_FIELD:payload.check_in",
-  "attempts": 1,
-  "consumer": "booking-worker",
-  "failed_datetime": "2026-11-10T17:00:01Z",
-  "trace_id": "tr-01JBOOK001"
+  "event_type": "platform.dlq",
+  "trace_id": "tr-01JBOOK001",
+  "timestamp": "2026-11-10T17:00:01.004Z",
+  "actor_id": "booking-worker",
+  "entity": {"entity_type": "event", "entity_id": "ev-01JBOOK001"},
+  "payload": {
+    "original_topic": "booking.requested",
+    "original_partition": 1,
+    "original_offset": 42,
+    "original_key": "property-2001",
+    "original_event": { "...": "full original envelope (or the raw text if it was not JSON)" },
+    "error_code": "INVALID_PAYLOAD",
+    "error_message": "MISSING_FIELD:payload.check_in",
+    "retry_count": 0,
+    "failed_at": "2026-11-10T17:00:01.004Z",
+    "consumer_group": "booking-worker",
+    "original_event_id": "ev-01JBOOK001",
+    "trace_id": "tr-01JBOOK001"
+  },
+  "idempotency_key": "dlq:booking-worker:booking.requested:1:42",
+  "attempt": 1,
+  "event_id": "ev-01JDLQ0001",
+  "producer": "booking-worker",
+  "schema_version": "1.0"
 }
 ```
+
+The original `event_id` and `trace_id` are preserved. A real record from the negative tests is in `reports/perf/booking/dlq_sample_record.json`.
 
 ## Consumer recovery (§13.2)
 
@@ -706,6 +736,8 @@ A DLQ message contains:
 3. Restart the worker. It resumes from the committed offset and processes the event once.
 4. Repeat, killing the worker after the MySQL commit but before the offset commit. Kafka redelivers; `processed_events` makes it a no-op.
 5. Assert exactly one status-history row per transition and one set of `availability_blocks` rows.
+
+**[impl]** Step 4 uses `WORKER_FAULT=crash_after_db_commit` (the worker exits with code 137 right after the MySQL commit, before publishing and before the offset commit). On redelivery the worker sees the event in `processed_events`, publishes the still-owed `booking.updated` (the row has `publish_pending = true`) and commits the offset. Workers use static group membership (`group.instance.id = WORKER_ID`) so a restarted worker rejoins without waiting for a rebalance. Evidence: `reports/perf/booking/consumer_recovery/`.
 
 # Status Codes
 
@@ -719,10 +751,34 @@ A DLQ message contains:
 | `404` | Reservation or property not found |
 | `409` | Dates unavailable, invalid status transition, version conflict |
 | `422` | Capacity exceeded, cancellation window closed, idempotency key reused with a different body |
-| `429` | Rate limit exceeded |
+| `429` | Rate limit exceeded (**[impl]** `RATE_LIMITED`, per-subject limit on `/bookings/create`, `Retry-After` header; `BOOKING_RATE_LIMIT_PER_MINUTE`, 0 disables) |
+| `500` | **[impl]** Unexpected error (`INTERNAL_ERROR`, no stack trace) |
 | `503` | MySQL, Kafka or Property service unavailable |
 
-Error codes: `VALIDATION_ERROR`, `UNAUTHORIZED`, `PROPERTY_NOT_FOUND`, `RESERVATION_NOT_FOUND`, `HOST_CANNOT_BOOK_OWN_PROPERTY`, `NOT_PROPERTY_HOST`, `NOT_RESERVATION_PARTY`, `HOST_PROFILE_REQUIRED`, `CAPACITY_EXCEEDED`, `DATES_UNAVAILABLE`, `INVALID_STATUS_TRANSITION`, `RESERVATION_VERSION_CONFLICT`, `CANCELLATION_WINDOW_CLOSED`, `IDEMPOTENCY_KEY_REUSED`, `DEPENDENCY_UNAVAILABLE`.
+Error codes: `VALIDATION_ERROR`, `UNAUTHORIZED`, `PROPERTY_NOT_FOUND`, `RESERVATION_NOT_FOUND`, `HOST_CANNOT_BOOK_OWN_PROPERTY`, `NOT_PROPERTY_HOST`, `NOT_RESERVATION_PARTY`, `HOST_PROFILE_REQUIRED`, `CAPACITY_EXCEEDED`, `DATES_UNAVAILABLE`, `INVALID_STATUS_TRANSITION`, `RESERVATION_VERSION_CONFLICT`, `CANCELLATION_WINDOW_CLOSED`, `IDEMPOTENCY_KEY_REUSED`, `DEPENDENCY_UNAVAILABLE`. **[impl]** Added: `RATE_LIMITED` (429), `FORBIDDEN` (403, wrong credential type on internal/user endpoints), `INTERNAL_ERROR` (500).
+
+**[impl] Notes on existing rules**
+- `404 PROPERTY_NOT_FOUND` is also returned for a property that exists but is not `active` (draft/suspended/archived).
+- Order of checks — approve/decline: host → status → `expected_version`; cancel: party → status → cancellation window → `expected_version`.
+- `decline`/`cancel` accept an optional free-text `reason` (≤ 500 chars); there is no column for it in the contract, so only the machine reason (`HOST_DECLINED`, `GUEST_CANCELLED`, `HOST_CANCELLED`) is stored.
+- The API retries a transaction that hits a MySQL deadlock / lock-wait timeout up to 3 times before answering `503`.
+
+# Configuration and demo flags **[impl]**
+
+All settings are environment variables (`services/booking-api/.env.example`).
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `PROPERTY_SOURCE` | `seed` | `http` → `POST {PROPERTY_SERVICE_URL}/properties/get`; `seed` → `data/seed/generated/properties.json` |
+| `USER_SERVICE_URL`, `ANALYTICS_SERVICE_URL` | empty | Optional; empty/unreachable → seed fallback / `null` views & saves |
+| `BOOKING_PRECHECK_ENABLED` | `true` | Validation step 5; the double-booking test sets `false` so every request reaches the worker |
+| `BOOKING_TEST_SPREAD_PARTITIONS` | `false` | **Test only.** Spreads `booking.requested` over partitions so several workers race on one property |
+| `WORKER_FAULT` | empty | `crash_after_db_commit` for the consumer-recovery demo |
+| `WORKER_TRANSIENT_FAULTS` | `0` | Inject n MySQL 1213 errors before processing (retry-timing evidence) |
+| `BOOKING_CLOCK_DATE` | empty | Override "today" (UTC) for demos/tests of the cancellation window and completion job |
+| `BOOKING_COMPLETION_INTERVAL_S` | `900` | Completion job period in the API process (0 disables); `make complete-stays` runs it once |
+| `BOOKING_OUTBOX_INTERVAL_S`, `BOOKING_OUTBOX_MIN_AGE_S` | `2`, `5` | Background re-publisher for rows with `publish_pending = true` |
+| `BOOKING_DEV_TOKEN_ENDPOINT` | `false` | Dev only: `POST /dev/token` for the demo page |
 
 # Cross-Service Dependencies
 

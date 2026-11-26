@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Booking Console</title>
+<!-- Role B standalone page (served by the Booking API at /ui). To be merged into the team frontend shell. -->
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --muted:#667085; --line:#e4e7ec; --accent:#2f6fde;
+          --ok:#14804a; --warn:#b54708; --bad:#c01048; --chip:#eef2f6; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12151b; --card:#1b2029; --ink:#e7eaf0; --muted:#98a2b3;
+          --line:#2c3340; --accent:#6b9bff; --ok:#4ccf8a; --warn:#f5a54a; --bad:#ff6b93; --chip:#252c38; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--ink); }
+  header { display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding:12px 16px; border-bottom:1px solid var(--line); background:var(--card); }
+  header h1 { font-size:16px; margin:0 12px 0 0; }
+  main { display:grid; gap:16px; padding:16px; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); max-width:1400px; margin:auto; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; min-width:0; }
+  h2 { font-size:14px; margin:0 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  label { display:block; font-size:12px; color:var(--muted); margin:6px 0 2px; }
+  input, textarea, select { width:100%; padding:7px 8px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--ink); font:inherit; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  button { padding:7px 12px; border:1px solid var(--accent); background:var(--accent); color:#fff; border-radius:6px; cursor:pointer; font:inherit; }
+  button.ghost { background:transparent; color:var(--accent); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .chip { display:inline-block; padding:1px 8px; border-radius:999px; background:var(--chip); font-size:12px; }
+  .s-pending_host,.s-requested { color:var(--warn); } .s-confirmed,.s-completed { color:var(--ok); }
+  .s-rejected,.s-declined,.s-cancelled { color:var(--bad); }
+  table { width:100%; border-collapse:collapse; font-size:13px; } td,th { text-align:left; padding:5px 4px; border-bottom:1px solid var(--line); }
+  .muted { color:var(--muted); } .err { color:var(--bad); } .okc { color:var(--ok); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:8px; }
+  .stat { border:1px solid var(--line); border-radius:8px; padding:8px; } .stat b { display:block; font-size:18px; }
+  #log { font:12px ui-monospace,Menlo,monospace; max-height:280px; overflow:auto; white-space:pre-wrap; word-break:break-all; }
+  .nights { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; } .night { font-size:11px; padding:1px 6px; border-radius:4px; background:var(--chip); }
+  .night.taken { background:var(--bad); color:#fff; }
+  .flash { animation: flash 1.2s ease-out; } @keyframes flash { from { background: rgba(47,111,222,.25); } to { background: transparent; } }
+  .overflow { overflow-x:auto; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Booking &amp; Availability</h1>
+  <label style="margin:0">Signed in as</label>
+  <input id="sub" value="guest-1001" style="width:130px">
+  <button id="login">Get dev token</button>
+  <input id="token" placeholder="…or paste a JWT (make booking-token SUB=guest-1001)" style="flex:1;min-width:200px">
+  <span id="wsState" class="chip">ws: offline</span>
+</header>
+<main>
+  <section>
+    <h2>Request a stay</h2>
+    <label>Property</label><input id="pid" value="property-2001">
+    <div class="row">
+      <div><label>Check-in</label><input id="ci" type="date"></div>
+      <div><label>Check-out</label><input id="co" type="date"></div>
+    </div>
+    <div class="row">
+      <div><label>Guests</label><input id="gc" type="number" value="2" min="1"></div>
+      <div><label>&nbsp;</label><button id="book" style="width:100%">Request booking</button></div>
+    </div>
+    <label>Message to host</label><textarea id="msg" rows="2"></textarea>
+    <div id="calNote" class="muted" style="margin-top:8px"></div>
+    <div id="nights" class="nights"></div>
+    <div id="bookResult" style="margin-top:8px"></div>
+  </section>
+
+  <section>
+    <h2>My bookings <span class="muted">(live via WebSocket)</span></h2>
+    <div class="overflow"><table id="guestTable"><thead><tr><th>Reservation</th><th>Property</th><th>Dates</th><th>Status</th><th></th></tr></thead><tbody></tbody></table></div>
+    <h2 style="margin-top:16px">Guest dashboard</h2>
+    <div id="guestDash" class="stats"></div>
+  </section>
+
+  <section>
+    <h2>Host requests</h2>
+    <div class="overflow"><table id="hostTable"><thead><tr><th>Reservation</th><th>Guest</th><th>Dates</th><th>Status</th><th></th></tr></thead><tbody></tbody></table></div>
+    <h2 style="margin-top:16px">Host dashboard</h2>
+    <div id="hostDash" class="stats"></div>
+  </section>
+
+  <section>
+    <h2>Event stream</h2>
+    <div id="log" class="muted"></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const API = location.origin.startsWith("http") ? location.origin : "http://127.0.0.1:8002";
+let ws = null, taken = new Set(), subscribed = null;
+
+function addDays(d, n) { const x = new Date(d + "T00:00:00Z"); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
+const today = new Date().toISOString().slice(0, 10);
+$("ci").value = addDays(today, 14); $("co").value = addDays(today, 16);
+
+function log(line, cls) { const el = document.createElement("div"); if (cls) el.className = cls;
+  el.textContent = new Date().toLocaleTimeString() + "  " + line; $("log").prepend(el); }
+function isHost() { return $("sub").value.startsWith("host-"); }
+
+async function call(path, body, mutating) {
+  const headers = { "Content-Type": "application/json" };
+  if ($("token").value) headers.Authorization = "Bearer " + $("token").value.trim();
+  if (mutating) headers["Idempotency-Key"] = crypto.randomUUID();
+  const r = await fetch(API + path, { method: "POST", headers, body: JSON.stringify(body || {}) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = j.error || {}; throw new Error(`${r.status} ${e.code || ""}: ${e.message || ""} (trace ${e.trace_id || "-"})`); }
+  return j;
+}
+
+$("login").onclick = async () => {
+  try { const j = await call("/dev/token", { sub: $("sub").value.trim() }); $("token").value = j.token; start(); }
+  catch (e) { log("dev token unavailable (" + e.message + ") — paste a token from `make booking-token`", "err"); }
+};
+$("token").onchange = start;
+
+function start() { connect(); refresh(); }
+
+function connect() {
+  if (ws) ws.close();
+  const url = API.replace(/^http/, "ws") + "/bookings/stream?token=" + encodeURIComponent($("token").value.trim());
+  ws = new WebSocket(url);
+  ws.onopen = () => { $("wsState").textContent = "ws: live"; subscribed = null; watchCalendar(); };
+  ws.onclose = () => { $("wsState").textContent = "ws: offline"; };
+  ws.onmessage = (m) => {
+    const ev = JSON.parse(m.data);
+    if (ev.event_type === "booking.updated") {
+      const p = ev.payload; log(`booking.updated ${p.reservation_id}: ${p.from_status} → ${p.to_status}${p.reason ? " (" + p.reason + ")" : ""}`);
+      refresh(p.reservation_id);
+    } else if (ev.event_type === "property.availability.updated") {
+      const p = ev.payload; log(`availability ${p.property_id}: ${p.change} ${p.nights.join(", ")}`);
+      p.nights.forEach((n) => p.change === "held" ? taken.add(n) : taken.delete(n)); renderNights(true);
+    } else { log(JSON.stringify(ev)); }
+  };
+}
+
+async function watchCalendar() {
+  const pid = $("pid").value.trim();
+  if (ws && ws.readyState === 1 && pid && subscribed !== pid) {
+    if (subscribed) ws.send(JSON.stringify({ action: "unsubscribe_calendar", property_id: subscribed }));
+    ws.send(JSON.stringify({ action: "subscribe_calendar", property_id: pid })); subscribed = pid;
+  }
+  try {
+    const cal = await call("/bookings/calendar", { property_id: pid, from_date: today, to_date: addDays(today, 365) });
+    taken = new Set(cal.unavailable_nights); renderNights(false);
+  } catch (e) { $("calNote").textContent = e.message; }
+}
+
+// Task 4.5: live "dates taken" — the request button is disabled as soon as a push says a selected night was held.
+function renderNights(live) {
+  const ci = $("ci").value, co = $("co").value, box = $("nights"); box.innerHTML = "";
+  const sel = []; for (let d = ci; d && co && d < co && sel.length < 31; d = addDays(d, 1)) sel.push(d);
+  const clash = sel.filter((d) => taken.has(d));
+  sel.forEach((d) => { const s = document.createElement("span"); s.className = "night" + (taken.has(d) ? " taken" : ""); s.textContent = d.slice(5); box.appendChild(s); });
+  $("book").disabled = clash.length > 0;
+  $("calNote").innerHTML = clash.length
+    ? `<span class="err">${live ? "Just taken: " : "Unavailable: "}${clash.join(", ")} — pick other dates.</span>`
+    : `<span class="okc">Selected nights are free</span> <span class="muted">(live calendar for ${$("pid").value})</span>`;
+}
+["ci", "co"].forEach((id) => $(id).addEventListener("change", () => renderNights(false)));
+$("pid").addEventListener("change", watchCalendar);
+
+$("book").onclick = async () => {
+  try {
+    const r = await call("/bookings/create", { property_id: $("pid").value.trim(), check_in: $("ci").value,
+      check_out: $("co").value, guest_count: Number($("gc").value), message_to_host: $("msg").value || null }, true);
+    $("bookResult").innerHTML = `<span class="chip s-requested">requested</span> ${r.reservation_id} — $${r.total_price} · waiting for the worker…`;
+    log(`202 accepted ${r.reservation_id} trace ${r.trace_id}`); refresh(r.reservation_id);
+  } catch (e) { $("bookResult").innerHTML = `<span class="err">${e.message}</span>`; }
+};
+
+function chip(s) { return `<span class="chip s-${s}">${s}</span>`; }
+
+async function refresh(flashId) {
+  if (!$("token").value) return;
+  if (!isHost()) {
+    try {
+      const g = await call("/bookings/byGuest", { page_size: 15 });
+      $("guestTable").querySelector("tbody").innerHTML = g.items.map((r) => `<tr id="g-${r.reservation_id}">
+        <td>${r.reservation_id.slice(0, 14)}…</td><td>${r.property_id}</td><td>${r.check_in} → ${r.check_out}</td>
+        <td>${chip(r.status)}</td><td>${["requested", "pending_host", "confirmed"].includes(r.status) ? `<button class="ghost" data-cancel="${r.reservation_id}">Cancel</button>` : ""}</td></tr>`).join("");
+      const d = await call("/dashboards/guest", { days: 30 });
+      $("guestDash").innerHTML = stat("Bookings (30d)", d.bookings_in_window) + stat("Upcoming", d.upcoming.length)
+        + stat("Spent", "$" + d.total_spent) + stat("Saved", d.saved_properties_count ?? "—")
+        + stat("Cancelled", d.status_summary.cancelled) + stat("Rejected", d.status_summary.rejected);
+      if (flashId && $("g-" + flashId)) $("g-" + flashId).classList.add("flash");
+    } catch (e) { log(e.message, "err"); }
+  } else {
+    try {
+      const h = await call("/bookings/byHost", { page_size: 15 });
+      $("hostTable").querySelector("tbody").innerHTML = h.items.map((r) => `<tr id="h-${r.reservation_id}">
+        <td>${r.reservation_id.slice(0, 14)}…</td><td>${r.guest_id} (${r.guest_count})</td><td>${r.check_in} → ${r.check_out}</td>
+        <td>${chip(r.status)}</td><td>${r.status === "pending_host" ? `<button data-approve="${r.reservation_id}">Approve</button> <button class="ghost" data-decline="${r.reservation_id}">Decline</button>` : ""}</td></tr>`).join("");
+      const d = await call("/dashboards/host", { days: 30 });
+      $("hostDash").innerHTML = stat("Views", d.funnel.views ?? "n/a") + stat("Saves", d.funnel.saves ?? "n/a")
+        + stat("Requests", d.funnel.requests) + stat("Confirmed", d.funnel.confirmed) + stat("Occupancy", (d.occupancy_rate * 100).toFixed(1) + "%")
+        + stat("Revenue", "$" + d.revenue) + stat("Declined", d.declined) + stat("Cancel g/h", d.cancellations.by_guest + "/" + d.cancellations.by_host)
+        + stat("Rating", d.average_rating ?? "—") + stat("Median reply", d.median_response_minutes == null ? "—" : d.median_response_minutes + " min");
+      if (flashId && $("h-" + flashId)) $("h-" + flashId).classList.add("flash");
+    } catch (e) { log(e.message, "err"); }
+  }
+}
+function stat(k, v) { return `<div class="stat"><span class="muted">${k}</span><b>${v}</b></div>`; }
+
+document.addEventListener("click", async (e) => {
+  const t = e.target, rid = t.dataset.approve || t.dataset.decline || t.dataset.cancel; if (!rid) return;
+  const action = t.dataset.approve ? "approve" : t.dataset.decline ? "decline" : "cancel";
+  try {
+    const cur = await call("/bookings/get", { reservation_id: rid });          // fetch expected_version
+    const r = await call("/bookings/" + action, { reservation_id: rid, expected_version: cur.version }, true);
+    log(`${action} → ${r.status} v${r.version}`); refresh(rid);
+  } catch (err) { log(err.message, "err"); }
+});
+</script>
+</body>
+</html>

@@ -1,9 +1,12 @@
 """Role B test fixtures. Integration tests use the isolated database `airbnb_booking_test`
-(created by `make booking-test-db`); they are skipped if MySQL is unreachable."""
+(created by `make booking-test-db`) and an in-memory producer; they are skipped if MySQL is unreachable."""
 from __future__ import annotations
 
 import dataclasses
 import sys
+import time
+import uuid
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -12,8 +15,11 @@ ROOT = Path(__file__).resolve().parents[2]
 for p in (ROOT / "services/booking-api", ROOT / "services/booking-worker", ROOT / "services/booking-api/scripts"):
     sys.path.insert(0, str(p))
 
+import jwt  # noqa: E402
+
 from booking_core.config import Settings  # noqa: E402
 from booking_core.db import Database  # noqa: E402
+from booking_core.kafka_producer import InMemoryProducer  # noqa: E402
 
 TEST_DB = "airbnb_booking_test"
 TEST_SECRET = "test-only-secret-not-used-anywhere-else-0123456789"
@@ -54,3 +60,63 @@ def clean_db(db):
             cur.execute(f"DELETE FROM {t}")
         cur.execute("SET FOREIGN_KEY_CHECKS = 1")
     return db
+
+
+@pytest.fixture()
+def producer(settings):
+    return InMemoryProducer(settings)
+
+
+@pytest.fixture()
+def client(settings, clean_db, producer):
+    from fastapi.testclient import TestClient
+
+    from booking_api.app import create_app
+    app = create_app(settings, db=clean_db, producer=producer, start_background=False)
+    with TestClient(app) as c:
+        yield c
+
+
+def make_token(settings, sub: str, role: str | None = None, ttl: int = 600) -> str:
+    now = int(time.time())
+    return jwt.encode({"sub": sub, "role": role or ("host" if sub.startswith("host-") else "guest"),
+                       "iat": now, "exp": now + ttl}, settings.jwt_secret, algorithm="HS256")
+
+
+@pytest.fixture()
+def auth(settings):
+    def _h(sub: str, *, key: str | None = "auto", role: str | None = None) -> dict[str, str]:
+        h = {"Authorization": f"Bearer {make_token(settings, sub, role)}"}
+        if key == "auto":
+            h["Idempotency-Key"] = str(uuid.uuid4())
+        elif key:
+            h["Idempotency-Key"] = key
+        return h
+    return _h
+
+
+def future(days: int) -> date:
+    return date.today() + timedelta(days=days)
+
+
+@pytest.fixture()
+def worker(settings, clean_db, producer):
+    from booking_worker.worker import BookingWorker
+    sleeps: list[float] = []
+    w = BookingWorker(settings, clean_db, producer, sleep=sleeps.append)
+    w.sleeps = sleeps
+    return w
+
+
+def run_worker_on_requested(worker, producer):
+    """Feed every booking.requested the API produced to the worker (like Kafka would)."""
+    import json
+
+    from booking_worker.consumer_utils import RecordMeta
+    outcomes = []
+    for i, (topic, key, event) in enumerate(list(producer.sent)):
+        if topic == "booking.requested" and not event.get("_fed"):
+            event["_fed"] = True
+            clean = {k: v for k, v in event.items() if k != "_fed"}
+            outcomes.append(worker.handle(RecordMeta(topic, 0, i, key), json.dumps(clean).encode()))
+    return outcomes

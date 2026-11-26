@@ -1,23 +1,28 @@
 """Booking API (Role B). Run: uvicorn booking_api.app:app --port 8002 (see services/booking-api/README.md)."""
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import re
+import threading
 import time
 from contextlib import asynccontextmanager
 from typing import Any
 
+import jwt
 import pymysql
-from fastapi import Depends, FastAPI, Header, Request
+from fastapi import Depends, FastAPI, Header, Request, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from booking_core import ids
-from booking_core.auth import Actor, require_user
+from booking_core.auth import Actor, decode_token, optional_user, require_service, require_user
 from booking_core.clients import AnalyticsClient, UserClient, make_property_client
-from booking_core.config import Settings
+from booking_core.config import REPO_ROOT, Settings
+from booking_core.dashboards import guest_dashboard, host_dashboard
 from booking_core.db import Database
 from booking_core.errors import ApiError, DependencyUnavailable
 from booking_core.kafka_producer import EventProducer, KafkaEventProducer
@@ -25,6 +30,7 @@ from booking_core.outbox import OutboxPublisher
 from booking_core.service import BookingService
 
 from .ratelimit import RateLimiter
+from .ws import Client, ConnectionManager, StatusConsumer
 
 log = logging.getLogger("booking.api")
 _TRACE_RE = re.compile(r"^[A-Za-z0-9._:-]{1,40}$")
@@ -46,12 +52,30 @@ def _configure_logging() -> None:
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s [booking-api] %(name)s %(message)s")
 
 
+class CompletionJob(threading.Thread):
+    def __init__(self, svc: BookingService, interval_s: float):
+        super().__init__(name="completion-job", daemon=True)
+        self._svc, self._interval = svc, interval_s
+        self._stop_evt = threading.Event()
+
+    def run(self) -> None:
+        while not self._stop_evt.wait(self._interval):
+            try:
+                self._svc.complete_stays()
+            except Exception:
+                log.exception("completion job failed")
+
+    def stop(self) -> None:
+        self._stop_evt.set()
+
+
 def create_app(settings: Settings | None = None, *, db: Database | None = None,
                producer: EventProducer | None = None, property_client=None, start_background: bool = True) -> FastAPI:
     _configure_logging()
     settings = settings or Settings.from_env()
     if not settings.jwt_secret:
         raise RuntimeError("JWT_SECRET is not set (copy services/booking-api/.env.example to .env)")
+    manager = ConnectionManager()
     state: dict[str, Any] = {}
 
     @asynccontextmanager
@@ -62,10 +86,15 @@ def create_app(settings: Settings | None = None, *, db: Database | None = None,
         svc = BookingService(settings, _db, _producer, property_client or make_property_client(settings),
                              UserClient(settings), AnalyticsClient(settings))
         state.update(svc=svc, db=_db, producer=_producer, limiter=RateLimiter(settings.rate_limit_per_minute))
+        manager.loop = asyncio.get_running_loop()
         threads = []
         if start_background:
             threads.append(OutboxPublisher(_db, _producer, interval_s=settings.outbox_interval_s,
                                            min_age_s=settings.outbox_min_age_s))
+            if settings.completion_interval_s > 0:
+                threads.append(CompletionJob(svc, settings.completion_interval_s))
+            if settings.ws_enabled:
+                threads.append(StatusConsumer(settings, manager, _producer))
         for t in threads:
             t.start()
         log.info("booking-api ready precheck=%s property_source=%s spread_partitions=%s",
@@ -82,6 +111,7 @@ def create_app(settings: Settings | None = None, *, db: Database | None = None,
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"],
                        expose_headers=["X-Trace-Id"])
     app.state.booking = state
+    app.state.ws_manager = manager
 
     @app.middleware("http")
     async def trace_middleware(request: Request, call_next):
@@ -148,6 +178,109 @@ def create_app(settings: Settings | None = None, *, db: Database | None = None,
     def get_booking(body: Any = Depends(json_body), authorization: str | None = Header(None)):
         return svc().get(user(authorization), body)
 
+    @app.post("/bookings/byGuest")
+    def by_guest(body: Any = Depends(json_body), authorization: str | None = Header(None)):
+        return svc().by_guest(user(authorization), body)
+
+    @app.post("/bookings/byHost")
+    def by_host(body: Any = Depends(json_body), authorization: str | None = Header(None)):
+        return svc().by_host(user(authorization), body)
+
+    @app.post("/bookings/approve")
+    def approve(request: Request, body: Any = Depends(json_body), authorization: str | None = Header(None),
+                idempotency_key: str | None = Header(None)):
+        return respond(svc().approve(user(authorization), body, idempotency_key, _trace(request)))
+
+    @app.post("/bookings/decline")
+    def decline(request: Request, body: Any = Depends(json_body), authorization: str | None = Header(None),
+                idempotency_key: str | None = Header(None)):
+        return respond(svc().decline(user(authorization), body, idempotency_key, _trace(request)))
+
+    @app.post("/bookings/cancel")
+    def cancel(request: Request, body: Any = Depends(json_body), authorization: str | None = Header(None),
+               idempotency_key: str | None = Header(None)):
+        return respond(svc().cancel(user(authorization), body, idempotency_key, _trace(request)))
+
+    @app.post("/bookings/calendar")
+    def calendar(body: Any = Depends(json_body), authorization: str | None = Header(None)):
+        optional_user(settings, authorization)   # public read; a bad token is still rejected
+        return svc().calendar(body)
+
+    # ------------------------------------------------------------------------- dashboards
+    @app.post("/dashboards/guest")
+    def dash_guest(body: Any = Depends(json_body), authorization: str | None = Header(None)):
+        return guest_dashboard(svc(), user(authorization), body)
+
+    @app.post("/dashboards/host")
+    def dash_host(body: Any = Depends(json_body), authorization: str | None = Header(None)):
+        return host_dashboard(svc(), user(authorization), body)
+
+    # ------------------------------------------------------------------------- internal (service auth)
+    def service(authorization: str | None, x_service_token: str | None) -> None:
+        require_service(settings, authorization, x_service_token)
+
+    @app.get("/internal/reservations/{reservation_id}")
+    def internal_reservation(reservation_id: str, authorization: str | None = Header(None),
+                             x_service_token: str | None = Header(None)):
+        service(authorization, x_service_token)
+        return svc().internal_reservation(reservation_id)
+
+    @app.post("/internal/availability/check")
+    def internal_availability(body: Any = Depends(json_body), authorization: str | None = Header(None),
+                              x_service_token: str | None = Header(None)):
+        service(authorization, x_service_token)
+        return svc().internal_availability(body)
+
+    @app.get("/internal/properties/{property_id}/active-reservations")
+    def internal_property_active(property_id: str, authorization: str | None = Header(None),
+                                 x_service_token: str | None = Header(None)):
+        service(authorization, x_service_token)
+        return svc().internal_active("property_id", property_id)
+
+    @app.get("/internal/guests/{guest_id}/active-reservations")
+    def internal_guest_active(guest_id: str, authorization: str | None = Header(None),
+                              x_service_token: str | None = Header(None)):
+        service(authorization, x_service_token)
+        return svc().internal_active("guest_id", guest_id)
+
+    # ------------------------------------------------------------------------- WebSocket
+    @app.websocket("/bookings/stream")
+    async def stream(ws: WebSocket):
+        # Browsers cannot set headers on a WebSocket, so `?token=` is accepted as well as Authorization.
+        auth = ws.headers.get("authorization")
+        token = auth.split(" ", 1)[1].strip() if auth and auth.lower().startswith("bearer ") else ws.query_params.get("token")
+        try:
+            if not token:
+                raise ApiError(401, "UNAUTHORIZED", "Missing bearer token.")
+            actor = decode_token(settings, token)
+        except ApiError:
+            await ws.close(code=4401)
+            return
+        await ws.accept()
+        client = Client(ws=ws, sub=actor.sub)
+        manager.add(client)
+        await ws.send_text(json.dumps({"type": "connected", "sub": actor.sub}))
+        try:
+            while True:
+                raw = await ws.receive_text()
+                try:
+                    msg = json.loads(raw)
+                except ValueError:
+                    await ws.send_text(json.dumps({"type": "error", "code": "VALIDATION_ERROR"}))
+                    continue
+                pid = msg.get("property_id") if isinstance(msg, dict) else None
+                action = msg.get("action") if isinstance(msg, dict) else None
+                if action in ("subscribe_calendar", "unsubscribe_calendar") and isinstance(pid, str) and pid:
+                    (client.calendars.add if action == "subscribe_calendar" else client.calendars.discard)(pid)
+                    await ws.send_text(json.dumps({"type": "ack", "action": action, "property_id": pid}))
+                else:
+                    await ws.send_text(json.dumps({"type": "error", "code": "VALIDATION_ERROR",
+                                                   "message": "Unknown action."}))
+        except WebSocketDisconnect:
+            pass
+        finally:
+            manager.remove(client)
+
     # ------------------------------------------------------------------------- ops / dev
     @app.get("/health")
     def health():
@@ -156,7 +289,31 @@ def create_app(settings: Settings | None = None, *, db: Database | None = None,
             state["db"].ping()
         except Exception:
             ok = False
-        return JSONResponse({"status": "ok" if ok else "degraded", "mysql": ok}, status_code=200 if ok else 503)
+        return JSONResponse({"status": "ok" if ok else "degraded", "mysql": ok, "ws_clients": manager.count,
+                             "ws_pushed": manager.pushed}, status_code=200 if ok else 503)
+
+    if settings.dev_token_endpoint:
+        @app.post("/dev/token")
+        def dev_token(body: Any = Depends(json_body)):
+            """DEV ONLY (BOOKING_DEV_TOKEN_ENDPOINT=true): mint a 12 h token for a seed guest/host id."""
+            body = body if isinstance(body, dict) else {}
+            sub = str(body.get("sub", ""))
+            if not re.match(r"^(guest|host)-\d+$", sub):
+                raise ApiError(400, "VALIDATION_ERROR", "sub must look like guest-1001 or host-501.")
+            role = "host" if sub.startswith("host-") else "guest"
+            now = int(time.time())
+            token = jwt.encode({"sub": sub, "role": role, "iat": now, "exp": now + 12 * 3600,
+                                **({"iss": settings.jwt_issuer} if settings.jwt_issuer else {})},
+                               settings.jwt_secret, algorithm=settings.jwt_algorithm)
+            return {"token": token, "sub": sub, "role": role}
+
+    ui_dir = REPO_ROOT / "frontend/booking"
+    if ui_dir.is_dir():
+        app.mount("/ui", StaticFiles(directory=ui_dir, html=True), name="booking-ui")
+
+        @app.get("/", include_in_schema=False)
+        def root():
+            return RedirectResponse("/ui/")
 
     return app
 

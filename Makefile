@@ -20,7 +20,8 @@ BOOKING_API_PORT ?= 8002
 WORKER_ID ?= worker-1
 N ?= 20
 
-.PHONY: booking-venv booking-infra-up booking-topics booking-db booking-seed booking-reset booking-api booking-worker booking-token booking-test-db test-booking
+.PHONY: booking-venv booking-infra-up booking-topics booking-db booking-seed booking-reset booking-api booking-worker booking-token complete-stays booking-test-db test-booking \
+        test-double-booking consumer-recovery booking-perf
 
 booking-venv: ## create .venv (Python 3.11) with Role B dependencies
 	@test -x $(PY) || (command -v uv >/dev/null && uv venv --python 3.11 .venv || python3.11 -m venv .venv)
@@ -66,11 +67,28 @@ booking-worker: ## run one Booking worker (start several with different WORKER_I
 booking-token: ## mint a dev JWT: make booking-token SUB=guest-1001 ROLE=guest
 	@$(BOOKING_RUN) services/booking-api/scripts/dev_token.py $(or $(SUB),guest-1001) --role $(or $(ROLE),guest)
 
+complete-stays: ## run the completion job once (confirmed -> completed after check_out)
+	$(BOOKING_RUN) services/booking-api/scripts/complete_stays.py
+
 booking-test-db: ## create the isolated test database used by tests/booking
 	docker compose -f infra/docker-compose.yml exec -T -e MYSQL_PWD=root mysql mysql -uroot -e \
 	  "CREATE DATABASE IF NOT EXISTS airbnb_booking_test; GRANT ALL ON airbnb_booking_test.* TO 'airbnb'@'%';"
 
 test-booking: booking-test-db ## pytest for Role B
 	$(BOOKING_RUN) -m pytest tests/booking -q
+
+test-double-booking: ## ★ task 3.4: N concurrent creates, 2 workers, exactly one wins (N=20)
+	@mkdir -p reports/perf/booking/double_booking
+	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/double_booking.py --n $(N) 2>&1 \
+	  | tee reports/perf/booking/double_booking/run_output.txt
+
+consumer-recovery: ## ★ task 4.3: stop/kill worker, show lag, prove no loss and no duplicates
+	@mkdir -p reports/perf/booking/consumer_recovery
+	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/consumer_recovery.py 2>&1 \
+	  | tee reports/perf/booking/consumer_recovery/run_output.txt
+
+booking-perf: ## task 5.2: e2e latency at concurrency 1/10/25/50, retry timing, duplicates, DLQ count
+	@mkdir -p reports/perf/booking
+	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/perf_booking.py 2>&1 | tee reports/perf/booking/run_output.txt
 
 # --- end Role B ---------------------------------------------------------------------------------

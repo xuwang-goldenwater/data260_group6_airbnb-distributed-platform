@@ -1,0 +1,28 @@
+2026-11-25 20:31:56,460 INFO [worker-2] booking.worker worker started id=worker-2 group=booking-worker fault=- transient_faults=0
+2026-11-25 20:31:59,363 INFO [worker-2] booking.worker assigned partitions []
+2026-11-25 20:32:02,388 INFO [worker-2] booking.worker assigned partitions [0]
+2026-11-25 20:32:03,534 INFO [worker-2] booking.worker processed reservation_id=res-01M8B1ZXWZDDG40VVCTZH8BGTS outcome=held retries=0 partition=0 offset=670 trace_id=tr-01M8B1ZXWSJ8QB9D3JKKC8YG8N
+2026-11-25 20:32:03,538 INFO [worker-2] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B1ZXWZDDG40VVCTZH8BGTS:v2 trace_id=tr-01M8B1ZXWSJ8QB9D3JKKC8YG8N
+2026-11-25 20:32:03,538 INFO [worker-2] booking.outbox published topic=property.availability.updated idempotency_key=availability:res-01M8B1ZXWZDDG40VVCTZH8BGTS:held trace_id=tr-01M8B1ZXWSJ8QB9D3JKKC8YG8N
+2026-11-25 20:32:03,538 INFO [worker-2] booking.worker committed offset partition=0 next_offset=671
+2026-11-25 20:32:03,542 INFO [worker-2] booking.worker processed reservation_id=res-01M8B1ZXXQ31XZJ6NYTDNMJXHB outcome=rejected retries=0 partition=0 offset=671 trace_id=tr-01M8B1ZXX1CX996H70Z5BTJYT9
+2026-11-25 20:32:03,545 INFO [worker-2] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B1ZXXQ31XZJ6NYTDNMJXHB:v2 trace_id=tr-01M8B1ZXX1CX996H70Z5BTJYT9
+2026-11-25 20:32:03,545 INFO [worker-2] booking.worker committed offset partition=0 next_offset=672
+2026-11-25 20:32:03,548 INFO [worker-2] booking.worker processed reservation_id=res-01M8B1ZXXH74ZKZ2Q2D05WK3P8 outcome=rejected retries=0 partition=0 offset=672 trace_id=tr-01M8B1ZXWSJ8QB9D3JKKC8YG8R
+2026-11-25 20:32:03,551 INFO [worker-2] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B1ZXXH74ZKZ2Q2D05WK3P8:v2 trace_id=tr-01M8B1ZXWSJ8QB9D3JKKC8YG8R
+2026-11-25 20:32:03,551 INFO [worker-2] booking.worker committed offset partition=0 next_offset=673
+2026-11-25 20:32:03,555 INFO [worker-2] booking.worker processed reservation_id=res-01M8B1ZXXM8BH8Q4ZCNZATBKF4 outcome=rejected retries=0 partition=0 offset=673 trace_id=tr-01M8B1ZXWTBZ7BDHX5WF5QG499
+2026-11-25 20:32:03,558 INFO [worker-2] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B1ZXXM8BH8Q4ZCNZATBKF4:v2 trace_id=tr-01M8B1ZXWTBZ7BDHX5WF5QG499
+2026-11-25 20:32:03,558 INFO [worker-2] booking.worker committed offset partition=0 next_offset=674
+2026-11-25 20:32:03,561 INFO [worker-2] booking.worker processed reservation_id=res-01M8B1ZXXN86K9T1TYTRYGVTNM outcome=rejected retries=0 partition=0 offset=674 trace_id=tr-01M8B1ZXWVFX9QM056KYDAX8E6
+2026-11-25 20:32:03,563 INFO [worker-2] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B1ZXXN86K9T1TYTRYGVTNM:v2 trace_id=tr-01M8B1ZXWVFX9QM056KYDAX8E6
+2026-11-25 20:32:03,563 INFO [worker-2] booking.worker committed offset partition=0 next_offset=675
+2026-11-25 20:32:03,567 INFO [worker-2] booking.worker processed reservation_id=res-01M8B1ZXXN86K9T1TYTRYGVTNP outcome=rejected retries=0 partition=0 offset=675 trace_id=tr-01M8B1ZXWYW456QGT1WPGV9KQ8
+2026-11-25 20:32:03,569 INFO [worker-2] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B1ZXXN86K9T1TYTRYGVTNP:v2 trace_id=tr-01M8B1ZXWYW456QGT1WPGV9KQ8
+2026-11-25 20:32:03,569 INFO [worker-2] booking.worker committed offset partition=0 next_offset=676
+2026-11-25 20:32:03,572 INFO [worker-2] booking.worker processed reservation_id=res-01M8B1ZXXS6GYMTHQP74GGQFG3 outcome=rejected retries=0 partition=0 offset=676 trace_id=tr-01M8B1ZXWYW456QGT1WPGV9KQ9
+2026-11-25 20:32:03,574 INFO [worker-2] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B1ZXXS6GYMTHQP74GGQFG3:v2 trace_id=tr-01M8B1ZXWYW456QGT1WPGV9KQ9
+2026-11-25 20:32:03,574 INFO [worker-2] booking.worker committed offset partition=0 next_offset=677
+2026-11-25 20:32:04,483 INFO [worker-2] booking.worker signal 15: stopping after the current record
+2026-11-25 20:32:04,588 INFO [worker-2] booking.worker revoked partitions [0]
+2026-11-25 20:32:04,588 INFO [worker-2] booking.worker worker stopped id=worker-2

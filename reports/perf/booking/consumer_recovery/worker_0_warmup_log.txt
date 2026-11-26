@@ -1,0 +1,5 @@
+2026-11-25 20:32:14,648 INFO [worker-1] booking.worker worker started id=worker-1 group=booking-worker fault=- transient_faults=0
+2026-11-25 20:32:14,717 INFO [worker-1] booking.worker assigned partitions [0, 1, 2]
+2026-11-25 20:32:16,893 INFO [worker-1] booking.worker signal 15: stopping after the current record
+2026-11-25 20:32:17,200 INFO [worker-1] booking.worker revoked partitions [0, 1, 2]
+2026-11-25 20:32:17,200 INFO [worker-1] booking.worker worker stopped id=worker-1

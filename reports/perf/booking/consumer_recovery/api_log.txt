@@ -1,0 +1,7 @@
+2026-11-25 20:32:14,573 INFO [booking-api] booking.api booking-api ready precheck=True property_source=seed spread_partitions=False
+2026-11-25 20:32:17,365 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B20BECQAV9DPZT1YAGK0JV trace_id=tr-01M8B20BE7QFWRPWDC40NRHN2F
+2026-11-25 20:32:17,365 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B20BECQAV9DPZT1YAGK0JV property_id=property-2044 guest_id=guest-1050 trace_id=tr-01M8B20BE7QFWRPWDC40NRHN2F
+2026-11-25 20:32:17,366 INFO [booking-api] booking.api POST /bookings/create -> 202 14.5ms trace_id=tr-01M8B20BE7QFWRPWDC40NRHN2F
+2026-11-25 20:32:26,091 INFO [booking-api] booking.outbox published topic=booking.requested idempotency_key=booking.requested:res-01M8B20KZ3RQRAQSMYM3TC55T4 trace_id=tr-01M8B20KYZMNS6336WAXQ4X5XT
+2026-11-25 20:32:26,091 INFO [booking-api] booking.service booking requested reservation_id=res-01M8B20KZ3RQRAQSMYM3TC55T4 property_id=property-2044 guest_id=guest-1051 trace_id=tr-01M8B20KYZMNS6336WAXQ4X5XT
+2026-11-25 20:32:26,091 INFO [booking-api] booking.api POST /bookings/create -> 202 12.1ms trace_id=tr-01M8B20KYZMNS6336WAXQ4X5XT

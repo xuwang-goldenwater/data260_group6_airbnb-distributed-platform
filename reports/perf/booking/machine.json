@@ -1,0 +1,16 @@
+{
+  "os": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.11.18",
+  "machine": "arm64",
+  "cpu": "Apple M5 Pro",
+  "logical_cpus": "15",
+  "memory_gb": 24.0,
+  "docker": "29.7.2",
+  "docker_vm_cpus": "15",
+  "docker_vm_memory_gb": 7.7,
+  "mysql_image": "mysql:8.4",
+  "kafka_image": "apache/kafka:3.8.1",
+  "topic_partitions_booking_requested": 3,
+  "workers": 2,
+  "git_rev": "98792be"
+}

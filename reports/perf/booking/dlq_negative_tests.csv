@@ -1,0 +1,12 @@
+case,partition,offset,expected_error_code,dlq_error_code,retry_count,dlq_records,match,reservations_unchanged
+not_json,0,929,INVALID_JSON,INVALID_JSON,0,1,True,True
+empty_value,0,930,INVALID_JSON,INVALID_JSON,0,1,True,True
+missing_payload_check_in,0,931,INVALID_PAYLOAD,INVALID_PAYLOAD,0,1,True,True
+guest_count_wrong_type,0,932,INVALID_PAYLOAD,INVALID_PAYLOAD,0,1,True,True
+check_out_before_check_in,0,933,INVALID_PAYLOAD,INVALID_PAYLOAD,0,1,True,True
+missing_envelope_trace_id,0,934,INVALID_EVENT_ENVELOPE,INVALID_EVENT_ENVELOPE,0,1,True,True
+schema_version_2,0,935,INVALID_EVENT_ENVELOPE,INVALID_EVENT_ENVELOPE,0,1,True,True
+unexpected_top_level_field,0,936,INVALID_EVENT_ENVELOPE,INVALID_EVENT_ENVELOPE,0,1,True,True
+unknown_event_type,0,937,UNKNOWN_EVENT_TYPE,UNKNOWN_EVENT_TYPE,0,1,True,True
+kafka_key_mismatch,2,648,EVENT_KEY_MISMATCH,EVENT_KEY_MISMATCH,0,1,True,True
+reservation_not_found,0,938,RESERVATION_NOT_FOUND,RESERVATION_NOT_FOUND,1,1,True,True

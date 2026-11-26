@@ -10,16 +10,19 @@ import time
 from contextlib import asynccontextmanager
 from typing import Any
 
+import jwt
 import pymysql
 from fastapi import Depends, FastAPI, Header, Request, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from booking_core import ids
 from booking_core.auth import Actor, decode_token, optional_user, require_service, require_user
 from booking_core.clients import AnalyticsClient, UserClient, make_property_client
-from booking_core.config import Settings
+from booking_core.config import REPO_ROOT, Settings
+from booking_core.dashboards import guest_dashboard, host_dashboard
 from booking_core.db import Database
 from booking_core.errors import ApiError, DependencyUnavailable
 from booking_core.kafka_producer import EventProducer, KafkaEventProducer
@@ -203,6 +206,15 @@ def create_app(settings: Settings | None = None, *, db: Database | None = None,
         optional_user(settings, authorization)   # public read; a bad token is still rejected
         return svc().calendar(body)
 
+    # ------------------------------------------------------------------------- dashboards
+    @app.post("/dashboards/guest")
+    def dash_guest(body: Any = Depends(json_body), authorization: str | None = Header(None)):
+        return guest_dashboard(svc(), user(authorization), body)
+
+    @app.post("/dashboards/host")
+    def dash_host(body: Any = Depends(json_body), authorization: str | None = Header(None)):
+        return host_dashboard(svc(), user(authorization), body)
+
     # ------------------------------------------------------------------------- internal (service auth)
     def service(authorization: str | None, x_service_token: str | None) -> None:
         require_service(settings, authorization, x_service_token)
@@ -279,6 +291,29 @@ def create_app(settings: Settings | None = None, *, db: Database | None = None,
             ok = False
         return JSONResponse({"status": "ok" if ok else "degraded", "mysql": ok, "ws_clients": manager.count,
                              "ws_pushed": manager.pushed}, status_code=200 if ok else 503)
+
+    if settings.dev_token_endpoint:
+        @app.post("/dev/token")
+        def dev_token(body: Any = Depends(json_body)):
+            """DEV ONLY (BOOKING_DEV_TOKEN_ENDPOINT=true): mint a 12 h token for a seed guest/host id."""
+            body = body if isinstance(body, dict) else {}
+            sub = str(body.get("sub", ""))
+            if not re.match(r"^(guest|host)-\d+$", sub):
+                raise ApiError(400, "VALIDATION_ERROR", "sub must look like guest-1001 or host-501.")
+            role = "host" if sub.startswith("host-") else "guest"
+            now = int(time.time())
+            token = jwt.encode({"sub": sub, "role": role, "iat": now, "exp": now + 12 * 3600,
+                                **({"iss": settings.jwt_issuer} if settings.jwt_issuer else {})},
+                               settings.jwt_secret, algorithm=settings.jwt_algorithm)
+            return {"token": token, "sub": sub, "role": role}
+
+    ui_dir = REPO_ROOT / "frontend/booking"
+    if ui_dir.is_dir():
+        app.mount("/ui", StaticFiles(directory=ui_dir, html=True), name="booking-ui")
+
+        @app.get("/", include_in_schema=False)
+        def root():
+            return RedirectResponse("/ui/")
 
     return app
 

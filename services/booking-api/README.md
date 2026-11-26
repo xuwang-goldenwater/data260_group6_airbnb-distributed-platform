@@ -14,8 +14,9 @@ Browser ──POST /bookings/create──▶ booking-api ──booking.requested
 | `booking_core/` | shared by API and worker: config, DB pool, `dao/` (all SQL), envelope + DLQ, events, producer, outbox, `cancellation_policy.py`, cross-service clients |
 | `booking_api/` | FastAPI app: REST endpoints, WebSocket gateway, outbox publisher, completion job |
 | `../booking-worker/booking_worker/` | separate worker process (`worker.py`) and `consumer_utils.py` (retry / DLQ helpers) |
-| `scripts/` | `import_seed.py`, `dev_token.py`, `complete_stays.py`, ★ `double_booking.py`, ★ `consumer_recovery.py` |
+| `scripts/` | `import_seed.py`, `dev_token.py`, `complete_stays.py`, ★ `double_booking.py`, ★ `consumer_recovery.py`, `perf_booking.py` |
 | `../../db/mysql/02_bookings.sql` | schema |
+| `../../frontend/booking/index.html` | standalone console, served at `http://localhost:8002/ui` |
 
 ## Run it (from the repository root)
 
@@ -28,7 +29,7 @@ make booking-infra-up             # Kafka + MySQL from infra/docker-compose.yml,
 make booking-topics               # booking.requested / booking.updated / property.availability.updated / platform.dlq (3 partitions)
 make booking-db booking-seed      # apply 02_bookings.sql, import data/seed/generated (idempotent, verified against manifest.json)
 
-make booking-api                                  # terminal 1 → http://localhost:8002  (docs at /docs)
+make booking-api                                  # terminal 1 → http://localhost:8002  (docs at /docs, UI at /ui)
 make booking-worker WORKER_ID=worker-1            # terminal 2
 make booking-worker WORKER_ID=worker-2            # terminal 3 (same consumer group "booking-worker")
 ```
@@ -61,8 +62,13 @@ make consumer-recovery              # evidence → reports/perf/booking/consumer
 
 make complete-stays                 # confirmed → completed after check_out (BOOKING_CLOCK_DATE=... to move "today")
 make test-booking                   # pytest (uses the isolated database airbnb_booking_test)
+make booking-perf                   # task 5.2 evidence → reports/perf/booking/
 make booking-reset                  # local only: drop + recreate the 5 booking tables and re-import the seed
 ```
+
+The UI: open `http://localhost:8002/ui`. Set `BOOKING_DEV_TOKEN_ENDPOINT=true` in `.env` to use the
+"Get dev token" button, or paste a token from `make booking-token`. Sign in as `guest-1001` in one tab and
+`host-501` in another to watch a request go requested → pending_host → confirmed live.
 
 ## Fallbacks for teammates' services that aren't deployed yet
 
@@ -71,3 +77,4 @@ make booking-reset                  # local only: drop + recreate the 5 booking 
 | Property service (A) | `data/seed/generated/properties.json` | `PROPERTY_SOURCE=http` + `PROPERTY_SERVICE_URL` |
 | User service / JWT issuer (A) | seed `guests.json`; `scripts/dev_token.py` | `USER_SERVICE_URL`; same `JWT_SECRET` as the issuer |
 | Shared consumer helper (C, task 3.5) | `booking_worker/consumer_utils.py` (`decode`, `run_with_retry`, `send_to_dlq`) | replace the import in `worker.py` |
+| Analytics views/saves (C) | `null` in the host dashboard | `ANALYTICS_SERVICE_URL` (expects `GET /analytics/host/{host_id}`) |

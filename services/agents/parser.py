@@ -5,9 +5,12 @@ validates the output in code. On a validation error it retries once with the
 error message; if that fails too it returns an error instead of bad data
 (assignment 7.5.1: the harness rejects invalid agent output).
 
+Lookup order: exact cache -> semantic cache (optional) -> model.
 Every real model call is stored in an exact-match cache keyed by
 (model, prompt version, text), so re-running the benchmark gives the same
-parse for every configuration and needs no model calls.
+parse for every configuration and needs no model calls. When a SemanticCache
+is passed, a paraphrase of a cached request can reuse its parse (see
+semantic_cache.py for the two gates).
 
 Usage (from repo root, Ollama running):
     python3 services/agents/parser.py R05        # parse one benchmark request
@@ -137,16 +140,32 @@ def validate(q):
 
 # ---------- agent ----------
 
-def parse(text, cache=None):
-    """Return {"request": dict | None, "error": str | None, meta...}."""
+def parse(text, cache=None, semantic=None):
+    """Return {"request": dict | None, "error": str | None, "cache": exact|semantic|miss, meta...}.
+    semantic: optional semantic_cache.SemanticCache."""
     cache = load_cache() if cache is None else cache
     key = cache_key(text)
     t0 = time.perf_counter()
+
+    def ms():
+        return round((time.perf_counter() - t0) * 1000, 2)
+
     if key in cache:
         q = cache[key]["request"]
         return {"request": q, "error": None, "model": MODEL, "prompt_version": PROMPT_VERSION,
-                "llm_cache_hit": True, "attempts": 0,
-                "latency_ms": round((time.perf_counter() - t0) * 1000, 2)}
+                "llm_cache_hit": True, "cache": "exact", "attempts": 0, "latency_ms": ms()}
+
+    vector, sem = None, {}
+    if semantic is not None:
+        try:
+            q, sem = semantic.lookup(text)
+            vector = sem.pop("vector")
+            if q is not None:
+                return {"request": q, "error": None, "model": MODEL, "prompt_version": PROMPT_VERSION,
+                        "llm_cache_hit": True, "cache": "semantic", "attempts": 0, "latency_ms": ms(),
+                        "similarity": sem["similarity"], "matched_text": sem["matched_text"]}
+        except urllib.error.URLError:
+            semantic = None                       # embedding model unavailable: plain parse
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": f"Message: {text}"}]
@@ -165,9 +184,12 @@ def parse(text, cache=None):
         if not problems:
             cache[key] = {"text": text, "request": q, "model": MODEL, "prompt_version": PROMPT_VERSION}
             save_cache(cache)
+            if semantic is not None:
+                semantic.add(text, q, vector)
+                semantic.save()
             return {"request": q, "error": None, "model": MODEL, "prompt_version": PROMPT_VERSION,
-                    "llm_cache_hit": False, "attempts": attempt,
-                    "latency_ms": round((time.perf_counter() - t0) * 1000, 2)}
+                    "llm_cache_hit": False, "cache": "miss", "attempts": attempt,
+                    "latency_ms": ms(), "similarity": sem.get("similarity")}
         error = "; ".join(problems)
         messages += [{"role": "assistant", "content": content},
                      {"role": "user", "content": f"Invalid: {error}. Return corrected JSON."}]

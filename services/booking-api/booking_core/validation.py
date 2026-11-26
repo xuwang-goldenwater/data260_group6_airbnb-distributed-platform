@@ -32,8 +32,8 @@ def _id(body: dict, field: str, *, required: bool = True) -> str | None:
     v = body.get(field)
     if v is None and not required:
         return None
-    if not isinstance(v, str) or not v.strip() or len(v) > 40:
-        raise validation(f"'{field}' is required and must be a string of 1-40 characters.", field=field)
+    if not isinstance(v, str) or not v.strip() or len(v) > 64:
+        raise validation(f"'{field}' is required and must be a string of 1-64 characters.", field=field)
     return v
 
 
@@ -155,7 +155,7 @@ def availability_check_request(body: Any) -> tuple[list[str], date, date]:
     body = require_object(body)
     ids = body.get("property_ids")
     if (not isinstance(ids, list) or not ids or len(ids) > MAX_AVAILABILITY_IDS
-            or any(not isinstance(i, str) or not i or len(i) > 40 for i in ids)):
+            or any(not isinstance(i, str) or not i or len(i) > 64 for i in ids)):
         raise validation(f"'property_ids' must be a list of 1-{MAX_AVAILABILITY_IDS} property IDs.",
                          field="property_ids")
     ci, co = _date(body, "check_in"), _date(body, "check_out")

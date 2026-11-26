@@ -36,7 +36,7 @@ def _envelope_validator(schema_path: str) -> Draft202012Validator:
 
 
 _DATE = {"type": "string", "pattern": r"^\d{4}-\d{2}-\d{2}$"}
-_ID = {"type": "string", "minLength": 1, "maxLength": 40}
+_ID = {"type": "string", "minLength": 1, "maxLength": 64}
 _STATUS = {"enum": list(STATUSES)}
 
 PAYLOAD_SCHEMAS: dict[str, dict[str, Any]] = {

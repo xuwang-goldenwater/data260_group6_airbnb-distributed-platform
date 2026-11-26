@@ -1,7 +1,7 @@
 -- Role B — Booking & Availability (owner: Ayushi Shringi)
 -- Tables owned by the Booking service. Contract: docs/api/booking.md "Data Model (MySQL)".
 -- Idempotent: safe to apply repeatedly (CREATE TABLE IF NOT EXISTS). Timestamps are UTC DATETIME(3).
--- property_id / guest_id / host_id use VARCHAR(64) ascii_bin, the same type as db/mysql/01_users_properties.sql,
+-- property_id / guest_id / host_id / actor_id use VARCHAR(64) ascii_bin, the same type as db/mysql/01_users_properties.sql,
 -- so they join with Role A's tables without a collation conversion. No cross-service FK (docs/entities.md).
 
 CREATE TABLE IF NOT EXISTS reservations (
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS reservation_status_history (
   reservation_id    VARCHAR(40)  NOT NULL,
   from_status       ENUM('requested','pending_host','confirmed','rejected','declined','cancelled','completed') NULL,
   to_status         ENUM('requested','pending_host','confirmed','rejected','declined','cancelled','completed') NOT NULL,
-  actor_id          VARCHAR(40)  NOT NULL,
+  actor_id          VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin  NOT NULL,
   reason            VARCHAR(64)  NULL,
   trace_id          VARCHAR(40)  NOT NULL,
   changed_datetime  DATETIME(3)  NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS reservation_status_history (
 -- REST Idempotency-Key store. Rows older than 24 h are purged by the API's background job.
 CREATE TABLE IF NOT EXISTS idempotency_keys (
   idempotency_key   VARCHAR(64)  NOT NULL,
-  actor_id          VARCHAR(40)  NOT NULL,
+  actor_id          VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin  NOT NULL,
   endpoint          VARCHAR(64)  NOT NULL,
   request_hash      CHAR(64)     NOT NULL,
   response_code     INT          NOT NULL,

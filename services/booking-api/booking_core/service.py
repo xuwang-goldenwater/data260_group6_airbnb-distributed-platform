@@ -7,7 +7,7 @@ from datetime import timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Any, Callable
 
-from . import events, ids, outbox, validation
+from . import cancellation_policy, events, ids, outbox, validation
 from .clients import AnalyticsClient, PropertyClient, UserClient
 from .config import Settings
 from .dao import availability as avail_dao
@@ -17,7 +17,7 @@ from .dao import reservations as res_dao
 from .db import Database, is_duplicate_key, retry_transaction
 from .errors import ApiError, DependencyUnavailable, dependency_unavailable, validation as validation_error
 from .kafka_producer import EventProducer
-from .models import reservation_json
+from .models import assert_transition, reservation_json, summary_json
 from .auth import Actor
 from .timeutil import iso, nights_between, today, utcnow
 
@@ -142,6 +142,87 @@ class BookingService:
                  res["reservation_id"], res["property_id"], actor.sub, trace_id)
         return Result(202, response)
 
+    # ---------------------------------------------------------------- approve / decline / cancel
+    def approve(self, actor: Actor, body: Any, idem_key: str | None, trace_id: str) -> Result:
+        def decide(res, req):
+            if res["host_id"] != actor.sub:
+                raise ApiError(403, "NOT_PROPERTY_HOST", "Only the property's host can approve this request.")
+            assert_transition(res["status"], "confirmed", res["reservation_id"])
+            self._check_version(res, req.expected_version)
+            return "confirmed", None, None
+        return self._transition(actor, "/bookings/approve", body, idem_key, trace_id, decide)
+
+    def decline(self, actor: Actor, body: Any, idem_key: str | None, trace_id: str) -> Result:
+        def decide(res, req):
+            if res["host_id"] != actor.sub:
+                raise ApiError(403, "NOT_PROPERTY_HOST", "Only the property's host can decline this request.")
+            assert_transition(res["status"], "declined", res["reservation_id"])
+            self._check_version(res, req.expected_version)
+            return "declined", "HOST_DECLINED", None
+        return self._transition(actor, "/bookings/decline", body, idem_key, trace_id, decide)
+
+    def cancel(self, actor: Actor, body: Any, idem_key: str | None, trace_id: str) -> Result:
+        def decide(res, req):
+            if actor.sub == res["guest_id"]:
+                by = "guest"
+            elif actor.sub == res["host_id"]:
+                by = "host"
+            else:
+                raise ApiError(403, "NOT_RESERVATION_PARTY", "Only the reservation's guest or host can cancel it.")
+            assert_transition(res["status"], "cancelled", res["reservation_id"])
+            decision = cancellation_policy.evaluate(res, by, today())
+            if not decision.allowed:
+                raise ApiError(422, decision.code, decision.message,
+                               details={"reservation_id": res["reservation_id"],
+                                        "check_in": res["check_in"].isoformat()})
+            self._check_version(res, req.expected_version)
+            return "cancelled", cancellation_policy.status_reason(by), by
+        return self._transition(actor, "/bookings/cancel", body, idem_key, trace_id, decide)
+
+    @staticmethod
+    def _check_version(res: dict[str, Any], expected: int) -> None:
+        if res["version"] != expected:
+            raise ApiError(409, "RESERVATION_VERSION_CONFLICT",
+                           "The reservation changed since you loaded it; reload and retry.",
+                           details={"reservation_id": res["reservation_id"], "expected_version": expected,
+                                    "current_version": res["version"], "current_status": res["status"]})
+
+    def _transition(self, actor: Actor, endpoint: str, body: Any, idem_key: str | None, trace_id: str,
+                    decide: Callable) -> Result:
+        key = self._require_key(idem_key)
+        req_hash = validation.request_hash(body)
+
+        def work() -> Result:
+            req = validation.transition_request(body)
+            now = utcnow()
+            with self.db.transaction() as conn:
+                res = res_dao.get(conn, req.reservation_id, for_update=True)
+                if res is None:
+                    raise ApiError(404, "RESERVATION_NOT_FOUND", "Reservation not found.",
+                                   details={"reservation_id": req.reservation_id})
+                to_status, reason, cancelled_by = decide(res, req)
+                rows = res_dao.update_status(conn, res["reservation_id"], from_status=res["status"],
+                                             expected_version=req.expected_version, to_status=to_status,
+                                             reason=reason, now=now, cancelled_by=cancelled_by)
+                if rows != 1:   # guarded UPDATE: 0 rows affected → 409
+                    raise ApiError(409, "RESERVATION_VERSION_CONFLICT", "The reservation changed concurrently.")
+                if to_status in ("declined", "cancelled"):
+                    avail_dao.release(conn, res["reservation_id"])
+                hist = history_dao.insert(conn, reservation_id=res["reservation_id"], from_status=res["status"],
+                                          to_status=to_status, actor_id=actor.sub, reason=reason,
+                                          trace_id=trace_id, changed=now)
+                after = res_dao.get(conn, res["reservation_id"])
+                response = reservation_json(after)
+                idem_dao.insert(conn, actor_id=actor.sub, endpoint=endpoint, key=key, request_hash=req_hash,
+                                response_code=200, response_body=response, now=now)
+            outbox.publish_and_clear(self.db, self.producer, after,
+                                     events.events_for_transition(after, hist, producer="booking-api"))
+            log.info("transition reservation_id=%s %s->%s actor=%s version=%s trace_id=%s",
+                     after["reservation_id"], hist["from_status"], to_status, actor.sub, after["version"], trace_id)
+            return Result(200, response)
+
+        return self._run_idempotent(actor, endpoint, key, req_hash, work)
+
     # ---------------------------------------------------------------- reads
     def get(self, actor: Actor, body: Any) -> dict[str, Any]:
         rid = validation.reservation_ref(body)
@@ -153,3 +234,85 @@ class BookingService:
                 raise ApiError(403, "NOT_RESERVATION_PARTY", "Only the reservation's guest or host can read it.")
             hist = history_dao.list_for(conn, rid)
         return reservation_json(res, hist)
+
+    def by_guest(self, actor: Actor, body: Any) -> dict[str, Any]:
+        req = validation.list_request(body)
+        with self.db.transaction() as conn:
+            items, total = res_dao.list_for_guest(conn, actor.sub, statuses=req.statuses, from_date=req.from_date,
+                                                  to_date=req.to_date, page=req.page, page_size=req.page_size)
+        return {"items": [summary_json(r) for r in items], "page": req.page, "page_size": req.page_size,
+                "total": total}
+
+    def require_host(self, actor: Actor) -> None:
+        if not (actor.is_host or self.users.is_host(actor.sub)):
+            raise ApiError(403, "HOST_PROFILE_REQUIRED", "This endpoint requires a host profile.")
+
+    def by_host(self, actor: Actor, body: Any) -> dict[str, Any]:
+        self.require_host(actor)
+        req = validation.list_request(body)
+        with self.db.transaction() as conn:
+            items, total = res_dao.list_for_host(conn, actor.sub, property_id=req.property_id,
+                                                 statuses=req.statuses, from_date=req.from_date,
+                                                 to_date=req.to_date, page=req.page, page_size=req.page_size)
+        return {"items": [summary_json(r, host_view=True) for r in items], "page": req.page,
+                "page_size": req.page_size, "total": total}
+
+    def calendar(self, body: Any) -> dict[str, Any]:
+        pid, fd, td = validation.calendar_request(body)
+        with self.db.transaction() as conn:
+            nights = avail_dao.taken_in_range(conn, pid, fd, td)
+        return {"property_id": pid, "from_date": fd.isoformat(), "to_date": td.isoformat(),
+                "unavailable_nights": [n.isoformat() for n in nights], "checked_datetime": iso(utcnow())}
+
+    # ---------------------------------------------------------------- internal (service auth)
+    def internal_reservation(self, rid: str) -> dict[str, Any]:
+        with self.db.transaction() as conn:
+            res = res_dao.get(conn, rid)
+        if res is None:
+            raise ApiError(404, "RESERVATION_NOT_FOUND", "Reservation not found.", details={"reservation_id": rid})
+        out = reservation_json(res)
+        return {k: out[k] for k in ("reservation_id", "property_id", "guest_id", "host_id", "status",
+                                    "check_in", "check_out")}
+
+    def internal_availability(self, body: Any) -> dict[str, Any]:
+        pids, ci, co = validation.availability_check_request(body)
+        with self.db.transaction() as conn:
+            taken = avail_dao.unavailable_properties(conn, pids, ci, co)
+        return {"check_in": ci.isoformat(), "check_out": co.isoformat(),
+                "results": [{"property_id": p, "available": p not in taken} for p in pids],
+                "checked_datetime": iso(utcnow())}
+
+    def internal_active(self, column: str, value: str) -> dict[str, Any]:
+        with self.db.transaction() as conn:
+            n = res_dao.count_active(conn, column=column, value=value, today=today())
+        return {column: value, "has_active_reservations": n > 0, "count": n}
+
+    # ---------------------------------------------------------------- completion job
+    def complete_stays(self, *, trace_id: str | None = None, limit: int = 500) -> dict[str, Any]:
+        trace_id = trace_id or ids.trace_id()
+        day = today()
+        with self.db.transaction() as conn:
+            candidates = res_dao.list_completable(conn, day, limit)
+        completed, skipped = [], 0
+        for cand in candidates:
+            now = utcnow()
+            with self.db.transaction() as conn:
+                rows = res_dao.update_status(conn, cand["reservation_id"], from_status="confirmed",
+                                             expected_version=cand["version"], to_status="completed",
+                                             reason=None, now=now)
+                if rows != 1:
+                    skipped += 1
+                    continue
+                hist = history_dao.insert(conn, reservation_id=cand["reservation_id"], from_status="confirmed",
+                                          to_status="completed", actor_id="completion-job", reason=None,
+                                          trace_id=trace_id, changed=now)
+                after = res_dao.get(conn, cand["reservation_id"])
+            outbox.publish_and_clear(self.db, self.producer, after,
+                                     events.events_for_transition(after, hist, producer="completion-job"))
+            completed.append(after["reservation_id"])
+        log.info("completion job today=%s completed=%d skipped=%d trace_id=%s", day, len(completed), skipped,
+                 trace_id)
+        return {"today": day.isoformat(), "completed": len(completed), "skipped": skipped,
+                "reservation_ids": completed, "trace_id": trace_id}
+
+

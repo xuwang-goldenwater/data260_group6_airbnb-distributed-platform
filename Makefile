@@ -19,7 +19,7 @@ BOOKING_API_PORT ?= 8002
 WORKER_ID ?= worker-1
 N ?= 20
 
-.PHONY: booking-venv booking-infra-up booking-topics booking-db booking-seed booking-reset booking-api booking-worker booking-token booking-test-db test-booking
+.PHONY: booking-venv booking-infra-up booking-topics booking-db booking-seed booking-reset booking-api booking-worker booking-token complete-stays booking-test-db test-booking
 
 booking-venv: ## create .venv (Python 3.11) with Role B dependencies
 	@test -x $(PY) || (command -v uv >/dev/null && uv venv --python 3.11 .venv || python3.11 -m venv .venv)
@@ -64,6 +64,9 @@ booking-worker: ## run one Booking worker (start several with different WORKER_I
 
 booking-token: ## mint a dev JWT: make booking-token SUB=guest-1001 ROLE=guest
 	@$(BOOKING_RUN) services/booking-api/scripts/dev_token.py $(or $(SUB),guest-1001) --role $(or $(ROLE),guest)
+
+complete-stays: ## run the completion job once (confirmed -> completed after check_out)
+	$(BOOKING_RUN) services/booking-api/scripts/complete_stays.py
 
 booking-test-db: ## create the isolated test database used by tests/booking
 	docker compose -f infra/docker-compose.yml exec -T -e MYSQL_PWD=root mysql mysql -uroot -e \

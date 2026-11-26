@@ -1,0 +1,30 @@
+[20:31:34] === mode=key N=20 nights=2 property=property-2001 ===
+[20:31:35] started api pid=17926 port=8012
+[20:31:35] started worker-1 pid=17927 env={}
+[20:31:36] started worker-2 pid=17928 env={}
+[20:31:43] dates 2027-06-01 -> 2027-06-03 (free before the test)
+[20:31:43] 20/20 accepted with 202
+[20:31:44]   PASS  all_accepted_202
+[20:31:44]   PASS  exactly_one_pending_host
+[20:31:44]   PASS  n_minus_1_rejected
+[20:31:44]   PASS  rejected_reason_dates_unavailable
+[20:31:44]   PASS  blocks_equal_nights
+[20:31:44]   PASS  blocks_owned_by_winner
+[20:31:44]   PASS  none_left_requested
+[20:31:44] statuses={'rejected': 19, 'pending_host': 1} per_worker={'worker-1': 0, 'worker-2': 20} blocks=2 winner=res-01M8B1ZA8QN4KMKTXGXKG8RXGQ
+[20:31:44] === mode=race N=20 nights=2 property=property-2001 ===
+[20:31:56] started api pid=18086 port=8012
+[20:31:56] started worker-1 pid=18087 env={}
+[20:31:56] started worker-2 pid=18088 env={}
+[20:32:03] dates 2027-06-03 -> 2027-06-05 (free before the test)
+[20:32:03] 20/20 accepted with 202
+[20:32:04]   PASS  all_accepted_202
+[20:32:04]   PASS  exactly_one_pending_host
+[20:32:04]   PASS  n_minus_1_rejected
+[20:32:04]   PASS  rejected_reason_dates_unavailable
+[20:32:04]   PASS  blocks_equal_nights
+[20:32:04]   PASS  blocks_owned_by_winner
+[20:32:04]   PASS  none_left_requested
+[20:32:04]   PASS  both_workers_processed_requests
+[20:32:04] statuses={'rejected': 19, 'pending_host': 1} per_worker={'worker-1': 13, 'worker-2': 7} blocks=2 winner=res-01M8B1ZXWZDDG40VVCTZH8BGTS
+[20:32:05] RESULT: PASS — no double booking

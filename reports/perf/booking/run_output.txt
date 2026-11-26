@@ -1,0 +1,62 @@
+[20:33:29] phase 1: e2e latency levels=[1, 10, 25, 50]
+[20:33:30] started api pid=18825 port=8012
+[20:33:30] started worker-1 pid=18826 env={}
+[20:33:30] started worker-2 pid=18827 env={}
+[20:33:37]   c=1: {'concurrency': 1, 'requests': 50, 'accepted_202': 50, 'completed': 50, 'errors': 0, 'wall_s': 0.47, 'throughput_rps': 107.3, 'e2e_p50_ms': 7.9, 'e2e_p95_ms': 10.3, 'e2e_p99_ms': 13.6, 'e2e_max_ms': 13.6, 'http_p50_ms': 5.8, 'http_p95_ms': 7.9, 'pending_host': 50, 'rejected': 0}
+[20:33:37]   c=10: {'concurrency': 10, 'requests': 60, 'accepted_202': 60, 'completed': 60, 'errors': 0, 'wall_s': 0.37, 'throughput_rps': 164.3, 'e2e_p50_ms': 50.7, 'e2e_p95_ms': 68.3, 'e2e_p99_ms': 72.3, 'e2e_max_ms': 74.2, 'http_p50_ms': 10.7, 'http_p95_ms': 29.6, 'pending_host': 60, 'rejected': 0}
+[20:33:38]   c=25: {'concurrency': 25, 'requests': 150, 'accepted_202': 150, 'completed': 150, 'errors': 0, 'wall_s': 0.8, 'throughput_rps': 187.7, 'e2e_p50_ms': 137.3, 'e2e_p95_ms': 185.3, 'e2e_p99_ms': 188.7, 'e2e_max_ms': 191.7, 'http_p50_ms': 11.0, 'http_p95_ms': 63.6, 'pending_host': 150, 'rejected': 0}
+[20:33:40]   c=50: {'concurrency': 50, 'requests': 300, 'accepted_202': 300, 'completed': 300, 'errors': 0, 'wall_s': 2.19, 'throughput_rps': 136.7, 'e2e_p50_ms': 266.8, 'e2e_p95_ms': 688.4, 'e2e_p99_ms': 970.5, 'e2e_max_ms': 1310.8, 'http_p50_ms': 213.0, 'http_p95_ms': 715.2, 'pending_host': 300, 'rejected': 0}
+[20:33:41] phase 2: retry timing with injected transient MySQL errors
+[20:33:53] started api pid=18963 port=8012
+[20:33:53] started worker-1 pid=18976 env={'WORKER_TRANSIENT_FAULTS': '0'}
+[20:33:53]   faults=0 trial=1: {'injected_faults': 0, 'trial': 1, 'retries_logged': 0, 'outcome': 'pending_host', 'elapsed_ms': 49.9, 'reservation_id': 'res-01M8B239S8A5F4XY9E1MAF3XQ1', 'trace_id': 'tr-01M8B239RZPD2HAJT0MW20ZXN3'}
+[20:33:54] started worker-1 pid=18977 env={'WORKER_TRANSIENT_FAULTS': '0'}
+[20:33:54]   faults=0 trial=2: {'injected_faults': 0, 'trial': 2, 'retries_logged': 0, 'outcome': 'pending_host', 'elapsed_ms': 41.5, 'reservation_id': 'res-01M8B23AM4478ZS799K9H0B19E', 'trace_id': 'tr-01M8B23AKZ4QMGVWERY3XQ53P5'}
+[20:33:54] started worker-1 pid=18978 env={'WORKER_TRANSIENT_FAULTS': '0'}
+[20:33:55]   faults=0 trial=3: {'injected_faults': 0, 'trial': 3, 'retries_logged': 0, 'outcome': 'pending_host', 'elapsed_ms': 42.6, 'reservation_id': 'res-01M8B23BESBAHAYC1WJ38GFN6H', 'trace_id': 'tr-01M8B23BEMMZC8ZBT5BXX3DTC8'}
+[20:33:55] started worker-1 pid=18988 env={'WORKER_TRANSIENT_FAULTS': '1'}
+[20:33:56]   faults=1 trial=1: {'injected_faults': 1, 'trial': 1, 'retries_logged': 1, 'outcome': 'pending_host', 'elapsed_ms': 261.5, 'reservation_id': 'res-01M8B23C9QHWCX69Y5CZ1NV48E', 'trace_id': 'tr-01M8B23C9GXDT16K71NFCTC3FE'}
+[20:33:56] started worker-1 pid=18989 env={'WORKER_TRANSIENT_FAULTS': '1'}
+[20:33:57]   faults=1 trial=2: {'injected_faults': 1, 'trial': 2, 'retries_logged': 1, 'outcome': 'pending_host', 'elapsed_ms': 263.8, 'reservation_id': 'res-01M8B23DBHJAYVH9HTDETYMWVQ', 'trace_id': 'tr-01M8B23DBCDACJSKV85J8E1E8G'}
+[20:33:57] started worker-1 pid=18999 env={'WORKER_TRANSIENT_FAULTS': '1'}
+[20:33:58]   faults=1 trial=3: {'injected_faults': 1, 'trial': 3, 'retries_logged': 1, 'outcome': 'pending_host', 'elapsed_ms': 250.5, 'reservation_id': 'res-01M8B23ED3R1WJ9007EAKAP89X', 'trace_id': 'tr-01M8B23ECZA42SKVEZYM3DQ458'}
+[20:33:58] started worker-1 pid=19000 env={'WORKER_TRANSIENT_FAULTS': '2'}
+[20:34:01]   faults=2 trial=1: {'injected_faults': 2, 'trial': 1, 'retries_logged': 2, 'outcome': 'pending_host', 'elapsed_ms': 1251.3, 'reservation_id': 'res-01M8B23FEHB4M4D6EFBTZMAQPS', 'trace_id': 'tr-01M8B23FECHDKB4SQNPZ4MZQ9Q'}
+[20:34:01] started worker-1 pid=19020 env={'WORKER_TRANSIENT_FAULTS': '2'}
+[20:34:03]   faults=2 trial=2: {'injected_faults': 2, 'trial': 2, 'retries_logged': 2, 'outcome': 'pending_host', 'elapsed_ms': 1242.4, 'reservation_id': 'res-01M8B23HEBR15FZZJPEEV7Q2XS', 'trace_id': 'tr-01M8B23HE63GC0NAPPM6T3NAVS'}
+[20:34:03] started worker-1 pid=19031 env={'WORKER_TRANSIENT_FAULTS': '2'}
+[20:34:05]   faults=2 trial=3: {'injected_faults': 2, 'trial': 3, 'retries_logged': 2, 'outcome': 'pending_host', 'elapsed_ms': 1249.4, 'reservation_id': 'res-01M8B23KE241BWQNXXXHH25D0E', 'trace_id': 'tr-01M8B23KDY54C16QCJQ9BQ6DDB'}
+[20:34:05] started worker-1 pid=19041 env={'WORKER_TRANSIENT_FAULTS': '3'}
+[20:34:12]   faults=3 trial=1: {'injected_faults': 3, 'trial': 1, 'retries_logged': 3, 'outcome': 'pending_host', 'elapsed_ms': 6265.2, 'reservation_id': 'res-01M8B23NE3EH91XQDZ0PXKP1BD', 'trace_id': 'tr-01M8B23NDWQKYVQKHX03VEQKX8'}
+[20:34:12] started worker-1 pid=19081 env={'WORKER_TRANSIENT_FAULTS': '3'}
+[20:34:19]   faults=3 trial=2: {'injected_faults': 3, 'trial': 2, 'retries_logged': 3, 'outcome': 'pending_host', 'elapsed_ms': 6275.6, 'reservation_id': 'res-01M8B23WBFQ5K30ZVSHB11D11M', 'trace_id': 'tr-01M8B23WB9RRJMR85T3TR38MZ0'}
+[20:34:19] started worker-1 pid=19109 env={'WORKER_TRANSIENT_FAULTS': '3'}
+[20:34:26]   faults=3 trial=3: {'injected_faults': 3, 'trial': 3, 'retries_logged': 3, 'outcome': 'pending_host', 'elapsed_ms': 6265.5, 'reservation_id': 'res-01M8B2438SY66CZGGB64D5TJ8Q', 'trace_id': 'tr-01M8B2438NCQA53ZZPC1VWPAT2'}
+[20:34:26] started worker-1 pid=19151 env={'WORKER_TRANSIENT_FAULTS': '4'}
+[20:34:33]   faults=4 trial=1: {'injected_faults': 4, 'trial': 1, 'retries_logged': 3, 'outcome': 'platform.dlq', 'elapsed_ms': 6297.9, 'reservation_id': 'res-01M8B24A65VATASZA0N2XHG92H', 'trace_id': 'tr-01M8B24A60R2GZPVNS8EV0Z6RT'}
+[20:34:33] started worker-1 pid=19191 env={'WORKER_TRANSIENT_FAULTS': '4'}
+[20:34:40]   faults=4 trial=2: {'injected_faults': 4, 'trial': 2, 'retries_logged': 3, 'outcome': 'platform.dlq', 'elapsed_ms': 6313.3, 'reservation_id': 'res-01M8B24HJS8K0D1QQWPQX86EF2', 'trace_id': 'tr-01M8B24HJPQ02Z4JXS0B0V1F6D'}
+[20:34:41] started worker-1 pid=19222 env={'WORKER_TRANSIENT_FAULTS': '4'}
+[20:34:48]   faults=4 trial=3: {'injected_faults': 4, 'trial': 3, 'retries_logged': 3, 'outcome': 'platform.dlq', 'elapsed_ms': 6396.8, 'reservation_id': 'res-01M8B24S0CZXA9PCE948Z80T72', 'trace_id': 'tr-01M8B24S06WYNYE0A542KD7100'}
+[20:34:49] phase 3: duplicates after a worker kill -9 + restart under load
+[20:35:00] started api pid=19343 port=8012
+[20:35:00] started worker-1 pid=19344 env={}
+[20:35:00] started worker-2 pid=19345 env={}
+[20:35:07]   kill -9 worker-2 after it processed 15 records
+[20:35:08] started worker-2 pid=19388 env={}
+[20:35:11]   {'requests': 120, 'accepted': 120, 'killed_worker': 'worker-2', 'worker2_processed_before_kill': 15, 'worker2_processed_after_restart': 29, 'redeliveries_detected_as_duplicate': 1, 'final_status_counts': {'pending_host': 120}, 'duplicate_history_rows': 0, 'reservations_with_wrong_block_count': 0, 'processed_events_rows': 120, 'booking_updated_events_on_topic': 120, 'booking_updated_duplicate_keys_on_topic': 0, 'duplicate_db_side_effects': 0}
+[20:35:12] phase 4: malformed events → platform.dlq
+[20:35:20] started worker-1 pid=19478 env={}
+[20:35:21] started worker-2 pid=19479 env={}
+[20:35:30]   {'case': 'not_json', 'partition': 0, 'offset': 929, 'expected_error_code': 'INVALID_JSON', 'dlq_error_code': 'INVALID_JSON', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'empty_value', 'partition': 0, 'offset': 930, 'expected_error_code': 'INVALID_JSON', 'dlq_error_code': 'INVALID_JSON', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'missing_payload_check_in', 'partition': 0, 'offset': 931, 'expected_error_code': 'INVALID_PAYLOAD', 'dlq_error_code': 'INVALID_PAYLOAD', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'guest_count_wrong_type', 'partition': 0, 'offset': 932, 'expected_error_code': 'INVALID_PAYLOAD', 'dlq_error_code': 'INVALID_PAYLOAD', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'check_out_before_check_in', 'partition': 0, 'offset': 933, 'expected_error_code': 'INVALID_PAYLOAD', 'dlq_error_code': 'INVALID_PAYLOAD', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'missing_envelope_trace_id', 'partition': 0, 'offset': 934, 'expected_error_code': 'INVALID_EVENT_ENVELOPE', 'dlq_error_code': 'INVALID_EVENT_ENVELOPE', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'schema_version_2', 'partition': 0, 'offset': 935, 'expected_error_code': 'INVALID_EVENT_ENVELOPE', 'dlq_error_code': 'INVALID_EVENT_ENVELOPE', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'unexpected_top_level_field', 'partition': 0, 'offset': 936, 'expected_error_code': 'INVALID_EVENT_ENVELOPE', 'dlq_error_code': 'INVALID_EVENT_ENVELOPE', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'unknown_event_type', 'partition': 0, 'offset': 937, 'expected_error_code': 'UNKNOWN_EVENT_TYPE', 'dlq_error_code': 'UNKNOWN_EVENT_TYPE', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'kafka_key_mismatch', 'partition': 2, 'offset': 648, 'expected_error_code': 'EVENT_KEY_MISMATCH', 'dlq_error_code': 'EVENT_KEY_MISMATCH', 'retry_count': 0, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:30]   {'case': 'reservation_not_found', 'partition': 0, 'offset': 938, 'expected_error_code': 'RESERVATION_NOT_FOUND', 'dlq_error_code': 'RESERVATION_NOT_FOUND', 'retry_count': 1, 'dlq_records': 1, 'match': True, 'reservations_unchanged': True}
+[20:35:32] RESULT: PASS

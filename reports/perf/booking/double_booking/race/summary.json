@@ -1,0 +1,37 @@
+{
+  "mode": "race",
+  "n": 20,
+  "nights": 2,
+  "property_id": "property-2001",
+  "check_in": "2027-06-03",
+  "check_out": "2027-06-05",
+  "api_precheck": false,
+  "workers": [
+    "worker-1",
+    "worker-2"
+  ],
+  "consumer_group": "booking-worker",
+  "statuses": {
+    "rejected": 19,
+    "pending_host": 1
+  },
+  "winner": "res-01M8B1ZXWZDDG40VVCTZH8BGTS",
+  "processed_per_worker": {
+    "worker-1": 13,
+    "worker-2": 7
+  },
+  "availability_block_rows": 2,
+  "checks": {
+    "all_accepted_202": true,
+    "exactly_one_pending_host": true,
+    "n_minus_1_rejected": true,
+    "rejected_reason_dates_unavailable": true,
+    "blocks_equal_nights": true,
+    "blocks_owned_by_winner": true,
+    "none_left_requested": true,
+    "both_workers_processed_requests": true
+  },
+  "passed": true,
+  "git_rev": "cb2561b",
+  "run_at": "2026-11-26T04:32:04Z"
+}

@@ -1,0 +1,63 @@
+### A2 — worker stopped, res-01M8B20BECQAV9DPZT1YAGK0JV in Kafka on partition 2
+$ kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group booking-worker
+GROUP           TOPIC             PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                   HOST            CLIENT-ID
+booking-worker  booking.requested 0          677             677             0               worker-1-4911903f-59f4-47a6-aee6-af51625e0fd3 /192.168.65.1   worker-1
+booking-worker  booking.requested 2          447             448             1               worker-1-4911903f-59f4-47a6-aee6-af51625e0fd3 /192.168.65.1   worker-1
+booking-worker  booking.requested 1          570             570             0               worker-1-4911903f-59f4-47a6-aee6-af51625e0fd3 /192.168.65.1   worker-1
+
+### A3 — after restart (resumed from committed offset)
+$ kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group booking-worker
+GROUP           TOPIC             PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                   HOST            CLIENT-ID
+booking-worker  booking.requested 0          677             677             0               worker-1-34fb0038-8c3e-4fe8-a07c-022a232ceb2d /192.168.65.1   worker-1
+booking-worker  booking.requested 2          448             448             0               worker-1-34fb0038-8c3e-4fe8-a07c-022a232ceb2d /192.168.65.1   worker-1
+booking-worker  booking.requested 1          570             570             0               worker-1-34fb0038-8c3e-4fe8-a07c-022a232ceb2d /192.168.65.1   worker-1
+
+### B1 — MySQL right after the crash (committed, publish_pending=1)
++--------------------------------+--------------+---------+-----------------+
+| reservation_id                 | status       | version | publish_pending |
++--------------------------------+--------------+---------+-----------------+
+| res-01M8B20KZ3RQRAQSMYM3TC55T4 | pending_host |       2 |               1 |
++--------------------------------+--------------+---------+-----------------+
++--------------------------------------------------+----------------+
+| idempotency_key                                  | consumer       |
++--------------------------------------------------+----------------+
+| booking.requested:res-01M8B20KZ3RQRAQSMYM3TC55T4 | booking-worker |
++--------------------------------------------------+----------------+
+
+### B2 — worker crashed after MySQL commit; offset for res-01M8B20KZ3RQRAQSMYM3TC55T4 NOT committed (partition 2)
+$ kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group booking-worker
+GROUP           TOPIC             PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                   HOST            CLIENT-ID
+booking-worker  booking.requested 0          677             677             0               worker-1-84262092-7adb-4074-b00e-4b8805841a7f /192.168.65.1   worker-1
+booking-worker  booking.requested 2          448             449             1               worker-1-84262092-7adb-4074-b00e-4b8805841a7f /192.168.65.1   worker-1
+booking-worker  booking.requested 1          570             570             0               worker-1-84262092-7adb-4074-b00e-4b8805841a7f /192.168.65.1   worker-1
+
+### B3 — after restart (redelivered, deduplicated)
+$ kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group booking-worker
+GROUP           TOPIC             PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                   HOST            CLIENT-ID
+booking-worker  booking.requested 0          677             677             0               worker-1-79b6852b-54a1-4c40-9d62-19bf01f89df9 /192.168.65.1   worker-1
+booking-worker  booking.requested 2          449             449             0               worker-1-79b6852b-54a1-4c40-9d62-19bf01f89df9 /192.168.65.1   worker-1
+booking-worker  booking.requested 1          570             570             0               worker-1-79b6852b-54a1-4c40-9d62-19bf01f89df9 /192.168.65.1   worker-1
+
+### Step 5 — final MySQL state
++--------------------------------+-------------+--------------+----------------+-------------------------+
+| reservation_id                 | from_status | to_status    | actor_id       | changed_datetime        |
++--------------------------------+-------------+--------------+----------------+-------------------------+
+| res-01M8B20BECQAV9DPZT1YAGK0JV | NULL        | requested    | guest-1050     | 2026-11-26 04:32:17.356 |
+| res-01M8B20BECQAV9DPZT1YAGK0JV | requested   | pending_host | booking-worker | 2026-11-26 04:32:20.694 |
+| res-01M8B20KZ3RQRAQSMYM3TC55T4 | NULL        | requested    | guest-1051     | 2026-11-26 04:32:26.083 |
+| res-01M8B20KZ3RQRAQSMYM3TC55T4 | requested   | pending_host | booking-worker | 2026-11-26 04:32:26.103 |
++--------------------------------+-------------+--------------+----------------+-------------------------+
++---------------+------------+--------------------------------+
+| property_id   | night_date | reservation_id                 |
++---------------+------------+--------------------------------+
+| property-2044 | 2027-06-01 | res-01M8B20BECQAV9DPZT1YAGK0JV |
+| property-2044 | 2027-06-02 | res-01M8B20BECQAV9DPZT1YAGK0JV |
+| property-2044 | 2027-06-03 | res-01M8B20KZ3RQRAQSMYM3TC55T4 |
+| property-2044 | 2027-06-04 | res-01M8B20KZ3RQRAQSMYM3TC55T4 |
++---------------+------------+--------------------------------+
++--------------------------------------------------+----------------+-------------------------+
+| idempotency_key                                  | consumer       | processed_datetime      |
++--------------------------------------------------+----------------+-------------------------+
+| booking.requested:res-01M8B20BECQAV9DPZT1YAGK0JV | booking-worker | 2026-11-26 04:32:20.694 |
+| booking.requested:res-01M8B20KZ3RQRAQSMYM3TC55T4 | booking-worker | 2026-11-26 04:32:26.103 |
++--------------------------------------------------+----------------+-------------------------+

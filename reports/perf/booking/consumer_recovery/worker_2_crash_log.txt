@@ -1,0 +1,4 @@
+2026-11-25 20:32:25,838 INFO [worker-1] booking.worker worker started id=worker-1 group=booking-worker fault=crash_after_db_commit transient_faults=0
+2026-11-25 20:32:25,901 INFO [worker-1] booking.worker assigned partitions [0, 1, 2]
+2026-11-25 20:32:26,106 INFO [worker-1] booking.worker processed reservation_id=res-01M8B20KZ3RQRAQSMYM3TC55T4 outcome=held retries=0 partition=2 offset=448 trace_id=tr-01M8B20KYZMNS6336WAXQ4X5XT
+2026-11-25 20:32:26,107 CRITICAL [worker-1] booking.worker FAULT INJECTION crash_after_db_commit: MySQL committed reservation_id=res-01M8B20KZ3RQRAQSMYM3TC55T4; exiting before publish and before the Kafka offset commit (partition=2 offset=448)

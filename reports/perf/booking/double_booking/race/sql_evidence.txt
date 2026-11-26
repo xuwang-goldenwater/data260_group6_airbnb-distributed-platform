@@ -1,0 +1,54 @@
+-- Reservation outcome
+mysql> SELECT status, status_reason, COUNT(*) AS reservations FROM reservations WHERE reservation_id IN ('res-01M8B1ZXXCE8H6Q8XD61VV82RE','res-01M8B1ZXXF153ED6VSN8AHAC6H','res-01M8B1ZXXM8BH8Q4ZCNZATBKF5','res-01M8B1ZXXS6GYMTHQP74GGQFG3','res-01M8B1ZXXK456NBA170528DR07','res-01M8B1ZXXH74ZKZ2Q2D05WK3P8','res-01M8B1ZXXRHJC4FTFKVSRXGYJP','res-01M8B1ZXXN86K9T1TYTRYGVTNK','res-01M8B1ZXXH74ZKZ2Q2D05WK3P7','res-01M8B1ZXWZDDG40VVCTZH8BGTS','res-01M8B1ZXXN86K9T1TYTRYGVTNQ','res-01M8B1ZXXN86K9T1TYTRYGVTNM','res-01M8B1ZXXN86K9T1TYTRYGVTNP','res-01M8B1ZXXN86K9T1TYTRYGVTNN','res-01M8B1ZXXJ2E4YQG276MW24J4C','res-01M8B1ZXXQ31XZJ6NYTDNMJXHA','res-01M8B1ZXXQ31XZJ6NYTDNMJXHB','res-01M8B1ZXXM8BH8Q4ZCNZATBKF4','res-01M8B1ZXXF153ED6VSN8AHAC6J','res-01M8B1ZXWX1FCR6YGPWP7C5816') GROUP BY status, status_reason;
++--------------+-------------------+--------------+
+| status       | status_reason     | reservations |
++--------------+-------------------+--------------+
+| rejected     | DATES_UNAVAILABLE |           19 |
+| pending_host | NULL              |            1 |
++--------------+-------------------+--------------+
+
+-- Held nights (availability_blocks)
+mysql> SELECT property_id, night_date, reservation_id FROM availability_blocks WHERE property_id = 'property-2001' AND night_date IN ('2027-06-03','2027-06-04') ORDER BY night_date;
++---------------+------------+--------------------------------+
+| property_id   | night_date | reservation_id                 |
++---------------+------------+--------------------------------+
+| property-2001 | 2027-06-03 | res-01M8B1ZXWZDDG40VVCTZH8BGTS |
+| property-2001 | 2027-06-04 | res-01M8B1ZXWZDDG40VVCTZH8BGTS |
++---------------+------------+--------------------------------+
+
+-- Winner
+mysql> SELECT reservation_id, guest_id, status, version, trace_id FROM reservations WHERE reservation_id IN ('res-01M8B1ZXXCE8H6Q8XD61VV82RE','res-01M8B1ZXXF153ED6VSN8AHAC6H','res-01M8B1ZXXM8BH8Q4ZCNZATBKF5','res-01M8B1ZXXS6GYMTHQP74GGQFG3','res-01M8B1ZXXK456NBA170528DR07','res-01M8B1ZXXH74ZKZ2Q2D05WK3P8','res-01M8B1ZXXRHJC4FTFKVSRXGYJP','res-01M8B1ZXXN86K9T1TYTRYGVTNK','res-01M8B1ZXXH74ZKZ2Q2D05WK3P7','res-01M8B1ZXWZDDG40VVCTZH8BGTS','res-01M8B1ZXXN86K9T1TYTRYGVTNQ','res-01M8B1ZXXN86K9T1TYTRYGVTNM','res-01M8B1ZXXN86K9T1TYTRYGVTNP','res-01M8B1ZXXN86K9T1TYTRYGVTNN','res-01M8B1ZXXJ2E4YQG276MW24J4C','res-01M8B1ZXXQ31XZJ6NYTDNMJXHA','res-01M8B1ZXXQ31XZJ6NYTDNMJXHB','res-01M8B1ZXXM8BH8Q4ZCNZATBKF4','res-01M8B1ZXXF153ED6VSN8AHAC6J','res-01M8B1ZXWX1FCR6YGPWP7C5816') AND status = 'pending_host';
++--------------------------------+------------+--------------+---------+-------------------------------+
+| reservation_id                 | guest_id   | status       | version | trace_id                      |
++--------------------------------+------------+--------------+---------+-------------------------------+
+| res-01M8B1ZXWZDDG40VVCTZH8BGTS | guest-1010 | pending_host |       2 | tr-01M8B1ZXWSJ8QB9D3JKKC8YG8N |
++--------------------------------+------------+--------------+---------+-------------------------------+
+
+-- Status history rows
+mysql> SELECT to_status, actor_id, reason, COUNT(*) AS rows_ FROM reservation_status_history WHERE reservation_id IN ('res-01M8B1ZXXCE8H6Q8XD61VV82RE','res-01M8B1ZXXF153ED6VSN8AHAC6H','res-01M8B1ZXXM8BH8Q4ZCNZATBKF5','res-01M8B1ZXXS6GYMTHQP74GGQFG3','res-01M8B1ZXXK456NBA170528DR07','res-01M8B1ZXXH74ZKZ2Q2D05WK3P8','res-01M8B1ZXXRHJC4FTFKVSRXGYJP','res-01M8B1ZXXN86K9T1TYTRYGVTNK','res-01M8B1ZXXH74ZKZ2Q2D05WK3P7','res-01M8B1ZXWZDDG40VVCTZH8BGTS','res-01M8B1ZXXN86K9T1TYTRYGVTNQ','res-01M8B1ZXXN86K9T1TYTRYGVTNM','res-01M8B1ZXXN86K9T1TYTRYGVTNP','res-01M8B1ZXXN86K9T1TYTRYGVTNN','res-01M8B1ZXXJ2E4YQG276MW24J4C','res-01M8B1ZXXQ31XZJ6NYTDNMJXHA','res-01M8B1ZXXQ31XZJ6NYTDNMJXHB','res-01M8B1ZXXM8BH8Q4ZCNZATBKF4','res-01M8B1ZXXF153ED6VSN8AHAC6J','res-01M8B1ZXWX1FCR6YGPWP7C5816') GROUP BY to_status, actor_id, reason;
++--------------+----------------+-------------------+-------+
+| to_status    | actor_id       | reason            | rows_ |
++--------------+----------------+-------------------+-------+
+| requested    | guest-1020     | NULL              |     1 |
+| rejected     | booking-worker | DATES_UNAVAILABLE |    19 |
+| requested    | guest-1010     | NULL              |     1 |
+| pending_host | booking-worker | NULL              |     1 |
+| requested    | guest-1001     | NULL              |     1 |
+| requested    | guest-1002     | NULL              |     1 |
+| requested    | guest-1019     | NULL              |     1 |
+| requested    | guest-1009     | NULL              |     1 |
+| requested    | guest-1006     | NULL              |     1 |
+| requested    | guest-1015     | NULL              |     1 |
+| requested    | guest-1005     | NULL              |     1 |
+| requested    | guest-1018     | NULL              |     1 |
+| requested    | guest-1003     | NULL              |     1 |
+| requested    | guest-1008     | NULL              |     1 |
+| requested    | guest-1012     | NULL              |     1 |
+| requested    | guest-1014     | NULL              |     1 |
+| requested    | guest-1013     | NULL              |     1 |
+| requested    | guest-1011     | NULL              |     1 |
+| requested    | guest-1016     | NULL              |     1 |
+| requested    | guest-1017     | NULL              |     1 |
+| requested    | guest-1007     | NULL              |     1 |
+| requested    | guest-1004     | NULL              |     1 |
++--------------+----------------+-------------------+-------+

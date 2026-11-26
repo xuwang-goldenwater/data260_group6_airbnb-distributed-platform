@@ -1,0 +1,9 @@
+2026-11-25 20:32:20,624 INFO [worker-1] booking.worker worker started id=worker-1 group=booking-worker fault=- transient_faults=0
+2026-11-25 20:32:20,681 INFO [worker-1] booking.worker assigned partitions [0, 1, 2]
+2026-11-25 20:32:20,698 INFO [worker-1] booking.worker processed reservation_id=res-01M8B20BECQAV9DPZT1YAGK0JV outcome=held retries=0 partition=2 offset=447 trace_id=tr-01M8B20BE7QFWRPWDC40NRHN2F
+2026-11-25 20:32:20,703 INFO [worker-1] booking.outbox published topic=booking.updated idempotency_key=booking.updated:res-01M8B20BECQAV9DPZT1YAGK0JV:v2 trace_id=tr-01M8B20BE7QFWRPWDC40NRHN2F
+2026-11-25 20:32:20,703 INFO [worker-1] booking.outbox published topic=property.availability.updated idempotency_key=availability:res-01M8B20BECQAV9DPZT1YAGK0JV:held trace_id=tr-01M8B20BE7QFWRPWDC40NRHN2F
+2026-11-25 20:32:20,704 INFO [worker-1] booking.worker committed offset partition=2 next_offset=448
+2026-11-25 20:32:22,942 INFO [worker-1] booking.worker signal 15: stopping after the current record
+2026-11-25 20:32:23,252 INFO [worker-1] booking.worker revoked partitions [0, 1, 2]
+2026-11-25 20:32:23,253 INFO [worker-1] booking.worker worker stopped id=worker-1

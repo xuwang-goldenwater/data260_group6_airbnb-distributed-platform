@@ -1,0 +1,13 @@
+# Role B — Booking API + Booking worker (Python 3.11). Versions pinned to what was tested.
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+pymysql==1.2.4
+confluent-kafka==2.16.2
+jsonschema==4.26.0
+pyjwt==2.15.1
+httpx==0.28.1
+python-ulid==4.2.0
+websockets==17.4
+# tests / perf graphs
+pytest==9.2.0
+matplotlib==3.11.2

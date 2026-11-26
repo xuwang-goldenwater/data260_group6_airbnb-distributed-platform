@@ -55,3 +55,8 @@ def parse_request(text: str) -> dict[str, Any]:
     """Run the Parser agent (Ollama qwen2.5:3b, exact cache first). Imported lazily: needs Ollama on a miss."""
     import parser as parser_agent  # noqa: E402  (services/agents/parser.py)
     return parser_agent.parse(text)
+
+
+def property_facts(property_id: str) -> dict[str, Any] | None:
+    """Seed listing facts for the Explanation step (read-only)."""
+    return next((p for p in _seed()["props"] if p["property_id"] == property_id), None)

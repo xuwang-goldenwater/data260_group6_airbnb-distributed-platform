@@ -1,0 +1,64 @@
+{
+  "scenario": "agent-timeout",
+  "config": "full_debate",
+  "round_timeout_s": 10.0,
+  "generated_at": "2026-11-26T11:02:26Z",
+  "wall_clock_s": 10.484,
+  "latency_s": {
+    "n": 1,
+    "p50": 10.483,
+    "p95": 10.483,
+    "max": 10.483,
+    "mean": 10.483
+  },
+  "checks": [
+    {
+      "check": "every request produced a result",
+      "passed": true
+    },
+    {
+      "check": "one result per trace_id (no mixing)",
+      "passed": true
+    },
+    {
+      "check": "partial result marked with the missing agent",
+      "passed": true
+    },
+    {
+      "check": "published shortly after the deadline, not after the slow agent",
+      "passed": true
+    }
+  ],
+  "runs": [
+    {
+      "request_id": "R07",
+      "task_id": "tr-2f321bf29cd74ddaa14f",
+      "end_to_end_s": 10.483,
+      "status": "awaiting_approval",
+      "recommendation": "property-2175",
+      "final_ranking": [
+        "property-2175",
+        "property-2155",
+        "property-2075",
+        "property-2095",
+        "property-2183",
+        "property-2019",
+        "property-2063",
+        "property-2091",
+        "property-2119",
+        "property-2123"
+      ],
+      "method": "rule_forced",
+      "limitations": [
+        "fairness timed out in round 0",
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round2_closed": 10.263,
+        "explained": 10.264,
+        "done": 10.265
+      }
+    }
+  ]
+}

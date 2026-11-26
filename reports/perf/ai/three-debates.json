@@ -1,0 +1,127 @@
+{
+  "scenario": "three-debates",
+  "config": "full_debate",
+  "round_timeout_s": 10.0,
+  "generated_at": "2026-11-26T10:48:18Z",
+  "wall_clock_s": 0.877,
+  "latency_s": {
+    "n": 3,
+    "p50": 0.876,
+    "p95": 0.876,
+    "max": 0.876,
+    "mean": 0.876
+  },
+  "checks": [
+    {
+      "check": "every request produced a result",
+      "passed": true
+    },
+    {
+      "check": "one result per trace_id (no mixing)",
+      "passed": true
+    },
+    {
+      "check": "R07: Kafka result == offline benchmark",
+      "passed": true
+    },
+    {
+      "check": "R35: Kafka result == offline benchmark",
+      "passed": true
+    },
+    {
+      "check": "R45: Kafka result == offline benchmark",
+      "passed": true
+    }
+  ],
+  "runs": [
+    {
+      "request_id": "R07",
+      "task_id": "tr-9889b75653594681b3ef",
+      "end_to_end_s": 0.876,
+      "status": "awaiting_approval",
+      "recommendation": "property-2155",
+      "final_ranking": [
+        "property-2155",
+        "property-2075",
+        "property-2175",
+        "property-2095",
+        "property-2183",
+        "property-2019",
+        "property-2063",
+        "property-2091",
+        "property-2119",
+        "property-2123"
+      ],
+      "method": "majority",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.005,
+        "round2_closed": 0.02,
+        "explained": 0.021,
+        "done": 0.021
+      }
+    },
+    {
+      "request_id": "R35",
+      "task_id": "tr-59ee0a2951e749c49db5",
+      "end_to_end_s": 0.875,
+      "status": "awaiting_approval",
+      "recommendation": "property-2094",
+      "final_ranking": [
+        "property-2094",
+        "property-2142",
+        "property-2070",
+        "property-2182",
+        "property-2042",
+        "property-2090",
+        "property-2010",
+        "property-2098",
+        "property-2166",
+        "property-2134"
+      ],
+      "method": "rule_forced",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.006,
+        "round2_closed": 0.025,
+        "explained": 0.025,
+        "done": 0.026
+      }
+    },
+    {
+      "request_id": "R45",
+      "task_id": "tr-658edad99e2b41eb91b7",
+      "end_to_end_s": 0.876,
+      "status": "awaiting_approval",
+      "recommendation": "property-2001",
+      "final_ranking": [
+        "property-2001",
+        "property-2161",
+        "property-2044",
+        "property-2049",
+        "property-2053",
+        "property-2157",
+        "property-2077",
+        "property-2007",
+        "property-2045",
+        "property-2012"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.036,
+        "explained": 0.047,
+        "done": 0.047
+      }
+    }
+  ]
+}

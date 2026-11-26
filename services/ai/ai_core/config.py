@@ -34,6 +34,15 @@ class Settings:
     mongo_db: str = os.environ.get("MONGO_DB", "airbnb_ai")
     # per-round deadline in seconds (ai.md: deadline_ms 10000 by default)
     round_timeout_s: float = float(os.environ.get("AI_ROUND_TIMEOUT_S", "10"))
+    # Explanation step: "llm" (Ollama, falls back to a template) or "template"
+    explain_mode: str = os.environ.get("AI_EXPLAIN_MODE", "llm")
+    explain_timeout_s: float = float(os.environ.get("AI_EXPLAIN_TIMEOUT_S", "5"))
+    ollama_url: str = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+    explain_model: str = os.environ.get("AI_EXPLAIN_MODEL", "qwen2.5:3b")
+    # JWT (same variables as the Booking service, docs/api/00_conventions.md)
+    jwt_secret: str = os.environ.get("JWT_SECRET", "")
+    jwt_algorithm: str = os.environ.get("JWT_ALGORITHM", "HS256")
+    jwt_issuer: str = os.environ.get("JWT_ISSUER", "")
     envelope_schema: Path = REPO_ROOT / "shared" / "envelope.schema.json"
     seed_dir: Path = REPO_ROOT / "data" / "seed" / "generated"
 

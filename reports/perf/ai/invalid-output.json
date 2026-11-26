@@ -1,0 +1,64 @@
+{
+  "scenario": "invalid-output",
+  "config": "full_debate",
+  "round_timeout_s": 10.0,
+  "generated_at": "2026-11-26T11:02:29Z",
+  "wall_clock_s": 0.288,
+  "latency_s": {
+    "n": 1,
+    "p50": 0.287,
+    "p95": 0.287,
+    "max": 0.287,
+    "mean": 0.287
+  },
+  "checks": [
+    {
+      "check": "every request produced a result",
+      "passed": true
+    },
+    {
+      "check": "one result per trace_id (no mixing)",
+      "passed": true
+    },
+    {
+      "check": "invalid fairness output rejected by the harness",
+      "passed": true
+    },
+    {
+      "check": "a recommendation was still made from the valid agents",
+      "passed": true
+    }
+  ],
+  "runs": [
+    {
+      "request_id": "R13",
+      "task_id": "tr-3bad9d3697ab4a3caf12",
+      "end_to_end_s": 0.287,
+      "status": "awaiting_approval",
+      "recommendation": "property-2053",
+      "final_ranking": [
+        "property-2053",
+        "property-2001",
+        "property-2044",
+        "property-2173",
+        "property-2049",
+        "property-2025",
+        "property-2157",
+        "property-2185",
+        "property-2045",
+        "property-2029"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "fairness output rejected in round 0 (INVALID_AGENT_OUTPUT)",
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.006,
+        "explained": 0.007,
+        "done": 0.007
+      }
+    }
+  ]
+}

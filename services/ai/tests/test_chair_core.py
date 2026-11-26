@@ -176,3 +176,37 @@ def test_restart_recovers_open_debate():
     assert drive(second, [copy.deepcopy(r)]) == []                   # redelivered message: deduplicated
     [result] = drive(second, [f])
     assert result["limitations"] == []
+
+
+# ---------------------------------------------------------------- explanation step (task 4.9)
+def test_explanation_is_filled_and_kept_apart_from_evidence(chair):
+    p = parsed_event("tr-ex", "R07")
+    [result] = drive(chair, [p] + round0_events(p, ["matching", "risk", "fairness"]))
+    ex = result["explanation"]
+    assert ex["source"] == "template" and ex["generated"] is True
+    assert result["recommendation"]["property_id"] in ex["text"]
+    assert "explanation" not in result["evidence"] and "score_breakdown" in result["evidence"]
+    assert len(result["alternatives"]) == 2 and result["allowed_agent_actions"] == []
+    assert [s["step_id"] for s in result["plan"]][-2:] == ["explain", "human_approval"]
+
+
+def test_slow_llm_falls_back_to_template_and_says_so():
+    from ai_core.explanation import ollama_explainer
+    slow = ollama_explainer("http://127.0.0.1:9", "qwen2.5:3b", timeout_s=0.2)      # nothing listens there
+    core = ChairCore(MemoryStore(), round_timeout_s=10, clock=Clock(), explainer=slow)
+    p = parsed_event("tr-fb", "R45")
+    [result] = drive(core, [p] + round0_events(p, ["matching", "risk", "fairness"]))
+    assert result["explanation"]["source"] == "template_fallback"
+    assert "explanation_fallback" in result["limitations"]
+    assert result["recommendation"]["property_id"] == offline("R45")["recommendation"]   # decision unchanged
+
+
+def test_corrupt_agent_output_is_rejected_not_used(chair):
+    """What `agent_worker fairness --corrupt` sends: score 1.7 on an unknown property."""
+    from ai_workers.agent_worker import corrupt
+    p = parsed_event("tr-bad", "R07")
+    good = round0_events(p, ["matching", "risk"])
+    bad = corrupt(agent_logic.round0_step("fairness", p)[0])[2]
+    [result] = drive(chair, [p] + good + [bad])
+    assert any(lim.startswith("fairness output rejected in round 0") for lim in result["limitations"])
+    assert result["recommendation"]["property_id"] is not None

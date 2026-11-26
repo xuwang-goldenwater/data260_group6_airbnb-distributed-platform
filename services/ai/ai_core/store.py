@@ -20,6 +20,10 @@ class Store(Protocol):
     def events(self, trace_id: str) -> list[dict[str, Any]]: ...
     def save_result(self, result: dict[str, Any]) -> None: ...
     def get_result(self, trace_id: str) -> dict[str, Any] | None: ...
+    def insert_approval(self, approval: dict[str, Any]) -> bool: ...
+    def get_approval(self, trace_id: str) -> dict[str, Any] | None: ...
+    def mark_approval_published(self, trace_id: str) -> None: ...
+    def set_result_decision(self, trace_id: str, status: str, decision: dict[str, Any]) -> None: ...
 
 
 class MemoryStore:
@@ -28,6 +32,7 @@ class MemoryStore:
         self.debates: dict[str, dict] = {}
         self._events: dict[str, list] = {}
         self.results: dict[str, dict] = {}
+        self.approvals: dict[str, dict] = {}
 
     def create_task(self, task):
         self.tasks[task["task_id"]] = copy.deepcopy(task)
@@ -56,9 +61,26 @@ class MemoryStore:
     def get_result(self, trace_id):
         return copy.deepcopy(self.results.get(trace_id))
 
+    def insert_approval(self, approval):
+        """Insert-once: False if this trace already has a decision (the API turns that into 409)."""
+        if approval["trace_id"] in self.approvals:
+            return False
+        self.approvals[approval["trace_id"]] = copy.deepcopy(approval)
+        return True
+
+    def get_approval(self, trace_id):
+        return copy.deepcopy(self.approvals.get(trace_id))
+
+    def mark_approval_published(self, trace_id):
+        self.approvals[trace_id]["published"] = True
+
+    def set_result_decision(self, trace_id, status, decision):
+        self.results[trace_id]["status"] = status
+        self.results[trace_id]["human_decision"] = copy.deepcopy(decision)
+
 
 class MongoStore:
-    """Collections: ai_tasks, ai_debates, ai_events, ai_results (database from MONGO_DB)."""
+    """Collections: ai_tasks, ai_debates, ai_events, ai_results, ai_approvals (database from MONGO_DB)."""
 
     def __init__(self, uri: str, db_name: str) -> None:
         from pymongo import ASCENDING, MongoClient
@@ -68,6 +90,8 @@ class MongoStore:
         self._db.ai_debates.create_index("phase")
         self._db.ai_events.create_index([("trace_id", ASCENDING), ("timestamp", ASCENDING)])
         self._db.ai_results.create_index("trace_id", unique=True)
+        # the unique index is what makes "one decision per result" hold even with two API replicas
+        self._db.ai_approvals.create_index("trace_id", unique=True)
 
     @staticmethod
     def _clean(doc):
@@ -102,3 +126,21 @@ class MongoStore:
 
     def get_result(self, trace_id):
         return self._clean(self._db.ai_results.find_one({"trace_id": trace_id}))
+
+    def insert_approval(self, approval):
+        from pymongo.errors import DuplicateKeyError
+        try:
+            self._db.ai_approvals.insert_one(dict(approval))
+            return True
+        except DuplicateKeyError:
+            return False
+
+    def get_approval(self, trace_id):
+        return self._clean(self._db.ai_approvals.find_one({"trace_id": trace_id}))
+
+    def mark_approval_published(self, trace_id):
+        self._db.ai_approvals.update_one({"trace_id": trace_id}, {"$set": {"published": True}})
+
+    def set_result_decision(self, trace_id, status, decision):
+        self._db.ai_results.update_one({"trace_id": trace_id},
+                                       {"$set": {"status": status, "human_decision": decision}})

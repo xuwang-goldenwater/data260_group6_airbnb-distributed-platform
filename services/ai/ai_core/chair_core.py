@@ -33,7 +33,8 @@ import time
 from typing import Any, Callable
 
 from . import envelope as env
-from .agents_bridge import chair_rules
+from .agents_bridge import chair_rules, property_facts
+from .explanation import Explainer, context, template_explainer
 from .config import EXPECTED_AGENTS, T_ROUND1, T_RESULTS
 from .harness import InvalidAgentOutput, check_round0, check_vote
 from .store import Store
@@ -42,8 +43,10 @@ Outgoing = tuple[str, str, dict[str, Any]]      # (topic, kafka key, envelope)
 
 
 class ChairCore:
-    def __init__(self, store: Store, *, round_timeout_s: float = 10.0, clock: Callable[[], float] = time.time):
+    def __init__(self, store: Store, *, round_timeout_s: float = 10.0, clock: Callable[[], float] = time.time,
+                 explainer: Explainer = template_explainer):
         self.store = store
+        self.explainer = explainer
         self.round_timeout_s = round_timeout_s
         self.clock = clock
         self.debates: dict[str, dict[str, Any]] = {}
@@ -110,7 +113,16 @@ class ChairCore:
             "rejected": [], "missing": {"round0": [], "round2": []}, "late": [], "seen": [], "outbox": [],
             "log": [{"at": now, "what": "debate opened", "config": config}],
             "timings": {"opened_at": now},
+            # one plan per trace (ai.md "Plan, Timeout, and Safety Rules"): every step has an owner,
+            # a status and timestamps; a dependent step starts only after its prerequisite completes
+            "plan": [{"step_id": s, "owner": o, "status": "pending", "started_at": None, "finished_at": None,
+                      "note": None}
+                     for s, o in (("parse", "parser"), ("retrieve_candidates", "agents"), ("round_0", "chair"),
+                                  ("round_1_2", "chair"), ("adjudicate", "chair"), ("explain", "explanation"),
+                                  ("human_approval", "guest"))],
         }
+        self._step(d, "parse", "completed", note=p.get("parser_cache") or p.get("model"))
+        self._step(d, "round_0", "in_progress")
         self.debates[trace_id] = d
         self.store.append_event(trace_id, event)
         if p.get("request") is None or config not in EXPECTED_AGENTS:
@@ -179,19 +191,25 @@ class ChairCore:
     # ------------------------------------------------------------------ round transitions
     def _close_round0(self, d):
         present = {a: d["round0"][a] for a in d["expected"] if a in d["round0"]}
+        self._step(d, "round_0", "completed", note=f"{len(present)}/{len(d['expected'])} agents")
         if "matching" not in present:
             return self._fail(d, "matching_missing: no valid Matching opinion before the deadline")
         try:
             chair_rules.check_candidates(present)
         except chair_rules.CandidateMismatch as exc:
             return self._fail(d, f"candidate_mismatch: {exc}")
+        n = len(present["matching"]["candidate_property_ids"])
+        self._step(d, "retrieve_candidates", "completed", note=f"{n} candidates from the fixed pool")
         if d["config"] == "single_agent":
+            self._step(d, "round_1_2", "skipped", note="single_agent config")
             return self._finalize(d)
         d["disagreement"] = chair_rules.disagreement(present)
         r1 = chair_rules.round1(present, d["config"])
         d["round1"] = r1
         if r1["challenger_property_id"] is None:       # everyone agrees on top-1: no vote needed
+            self._step(d, "round_1_2", "skipped", note="agents agree on top-1")
             return self._finalize(d)
+        self._step(d, "round_1_2", "in_progress")
         d["phase"] = "round2"
         d["voters"] = sorted(present)
         d["deadline"] = self.clock() + self.round_timeout_s
@@ -216,15 +234,31 @@ class ChairCore:
             votes = [d["votes"][a] for a in sorted(d["votes"])]
             winner, adjudication = chair_rules.adjudicate(present, r1, votes)
             ranking = chair_rules.final_ranking(present, winner)
+        if d["plan"][3]["status"] == "in_progress":
+            self._step(d, "round_1_2", "completed", note=f"{len(votes)}/{len(d['voters'])} votes")
+        self._step(d, "adjudicate", "completed", note=adjudication["method"])
         dissent = [{"agent_id": v["agent_id"], "reason": v["reason"]}
                    for v in votes if v.get("property_id") not in (winner, None)]
         limitations = self._limitations(d)
-        top = next((r for r in present["matching"]["ranked_properties"] if r["property_id"] == winner), {})
+        m_scores = {r["property_id"]: r for r in present["matching"]["ranked_properties"]}
+        top = m_scores.get(winner, {"property_id": winner})
+        alternatives = [{"property_id": pid, "score": m_scores.get(pid, {}).get("score"),
+                         "reasons": m_scores.get(pid, {}).get("reasons", [])} for pid in ranking[1:3]]
+        flags = [f for f in present.get("risk", {}).get("risk_flags", []) if f.get("property_id") == winner]
+        # Explanation step: reads only the decided result; cannot change it
+        self._step(d, "explain", "in_progress")
+        explanation = self.explainer(context(property_facts(winner), top, alternatives[0] if alternatives else None,
+                                             flags, dissent, limitations))
+        if explanation.get("source") == "template_fallback":
+            limitations = limitations + ["explanation_fallback"]
+        self._step(d, "explain", "completed", note=explanation.get("source"))
+        d["timings"]["explained_at"] = self.clock()
         result = {
             "trace_id": d["trace_id"], "task_id": d["task_id"], "plan_id": d["plan_id"],
             "debate_id": d["debate_id"], "config": d["config"], "status": "awaiting_approval",
             "recommendation": {"property_id": winner, "score": top.get("score"), "reasons": top.get("reasons", [])},
             "final_ranking": ranking,
+            "alternatives": alternatives,
             "disagreement": d.get("disagreement"),
             "round1": r1,
             "votes": votes,
@@ -233,21 +267,31 @@ class ChairCore:
             "dissent": dissent,
             "adjudication": adjudication,
             "audit_findings": present.get("fairness", {}).get("audit_findings", []),
+            # measured values only (spec 13.6) ...
             "evidence": {"scoring_versions": {a: p["scoring_version"] for a, p in present.items()},
+                         "score_breakdown": top.get("score_breakdown", {}),
+                         "risk_flags": flags,
                          "evidence_ids": top.get("evidence_ids", [])},
-            "explanation": None,            # task 4.9: Explanation step fills this before publish
+            # ... and generated text, kept separate and never used for scoring
+            "explanation": explanation,
             "limitations": limitations,
             "approval_required": True,      # always: agents never act on their own
+            "allowed_agent_actions": [],    # agents cannot book, message or change availability
+            "plan": d["plan"],
             "timings_s": self._timings(d),
         }
+        self._step(d, "human_approval", "in_progress")
         return self._publish_result(d, result)
 
     def _fail(self, d, reason):
+        for st in d["plan"]:
+            if st["status"] in ("pending", "in_progress"):
+                st["status"] = "failed" if st["step_id"] != "human_approval" else "pending"
         result = {
             "trace_id": d["trace_id"], "task_id": d["task_id"], "plan_id": d["plan_id"],
             "debate_id": d["debate_id"], "config": d["config"], "status": "failed",
             "recommendation": None, "final_ranking": [], "limitations": [reason] + self._limitations(d),
-            "approval_required": True, "timings_s": self._timings(d),
+            "approval_required": True, "plan": d["plan"], "timings_s": self._timings(d),
         }
         return self._publish_result(d, result)
 
@@ -296,6 +340,18 @@ class ChairCore:
 
     def _save(self, d):
         self.store.save_debate(d)
+
+    def _step(self, d, step_id, status, note=None):
+        now = self.clock()
+        for st in d["plan"]:
+            if st["step_id"] == step_id:
+                if status == "in_progress" or st["started_at"] is None:
+                    st["started_at"] = st["started_at"] or now
+                if status in ("completed", "skipped", "failed"):
+                    st["finished_at"] = now
+                st["status"] = status
+                if note is not None:
+                    st["note"] = note
 
     def _out(self, d, topic, payload, idem_suffix) -> Outgoing:
         ev = env.build(event_type=topic, trace_id=d["trace_id"], actor_id="chair",

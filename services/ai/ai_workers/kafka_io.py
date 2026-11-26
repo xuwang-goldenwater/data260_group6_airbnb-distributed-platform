@@ -25,6 +25,10 @@ def make_consumer(s: Settings, group_id: str, topics: list[str]) -> Consumer:
         "group.id": group_id,
         "enable.auto.commit": False,        # we commit only after the work is saved and published
         "auto.offset.reset": "earliest",
+        # a crashed member is noticed after 10 s instead of the 45 s default, so a restarted
+        # worker gets its partitions back quickly
+        "session.timeout.ms": 10000,
+        "heartbeat.interval.ms": 3000,
     })
     c.subscribe(topics)
     return c
@@ -56,3 +60,34 @@ def send_to_dlq(producer: Producer, msg, group_id: str, err: env.EnvelopeError) 
                       idempotency_key=f"dlq:{msg.topic()}:{msg.partition()}:{msg.offset()}")
     publish(producer, [(T_DLQ, key, event)])
     log.warning("sent to DLQ: %s %s", err.code, err.message)
+
+
+class KafkaUnavailable(RuntimeError):
+    pass
+
+
+def ensure_topics(s: Settings, topics: list[str], partitions: int = 3, replication: int = 1,
+                  wait_s: float = 60) -> list[str]:
+    """Wait for the broker (it needs ~20 s after `docker compose up`), then create missing topics
+    (3 partitions so three debates can spread across them). Returns the ones created."""
+    import time
+    from confluent_kafka import KafkaException
+    from confluent_kafka.admin import AdminClient, NewTopic
+    admin = AdminClient({"bootstrap.servers": s.kafka_bootstrap, "log_level": 0})   # quiet while waiting
+    deadline = time.time() + wait_s
+    while True:
+        try:
+            existing = set(admin.list_topics(timeout=3).topics)
+            break
+        except KafkaException as exc:
+            if time.time() > deadline:
+                raise KafkaUnavailable(f"no Kafka broker at {s.kafka_bootstrap} after {wait_s:.0f}s") from exc
+            time.sleep(2)
+    new = [NewTopic(t, num_partitions=partitions, replication_factor=replication) for t in topics if t not in existing]
+    for topic, fut in (admin.create_topics(new).items() if new else []):
+        try:
+            fut.result(15)
+        except Exception as exc:          # created by someone else in the meantime is fine
+            if "TOPIC_ALREADY_EXISTS" not in str(exc):
+                raise
+    return [t.topic for t in new]

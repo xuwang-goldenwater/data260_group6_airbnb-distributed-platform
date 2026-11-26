@@ -17,6 +17,7 @@ import signal
 from ai_core import envelope as env
 from ai_core.chair_core import ChairCore
 from ai_core.config import T_PARSED, T_ROUND0, T_ROUND2, settings
+from ai_core.explanation import ollama_explainer, template_explainer
 from ai_core.store import MongoStore
 
 from .kafka_io import make_consumer, make_producer, publish, send_to_dlq
@@ -28,7 +29,10 @@ log = logging.getLogger("ai.chair")
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
     s = settings()
-    core = ChairCore(MongoStore(s.mongo_uri, s.mongo_db), round_timeout_s=s.round_timeout_s)
+    explainer = (ollama_explainer(s.ollama_url, s.explain_model, s.explain_timeout_s)
+                 if s.explain_mode == "llm" else template_explainer)
+    core = ChairCore(MongoStore(s.mongo_uri, s.mongo_db), round_timeout_s=s.round_timeout_s, explainer=explainer)
+    log.info("explanation mode: %s", s.explain_mode)
     producer = make_producer(s, "ai-chair")
     log.info("recovered %d open debate(s) from MongoDB", core.recover())
     core.mark_sent(publish(producer, core.unsent()))         # finish anything cut off by a crash

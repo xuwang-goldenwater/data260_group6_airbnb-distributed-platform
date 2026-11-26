@@ -1,0 +1,319 @@
+{
+  "scenario": "latency",
+  "config": "full_debate",
+  "round_timeout_s": 10.0,
+  "generated_at": "2026-11-26T11:02:36Z",
+  "wall_clock_s": 2.926,
+  "latency_s": {
+    "n": 10,
+    "p50": 0.292,
+    "p95": 0.302,
+    "max": 0.302,
+    "mean": 0.293
+  },
+  "checks": [
+    {
+      "check": "every request produced a result",
+      "passed": true
+    },
+    {
+      "check": "one result per trace_id (no mixing)",
+      "passed": true
+    }
+  ],
+  "runs": [
+    {
+      "request_id": "R01",
+      "task_id": "tr-7436a5d937804a6fb09c",
+      "end_to_end_s": 0.287,
+      "status": "awaiting_approval",
+      "recommendation": "property-2005",
+      "final_ranking": [
+        "property-2005",
+        "property-2125",
+        "property-2165",
+        "property-2041",
+        "property-2181",
+        "property-2129",
+        "property-2057",
+        "property-2197",
+        "property-2193",
+        "property-2121"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.007,
+        "explained": 0.008,
+        "done": 0.008
+      }
+    },
+    {
+      "request_id": "R02",
+      "task_id": "tr-1da26fb85eaa4e8eb018",
+      "end_to_end_s": 0.294,
+      "status": "awaiting_approval",
+      "recommendation": "property-2118",
+      "final_ranking": [
+        "property-2118",
+        "property-2078",
+        "property-2018",
+        "property-2034",
+        "property-2138",
+        "property-2174",
+        "property-2094",
+        "property-2070",
+        "property-2066",
+        "property-2162"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.008,
+        "explained": 0.008,
+        "done": 0.008
+      }
+    },
+    {
+      "request_id": "R03",
+      "task_id": "tr-0da579387e3e4c9faf80",
+      "end_to_end_s": 0.29,
+      "status": "awaiting_approval",
+      "recommendation": "property-2167",
+      "final_ranking": [
+        "property-2167",
+        "property-2047",
+        "property-2067",
+        "property-2019",
+        "property-2091",
+        "property-2119",
+        "property-2187",
+        "property-2107",
+        "property-2155",
+        "property-2175"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.009,
+        "explained": 0.009,
+        "done": 0.009
+      }
+    },
+    {
+      "request_id": "R04",
+      "task_id": "tr-4e263cb50f9a4405967f",
+      "end_to_end_s": 0.29,
+      "status": "awaiting_approval",
+      "recommendation": "property-2180",
+      "final_ranking": [
+        "property-2180",
+        "property-2120",
+        "property-2160",
+        "property-2084",
+        "property-2036",
+        "property-2004",
+        "property-2068",
+        "property-2196",
+        "property-2192",
+        "property-2064"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.008,
+        "explained": 0.009,
+        "done": 0.009
+      }
+    },
+    {
+      "request_id": "R05",
+      "task_id": "tr-02d2a992e4644018ba98",
+      "end_to_end_s": 0.291,
+      "status": "awaiting_approval",
+      "recommendation": "property-2044",
+      "final_ranking": [
+        "property-2044",
+        "property-2049",
+        "property-2029",
+        "property-2001",
+        "property-2129",
+        "property-2025",
+        "property-2053",
+        "property-2157",
+        "property-2185",
+        "property-2077"
+      ],
+      "method": "majority",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.008,
+        "round2_closed": 0.02,
+        "explained": 0.021,
+        "done": 0.021
+      }
+    },
+    {
+      "request_id": "R06",
+      "task_id": "tr-9db53de0284a46478582",
+      "end_to_end_s": 0.298,
+      "status": "awaiting_approval",
+      "recommendation": "property-2078",
+      "final_ranking": [
+        "property-2078",
+        "property-2138",
+        "property-2098",
+        "property-2174",
+        "property-2094",
+        "property-2070",
+        "property-2090",
+        "property-2122",
+        "property-2010",
+        "property-2134"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.01,
+        "explained": 0.011,
+        "done": 0.011
+      }
+    },
+    {
+      "request_id": "R07",
+      "task_id": "tr-fb0ba164c05f4335ba11",
+      "end_to_end_s": 0.287,
+      "status": "awaiting_approval",
+      "recommendation": "property-2155",
+      "final_ranking": [
+        "property-2155",
+        "property-2075",
+        "property-2175",
+        "property-2095",
+        "property-2183",
+        "property-2019",
+        "property-2063",
+        "property-2091",
+        "property-2119",
+        "property-2123"
+      ],
+      "method": "majority",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.008,
+        "round2_closed": 0.016,
+        "explained": 0.017,
+        "done": 0.017
+      }
+    },
+    {
+      "request_id": "R08",
+      "task_id": "tr-00fad1bb8143433db0da",
+      "end_to_end_s": 0.292,
+      "status": "awaiting_approval",
+      "recommendation": "property-2036",
+      "final_ranking": [
+        "property-2036",
+        "property-2196",
+        "property-2084",
+        "property-2016",
+        "property-2180",
+        "property-2076",
+        "property-2156",
+        "property-2068",
+        "property-2120",
+        "property-2004"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.009,
+        "explained": 0.01,
+        "done": 0.01
+      }
+    },
+    {
+      "request_id": "R09",
+      "task_id": "tr-fb6ac822e13c432e808a",
+      "end_to_end_s": 0.295,
+      "status": "awaiting_approval",
+      "recommendation": "property-2025",
+      "final_ranking": [
+        "property-2025",
+        "property-2157",
+        "property-2185",
+        "property-2029",
+        "property-2077",
+        "property-2177",
+        "property-2161",
+        "property-2181",
+        "property-2037",
+        "property-2081"
+      ],
+      "method": "consensus",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.012,
+        "explained": 0.013,
+        "done": 0.013
+      }
+    },
+    {
+      "request_id": "R10",
+      "task_id": "tr-cb91949f6c2047479f49",
+      "end_to_end_s": 0.302,
+      "status": "awaiting_approval",
+      "recommendation": "property-2174",
+      "final_ranking": [
+        "property-2174",
+        "property-2094",
+        "property-2134",
+        "property-2078",
+        "property-2070",
+        "property-2090",
+        "property-2098",
+        "property-2010",
+        "property-2122",
+        "property-2166"
+      ],
+      "method": "majority",
+      "limitations": [
+        "explanation_fallback"
+      ],
+      "explanation_source": "template_fallback",
+      "chair_timings_s": {
+        "round0_closed": 0.011,
+        "round2_closed": 0.022,
+        "explained": 0.023,
+        "done": 0.023
+      }
+    }
+  ]
+}

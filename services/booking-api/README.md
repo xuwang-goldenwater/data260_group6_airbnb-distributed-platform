@@ -14,7 +14,7 @@ Browser ──POST /bookings/create──▶ booking-api ──booking.requested
 | `booking_core/` | shared by API and worker: config, DB pool, `dao/` (all SQL), envelope + DLQ, events, producer, outbox, `cancellation_policy.py`, cross-service clients |
 | `booking_api/` | FastAPI app: REST endpoints, WebSocket gateway, outbox publisher, completion job |
 | `../booking-worker/booking_worker/` | separate worker process (`worker.py`) and `consumer_utils.py` (retry / DLQ helpers) |
-| `scripts/` | `import_seed.py`, `dev_token.py`, `complete_stays.py`, ★ `double_booking.py`, ★ `consumer_recovery.py` |
+| `scripts/` | `import_seed.py`, `dev_token.py`, `complete_stays.py`, ★ `double_booking.py`, ★ `consumer_recovery.py`, `perf_booking.py` |
 | `../../db/mysql/02_bookings.sql` | schema |
 | `../../frontend/booking/index.html` | standalone console, served at `http://localhost:8002/ui` |
 
@@ -62,6 +62,7 @@ make consumer-recovery              # evidence → reports/perf/booking/consumer
 
 make complete-stays                 # confirmed → completed after check_out (BOOKING_CLOCK_DATE=... to move "today")
 make test-booking                   # pytest (uses the isolated database airbnb_booking_test)
+make booking-perf                   # task 5.2 evidence → reports/perf/booking/
 make booking-reset                  # local only: drop + recreate the 5 booking tables and re-import the seed
 ```
 

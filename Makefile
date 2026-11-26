@@ -21,7 +21,7 @@ WORKER_ID ?= worker-1
 N ?= 20
 
 .PHONY: booking-venv booking-infra-up booking-topics booking-db booking-seed booking-reset booking-api booking-worker booking-token complete-stays booking-test-db test-booking \
-        test-double-booking consumer-recovery
+        test-double-booking consumer-recovery booking-perf
 
 booking-venv: ## create .venv (Python 3.11) with Role B dependencies
 	@test -x $(PY) || (command -v uv >/dev/null && uv venv --python 3.11 .venv || python3.11 -m venv .venv)
@@ -86,5 +86,9 @@ consumer-recovery: ## ★ task 4.3: stop/kill worker, show lag, prove no loss an
 	@mkdir -p reports/perf/booking/consumer_recovery
 	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/consumer_recovery.py 2>&1 \
 	  | tee reports/perf/booking/consumer_recovery/run_output.txt
+
+booking-perf: ## task 5.2: e2e latency at concurrency 1/10/25/50, retry timing, duplicates, DLQ count
+	@mkdir -p reports/perf/booking
+	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/perf_booking.py 2>&1 | tee reports/perf/booking/run_output.txt
 
 # --- end Role B ---------------------------------------------------------------------------------

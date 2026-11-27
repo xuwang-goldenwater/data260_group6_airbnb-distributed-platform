@@ -231,3 +231,15 @@ def test_panel_and_health():
     client = app_with(MemoryStore(), [])
     assert "AI Debate Panel" in client.get("/ai/panel").text
     assert client.get("/ai/health").json() == {"status": "ok", "mongo": "ok"}
+
+
+def test_edit_may_pick_the_entire_place_alternative():
+    """In the 7 reviewed cases the alternative is also in final_ranking; this checks the case where
+    it is not (the alternative scan covers every candidate, the ranking only the top 10)."""
+    client, store, _, task_id, result = decided_task("R01")
+    alt = "property-2999"
+    assert alt not in result["final_ranking"]
+    store.results[task_id]["explanation"]["entire_place_alternative"]["property_id"] = alt
+    r = client.post(f"/ai/results/{task_id}/edit", headers=GUEST,
+                    json={"decision": "edited", "selected_property_id": alt, "reason": "entire place, similar price"})
+    assert r.status_code == 200 and r.json()["selected_property_id"] == alt

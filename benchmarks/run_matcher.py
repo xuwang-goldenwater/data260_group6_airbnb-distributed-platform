@@ -11,6 +11,8 @@ Usage (from repo root):
     python3 benchmarks/run_matcher.py --parse parser   # needs Ollama unless all cached
     python3 benchmarks/run_matcher.py --parse parser --matcher matcher-v2
                                                        # -> single_agent_matcher-v2
+    python3 benchmarks/run_matcher.py --parse parser --reflect
+                                                       # -> single_agent_reflect
 Output:
     benchmarks/results/<config>.csv
 """
@@ -24,6 +26,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path("services/agents")))
 import matching  # noqa: E402
 import parser as parser_agent  # noqa: E402
+import reflection  # noqa: E402
+import risk  # noqa: E402
 
 REQUESTS = Path("benchmarks/requests.json")
 RESULTS_DIR = Path("benchmarks/results")
@@ -34,10 +38,14 @@ def main():
     ap.add_argument("--parse", choices=["expected", "parser"], default="expected",
                     help="where the structured request comes from")
     ap.add_argument("--matcher", choices=matching.VERSIONS, default=matching.SCORING_VERSION)
+    ap.add_argument("--reflect", action="store_true", help="run the reflection step (7.5.3)")
     args = ap.parse_args()
     config = "single_agent" if args.parse == "parser" else "matcher_expected_parse"
     if args.matcher != matching.SCORING_VERSION:
         config += f"_{args.matcher}"
+    if args.reflect:
+        config += "_reflect"
+        reviews, cancels = risk.load_evidence()
     cache = parser_agent.load_cache()
 
     bench = json.loads(REQUESTS.read_text())
@@ -53,6 +61,10 @@ def main():
             q, cache_hit = req["expected_parse"], ""
         out = matching.rank(q, props, blocked, args.matcher) if q else {"ranked_properties": [],
               "scoring_version": matching.SCORING_VERSION}
+        refl = {}
+        if args.reflect and q:
+            out = reflection.reflect(out, q, props, blocked, reviews, cancels)
+            refl = out["reflection"]
         ranked = out["ranked_properties"]
         rows.append({
             "request_id": req["request_id"],
@@ -63,6 +75,9 @@ def main():
             "final_ranking": ";".join(r["property_id"] for r in ranked),
             "scores": ";".join(f"{r['score']:.4f}" for r in ranked),
             "latency_ms": round((time.perf_counter() - t0) * 1000, 2),
+            **({"reflection_decision": refl.get("decision", ""),
+                "reflection_cycles": refl.get("cycles", ""),
+                "reflection_changed_top1": refl.get("changed_top_1", "")} if args.reflect else {}),
         })
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)

@@ -18,6 +18,7 @@ _AGENTS_DIR = REPO_ROOT / "services" / "agents"
 if str(_AGENTS_DIR) not in sys.path:
     sys.path.insert(0, str(_AGENTS_DIR))
 
+import alternatives  # noqa: E402  (Role E: explanation-v2, services/agents/alternatives.py)
 import chair as chair_rules  # noqa: E402  (Role E: services/agents/chair.py)
 import fairness  # noqa: E402
 import matching  # noqa: E402
@@ -55,6 +56,16 @@ def parse_request(text: str) -> dict[str, Any]:
     """Run the Parser agent (Ollama qwen2.5:3b, exact cache first). Imported lazily: needs Ollama on a miss."""
     import parser as parser_agent  # noqa: E402  (services/agents/parser.py)
     return parser_agent.parse(text)
+
+
+def entire_place_alternative(request: dict[str, Any], winner_id: str) -> dict[str, Any] | None:
+    """explanation-v2: best entire place at a similar price when a private room is recommended.
+    Read-only: it never changes the ranking or the recommendation."""
+    s = _seed()
+    return alternatives.entire_place_alternative(request, winner_id, s["props"], s["blocked"])
+
+
+EXPLANATION_VERSION = alternatives.EXPLANATION_VERSION
 
 
 def property_facts(property_id: str) -> dict[str, Any] | None:

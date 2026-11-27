@@ -112,7 +112,7 @@ function showResult(r) {
     <details><summary>Evidence (measured, separate from the explanation)</summary><pre>${esc(JSON.stringify(r.evidence, null, 2))}</pre></details>
     <div class="actions">
       <button id="ap">Approve</button>
-      <select id="alt" style="width:auto">${(r.final_ranking || []).map(id => `<option>${esc(id)}</option>`).join("")}</select>
+      <select id="alt" style="width:auto">${(r.final_ranking || []).map(id => `<option>${esc(id)}</option>`).join("")}${ex.entire_place_alternative ? `<option>${esc(ex.entire_place_alternative.property_id)}</option>` : ""}</select>
       <button class="ghost" id="ed">Edit to selected</button>
       <button class="ghost" id="rj">Reject</button>
     </div>`;

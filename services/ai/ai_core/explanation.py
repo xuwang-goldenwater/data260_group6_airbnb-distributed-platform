@@ -61,14 +61,18 @@ def template_text(ctx: dict[str, Any]) -> str:
         text += f" Next best option: {ctx['runner_up']['property_id']}."
     alt = ctx.get("entire_place_alternative")
     if alt:
-        rated = f"rated {alt['rating']:.1f}" if alt.get("rating") is not None else "new listing"
-        text += (f" An entire place at a similar price is also available: {alt['property_id']} "
-                 f"({alt['property_type']}, ${alt['nightly_price']:.0f}, {rated}).")
+        text += " " + alternative_sentence(alt)
     if ctx.get("dissent"):
         text += " Dissent: " + ctx["dissent"][0] + "."
     if ctx.get("limitations"):
         text += " Note: " + "; ".join(ctx["limitations"]) + "."
     return text
+
+
+def alternative_sentence(alt: dict[str, Any]) -> str:
+    rated = f"rated {alt['rating']:.1f}" if alt.get("rating") is not None else "new listing"
+    return (f"An entire place at a similar price is also available: {alt['property_id']} "
+            f"({alt['property_type']}, ${alt['nightly_price']:.0f}, {rated}).")
 
 
 def template_explainer(ctx: dict[str, Any]) -> dict[str, Any]:
@@ -78,7 +82,8 @@ def template_explainer(ctx: dict[str, Any]) -> dict[str, Any]:
 def ollama_explainer(url: str, model: str, timeout_s: float) -> Explainer:
     prompt = ("Write 2-3 short plain-English sentences telling a guest why this rental was recommended. "
               "Use ONLY the facts in the JSON. Do not invent prices, ratings or amenities. "
-              "Mention any risk notes or limitations honestly.")
+              "Mention any risk notes or limitations honestly. If entire_place_alternative is not null, "
+              "add one sentence offering it as an entire place at a similar price.")
 
     def explain(ctx: dict[str, Any]) -> dict[str, Any]:
         body = json.dumps({"model": model, "stream": False, "options": {"temperature": 0},
@@ -90,6 +95,9 @@ def ollama_explainer(url: str, model: str, timeout_s: float) -> Explainer:
                 text = json.loads(resp.read())["message"]["content"].strip()
             if not text:
                 raise ValueError("empty explanation")
+            alt = ctx.get("entire_place_alternative")
+            if alt and alt["property_id"] not in text:     # explanation-v2 must always show the option
+                text += " " + alternative_sentence(alt)
             return {"text": text, "source": "llm", "model": model, "generated": True}
         except Exception as exc:          # timeout, Ollama down, bad JSON: never block the result
             return {"text": template_text(ctx), "source": "template_fallback", "model": None,

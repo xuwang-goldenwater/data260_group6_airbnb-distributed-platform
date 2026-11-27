@@ -200,9 +200,13 @@ def create_app(store: Store | None = None, publisher=None, settings_obj: Setting
                                task_id)
             selected = original
         elif kind == "edited":
-            if not selected or selected not in result.get("final_ranking", []):
-                raise APIError(400, "VALIDATION_ERROR", "selected_property_id must be one of final_ranking",
-                               task_id, details={"final_ranking": result.get("final_ranking", [])})
+            # the guest may pick from the ranking or the entire-place option the explanation showed
+            alt = ((result.get("explanation") or {}).get("entire_place_alternative") or {}).get("property_id")
+            allowed = list(result.get("final_ranking", [])) + ([alt] if alt else [])
+            if not selected or selected not in allowed:
+                raise APIError(400, "VALIDATION_ERROR",
+                               "selected_property_id must be in final_ranking or the shown alternative",
+                               task_id, details={"allowed": allowed})
             if not body.reason:
                 raise APIError(400, "VALIDATION_ERROR", "an edit needs a reason", task_id)
         else:

@@ -9,6 +9,10 @@ where relevant = union of every labeler's top-10 for that request, and the
 human top choice = rank 1 in the adjudicated file (or, before adjudication,
 rank 1 of the first labeler; marked provisional).
 
+precision_at_10_single = hits against ONE labeler's top 10 / 10, averaged over
+labelers; this is the number comparable to the human agreement ceiling
+(one labeler scored against the other, see adjudicate.py).
+
 chance_precision_at_10 = expected precision of 10 properties picked at random
 from the request's candidates (= |relevant| / |candidates|). Candidate sets are
 small (11-29), so this is the floor to compare against, not zero.
@@ -81,6 +85,8 @@ def main():
             "relevant_size": len(relevant),
             "precision_at_10": round(hits / K, 4),
             "recall_at_10": round(hits / len(relevant), 4),
+            "precision_at_10_single": round(sum(len(set(system) & set(lab.get(rid, {}).values()))
+                                                for lab in labelers) / (K * len(labelers)), 4),
             "chance_precision_at_10": round(min(len(relevant), n_cand[rid]) / n_cand[rid], 4),
             "human_top_choice": top or "",
             "top_pick_rank": top_rank if top else "",
@@ -98,6 +104,7 @@ def main():
         "labelers": len(labelers),
         "precision_at_10": mean("precision_at_10"),
         "recall_at_10": mean("recall_at_10"),
+        "precision_at_10_single": mean("precision_at_10_single"),
         "chance_precision_at_10": mean("chance_precision_at_10"),
         "mean_top_pick_rank": mean("top_pick_rank"),
         "top_pick_in_top10": sum(1 for r in rows if r["top_pick_rank"] not in ("", MISSING_RANK)),

@@ -1,0 +1,5 @@
+run_at,config,scoring_version,requests,labelers,precision_at_10,recall_at_10,precision_at_10_single,chance_precision_at_10,mean_top_pick_rank,top_pick_in_top10,top_choice_source
+2026-11-27T01:32:46Z,baseline,filter-count-v1,50,2,0.884,0.7215,0.739,0.8245,3.3,46,adjudicated
+2026-11-27T01:32:46Z,single_agent,matcher-v1,50,2,0.904,0.7387,0.764,0.8245,2.86,49,adjudicated
+2026-11-27T01:32:46Z,debate_without_auditor,matcher-v1+risk-rules-v1,50,2,0.906,0.7398,0.771,0.8245,2.84,49,adjudicated
+2026-11-27T01:32:46Z,full_debate,matcher-v1+risk-rules-v1+fairness-v1,50,2,0.906,0.74,0.765,0.8245,2.94,49,adjudicated

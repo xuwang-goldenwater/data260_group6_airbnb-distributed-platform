@@ -1,0 +1,65 @@
+{
+  "labelers": [
+    "xu",
+    "xuanhua"
+  ],
+  "requests": 50,
+  "discussed": 35,
+  "human_agreement_ceiling": {
+    "p10_vs_other_labeler": 0.752,
+    "r10_vs_union": 0.8114,
+    "final_top1_rank": 1.95,
+    "same_top1_as_final": 0.56
+  },
+  "by_labeler": {
+    "xu": {
+      "p10_vs_other_labeler": 0.752,
+      "r10_vs_union": 0.8098,
+      "final_top1_rank": 2.02,
+      "same_top1_as_final": 0.5
+    },
+    "xuanhua": {
+      "p10_vs_other_labeler": 0.752,
+      "r10_vs_union": 0.8129,
+      "final_top1_rank": 1.88,
+      "same_top1_as_final": 0.62
+    }
+  },
+  "notes": {
+    "R01": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R03": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R04": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R06": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R07": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R08": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R09": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R11": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R12": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R14": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R16": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R17": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R18": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R19": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R20": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R23": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R25": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R26": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R27": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R29": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R31": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R33": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R35": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R37": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R38": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R39": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R40": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R41": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R42": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R44": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R45": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R46": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R48": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R49": "agreed in discussion: suggested_top1 (best mean rank)",
+    "R50": "agreed in discussion: suggested_top1 (best mean rank)"
+  }
+}

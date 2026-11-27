@@ -210,3 +210,39 @@ def test_corrupt_agent_output_is_rejected_not_used(chair):
     [result] = drive(chair, [p] + good + [bad])
     assert any(lim.startswith("fairness output rejected in round 0") for lim in result["limitations"])
     assert result["recommendation"]["property_id"] is not None
+
+
+# ---------------------------------------------------------------- explanation-v2 (Role E, §7.5.4)
+def test_private_room_pick_shows_entire_place_alternative(chair):
+    """R01: the debate recommends a private room; explanation-v2 adds the entire-place option
+    from services/agents/alternatives.py without touching the ranking."""
+    p = parsed_event("tr-v2", "R01")
+    [result] = drive(chair, [p] + round0_events(p, ["matching", "risk", "fairness"]))
+    ex = result["explanation"]
+    assert ex["version"] == "explanation-v2"
+    assert ex["entire_place_alternative"]["property_id"] == "property-2041"   # same as eval_explanation.py
+    assert "property-2041" in ex["text"]
+    assert result["recommendation"]["property_id"] == offline("R01")["recommendation"]
+    assert result["final_ranking"] == offline("R01")["final_ranking"]
+
+
+def test_non_room_pick_keeps_v1_text(chair):
+    p = parsed_event("tr-v1", "R45")
+    [result] = drive(chair, [p] + round0_events(p, ["matching", "risk", "fairness"]))
+    assert result["explanation"]["entire_place_alternative"] is None
+    assert "entire place" not in result["explanation"]["text"]
+
+
+def test_llm_text_that_forgets_the_alternative_gets_it_appended(monkeypatch):
+    from ai_core import explanation
+    ctx = {"entire_place_alternative": {"property_id": "property-2041", "property_type": "apartment",
+                                        "nightly_price": 150, "rating": 4.6}}
+
+    class Resp:
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def read(self): return b'{"message": {"content": "A quiet room near downtown."}}'
+
+    monkeypatch.setattr(explanation.urllib.request, "urlopen", lambda req, timeout: Resp())
+    out = explanation.ollama_explainer("http://x", "m", 1)(ctx)
+    assert out["source"] == "llm" and "property-2041" in out["text"]

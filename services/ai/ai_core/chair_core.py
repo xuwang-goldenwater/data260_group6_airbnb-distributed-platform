@@ -33,7 +33,7 @@ import time
 from typing import Any, Callable
 
 from . import envelope as env
-from .agents_bridge import chair_rules, property_facts
+from .agents_bridge import EXPLANATION_VERSION, chair_rules, entire_place_alternative, property_facts
 from .explanation import Explainer, context, template_explainer
 from .config import EXPECTED_AGENTS, T_ROUND1, T_RESULTS
 from .harness import InvalidAgentOutput, check_round0, check_vote
@@ -247,8 +247,13 @@ class ChairCore:
         flags = [f for f in present.get("risk", {}).get("risk_flags", []) if f.get("property_id") == winner]
         # Explanation step: reads only the decided result; cannot change it
         self._step(d, "explain", "in_progress")
+        try:   # explanation-v2 (Role E); a failure here must never block the result
+            entire_place = entire_place_alternative(d["request"], winner)
+        except Exception:
+            entire_place = None
         explanation = self.explainer(context(property_facts(winner), top, alternatives[0] if alternatives else None,
-                                             flags, dissent, limitations))
+                                             flags, dissent, limitations, entire_place))
+        explanation = {**explanation, "version": EXPLANATION_VERSION, "entire_place_alternative": entire_place}
         if explanation.get("source") == "template_fallback":
             limitations = limitations + ["explanation_fallback"]
         self._step(d, "explain", "completed", note=explanation.get("source"))

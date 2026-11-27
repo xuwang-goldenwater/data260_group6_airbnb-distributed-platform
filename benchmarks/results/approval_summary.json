@@ -1,0 +1,23 @@
+{
+  "reviewed": 30,
+  "reviewer": "xu",
+  "approval_rate": 0.7667,
+  "decisions": {
+    "approved": 23,
+    "edited": 7,
+    "rejected": 0
+  },
+  "reason_categories": {
+    "other": 7
+  },
+  "edit_patterns": {
+    "room -> apartment": 2,
+    "room -> cabin": 3,
+    "room -> house": 2
+  },
+  "edit_price_change_mean": -0.71,
+  "reasons": {
+    "An entire place at a similar price is better than a shared private room": 7
+  },
+  "scoring_version": "matcher-v1"
+}

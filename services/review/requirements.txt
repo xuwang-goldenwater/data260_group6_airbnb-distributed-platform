@@ -1,0 +1,9 @@
+# Review service (Role E). Same stack as Booking and AI.
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pymongo>=4.6
+confluent-kafka>=2.3
+PyJWT>=2.8
+# tests
+pytest>=8
+httpx>=0.27

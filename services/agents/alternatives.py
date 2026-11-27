@@ -12,6 +12,11 @@ Rule, fixed before evaluation:
   filters, cost at most MAX_EXTRA more per night, and are rated at least as
   high as the recommended room (listings with no reviews are not excluded)
   pick: the highest matcher-v1 score (which includes rating)
+
+Result (benchmarks/results/explanation_v2_eval.json): an entire-place
+alternative is shown in 7/7 edited reviews, and it is the reviewer's own pick
+in 2/7 (R04, R17). The 23 approved explanations are unchanged and the ranking
+does not change.
 """
 import sys
 from pathlib import Path

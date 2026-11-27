@@ -28,6 +28,8 @@ matcher-v3 (second, declared attempt) reads the same feedback as "an entire
 place also satisfies a private-room preference", not "rooms are worse":
   guest prefers "room": entire place 1.0, private room 1.0
   any other preference: unchanged
+  Result: also worse than v1 (mean top-pick rank 2.86 -> 3.28); NOT promoted.
+  Both runs: benchmarks/results/eval_single_agent_matcher-v2.csv / -v3.csv.
 matcher-v1 stays available for comparison and rollback.
 
 Usage (from repo root), prints the top 10 for one benchmark request:

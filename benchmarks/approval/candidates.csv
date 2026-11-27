@@ -1,0 +1,494 @@
+review_id,request_id,property_id,is_recommended,property_type,entire_place,nightly_price,sleeps,bedrooms,rating,review_count,amenities,complaints
+AP01,R01,property-2041,,apartment,yes,105,2,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP01,R01,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP01,R01,property-2005,YES,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP01,R01,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP01,R01,property-2125,,room,no (shared),175,2,4,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP01,R01,property-2165,,room,no (shared),190,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP01,R01,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP01,R01,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP01,R01,property-2069,,cabin,yes,210,6,3,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP01,R01,property-2121,,apartment,yes,245,4,3,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP01,R01,property-2061,,apartment,yes,255,6,4,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP01,R01,property-2141,,apartment,yes,260,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP01,R01,property-2193,,condo,yes,265,4,4,4.0,3,"kitchen, parking, washer, wifi",cleanliness:1
+AP01,R01,property-2101,,apartment,yes,290,8,4,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP02,R04,property-2068,,condo,yes,80,8,1,3.5,4,"parking, pool, washer, wifi",missing_amenity:2
+AP02,R04,property-2084,,cabin,yes,85,6,3,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP02,R04,property-2180,YES,room,no (shared),95,2,3,3.88,8,"parking, pool, washer, wifi",price_mismatch:3
+AP02,R04,property-2036,,apartment,yes,100,2,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP02,R04,property-2144,,cabin,yes,110,4,3,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP02,R04,property-2064,,cabin,yes,130,4,4,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP02,R04,property-2160,,room,no (shared),130,8,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP02,R04,property-2120,,room,no (shared),140,2,2,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP02,R04,property-2192,,house,yes,160,4,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP02,R04,property-2004,,cabin,yes,165,4,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP02,R04,property-2164,,cabin,yes,175,4,3,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP02,R04,property-2196,,apartment,yes,175,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP02,R04,property-2072,,house,yes,190,4,2,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP02,R04,property-2076,,apartment,yes,215,2,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP02,R04,property-2028,,condo,yes,230,8,1,4.0,6,"parking, pool, washer, wifi",cancellation:2
+AP02,R04,property-2128,,condo,yes,230,6,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP02,R04,property-2140,,room,no (shared),240,4,2,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP02,R04,property-2016,,apartment,yes,250,8,2,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP02,R04,property-2152,,house,yes,250,4,1,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP02,R04,property-2156,,apartment,yes,260,6,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP02,R04,property-2104,,cabin,yes,265,2,3,3.5,4,"kitchen, parking, washer, wifi",missing_amenity:2
+AP02,R04,property-2132,,house,yes,270,4,4,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP02,R04,property-2056,,apartment,yes,290,4,2,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP02,R04,property-2148,,condo,yes,290,8,3,4.0,6,"kitchen, parking, washer, wifi",cancellation:2
+AP03,R05,property-2185,,room,no (shared),85,4,4,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP03,R05,property-2025,,room,no (shared),100,4,2,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP03,R05,property-2029,,cabin,yes,100,6,3,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP03,R05,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP03,R05,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP03,R05,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP03,R05,property-2177,,house,yes,120,4,2,3.8,5,"parking, pool, washer, wifi",noise:2
+AP03,R05,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP03,R05,property-2005,,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP03,R05,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP03,R05,property-2081,,apartment,yes,165,4,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP03,R05,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP03,R05,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP03,R05,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP03,R05,property-2044,YES,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP03,R05,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP03,R05,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP03,R05,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP03,R05,property-2037,,house,yes,185,4,3,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP03,R05,property-2165,,room,no (shared),190,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP03,R05,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP03,R05,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP03,R05,property-2069,,cabin,yes,210,6,3,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP03,R05,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP04,R07,property-2183,,condo,yes,85,2,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP04,R07,property-2063,,condo,yes,95,6,4,3.8,5,"parking, pool, washer, wifi",noise:2
+AP04,R07,property-2119,,cabin,yes,110,2,3,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP04,R07,property-2019,,cabin,yes,130,6,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP04,R07,property-2091,,apartment,yes,135,2,4,4.0,3,"kitchen, parking, washer, wifi",cleanliness:1
+AP04,R07,property-2123,,condo,yes,140,4,3,3.8,5,"parking, pool, washer, wifi",noise:2
+AP04,R07,property-2147,,house,yes,140,8,2,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP04,R07,property-2167,,house,yes,145,2,4,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP04,R07,property-2155,YES,room,no (shared),155,4,2,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP04,R07,property-2027,,house,yes,170,4,2,3.8,5,"parking, pool, washer, wifi",noise:2
+AP04,R07,property-2095,,room,no (shared),175,2,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP04,R07,property-2047,,house,yes,180,2,4,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP04,R07,property-2075,,room,no (shared),180,4,1,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP04,R07,property-2143,,condo,yes,180,4,3,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP04,R07,property-2099,,cabin,yes,195,2,1,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP04,R07,property-2175,,room,no (shared),210,6,4,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP04,R07,property-2083,,condo,yes,220,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP04,R07,property-2171,,apartment,yes,230,2,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP04,R07,property-2191,,apartment,yes,240,4,1,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP04,R07,property-2059,,cabin,yes,250,6,4,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP05,R12,property-2084,,cabin,yes,85,6,3,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP05,R12,property-2180,YES,room,no (shared),95,2,3,3.88,8,"parking, pool, washer, wifi",price_mismatch:3
+AP05,R12,property-2036,,apartment,yes,100,2,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP05,R12,property-2144,,cabin,yes,110,4,3,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP05,R12,property-2064,,cabin,yes,130,4,4,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP05,R12,property-2160,,room,no (shared),130,8,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP05,R12,property-2120,,room,no (shared),140,2,2,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP05,R12,property-2192,,house,yes,160,4,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP05,R12,property-2004,,cabin,yes,165,4,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP05,R12,property-2196,,apartment,yes,175,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP05,R12,property-2072,,house,yes,190,4,2,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP05,R12,property-2076,,apartment,yes,215,2,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP05,R12,property-2028,,condo,yes,230,8,1,4.0,6,"parking, pool, washer, wifi",cancellation:2
+AP05,R12,property-2016,,apartment,yes,250,8,2,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP05,R12,property-2156,,apartment,yes,260,6,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP06,R13,property-2185,,room,no (shared),85,4,4,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP06,R13,property-2025,,room,no (shared),100,4,2,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP06,R13,property-2029,,cabin,yes,100,6,3,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP06,R13,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP06,R13,property-2041,,apartment,yes,105,2,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP06,R13,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP06,R13,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP06,R13,property-2177,,house,yes,120,4,2,3.8,5,"parking, pool, washer, wifi",noise:2
+AP06,R13,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP06,R13,property-2173,,condo,yes,130,2,1,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP06,R13,property-2005,,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP06,R13,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP06,R13,property-2081,,apartment,yes,165,4,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP06,R13,property-2125,,room,no (shared),175,2,4,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP06,R13,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP06,R13,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP06,R13,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP06,R13,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP06,R13,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP06,R13,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP06,R13,property-2053,YES,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP06,R13,property-2037,,house,yes,185,4,3,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP06,R13,property-2165,,room,no (shared),190,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP06,R13,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP06,R13,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP06,R13,property-2069,,cabin,yes,210,6,3,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP06,R13,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP06,R13,property-2169,,cabin,yes,225,4,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP06,R13,property-2121,,apartment,yes,245,4,3,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP07,R14,property-2068,,condo,yes,80,8,1,3.5,4,"parking, pool, washer, wifi",missing_amenity:2
+AP07,R14,property-2084,,cabin,yes,85,6,3,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP07,R14,property-2180,YES,room,no (shared),95,2,3,3.88,8,"parking, pool, washer, wifi",price_mismatch:3
+AP07,R14,property-2036,,apartment,yes,100,2,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP07,R14,property-2144,,cabin,yes,110,4,3,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP07,R14,property-2064,,cabin,yes,130,4,4,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP07,R14,property-2160,,room,no (shared),130,8,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP07,R14,property-2120,,room,no (shared),140,2,2,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP07,R14,property-2192,,house,yes,160,4,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP07,R14,property-2004,,cabin,yes,165,4,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP07,R14,property-2164,,cabin,yes,175,4,3,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP07,R14,property-2196,,apartment,yes,175,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP08,R15,property-2185,,room,no (shared),85,4,4,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP08,R15,property-2025,,room,no (shared),100,4,2,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP08,R15,property-2029,,cabin,yes,100,6,3,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP08,R15,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP08,R15,property-2041,,apartment,yes,105,2,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP08,R15,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP08,R15,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP08,R15,property-2177,,house,yes,120,4,2,3.8,5,"parking, pool, washer, wifi",noise:2
+AP08,R15,property-2173,,condo,yes,130,2,1,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP08,R15,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP08,R15,property-2081,,apartment,yes,165,4,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP08,R15,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP08,R15,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP08,R15,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP08,R15,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP08,R15,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP08,R15,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP08,R15,property-2053,YES,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP08,R15,property-2037,,house,yes,185,4,3,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP08,R15,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP08,R15,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP08,R15,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP08,R15,property-2169,,cabin,yes,225,4,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP09,R17,property-2025,YES,room,no (shared),100,4,2,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP09,R17,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP09,R17,property-2177,,house,yes,120,4,2,3.8,5,"parking, pool, washer, wifi",noise:2
+AP09,R17,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP09,R17,property-2081,,apartment,yes,165,4,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP09,R17,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP09,R17,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP09,R17,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP09,R17,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP09,R17,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP09,R17,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP09,R17,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP09,R17,property-2037,,house,yes,185,4,3,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP09,R17,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP10,R18,property-2084,YES,cabin,yes,85,6,3,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP10,R18,property-2180,,room,no (shared),95,2,3,3.88,8,"parking, pool, washer, wifi",price_mismatch:3
+AP10,R18,property-2036,,apartment,yes,100,2,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP10,R18,property-2144,,cabin,yes,110,4,3,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP10,R18,property-2064,,cabin,yes,130,4,4,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP10,R18,property-2160,,room,no (shared),130,8,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP10,R18,property-2120,,room,no (shared),140,2,2,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP10,R18,property-2192,,house,yes,160,4,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP10,R18,property-2004,,cabin,yes,165,4,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP10,R18,property-2196,,apartment,yes,175,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP10,R18,property-2072,,house,yes,190,4,2,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP10,R18,property-2076,,apartment,yes,215,2,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP10,R18,property-2028,,condo,yes,230,8,1,4.0,6,"parking, pool, washer, wifi",cancellation:2
+AP11,R21,property-2185,,room,no (shared),85,4,4,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP11,R21,property-2025,,room,no (shared),100,4,2,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP11,R21,property-2029,,cabin,yes,100,6,3,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP11,R21,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP11,R21,property-2041,,apartment,yes,105,2,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP11,R21,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP11,R21,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP11,R21,property-2177,,house,yes,120,4,2,3.8,5,"parking, pool, washer, wifi",noise:2
+AP11,R21,property-2173,,condo,yes,130,2,1,3.71,7,"parking, pool, washer, wifi",host_unresponsive:3
+AP11,R21,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP11,R21,property-2081,,apartment,yes,165,4,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP11,R21,property-2001,YES,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP11,R21,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP11,R21,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP11,R21,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP11,R21,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP11,R21,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP11,R21,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP11,R21,property-2037,,house,yes,185,4,3,4.0,3,"parking, pool, washer, wifi",cleanliness:1
+AP11,R21,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP11,R21,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP11,R21,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP11,R21,property-2169,,cabin,yes,225,4,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP12,R22,property-2084,,cabin,yes,85,6,3,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP12,R22,property-2180,,room,no (shared),95,2,3,3.88,8,"parking, pool, washer, wifi",price_mismatch:3
+AP12,R22,property-2036,,apartment,yes,100,2,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP12,R22,property-2120,,room,no (shared),140,2,2,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP12,R22,property-2192,,house,yes,160,4,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP12,R22,property-2004,,cabin,yes,165,4,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP12,R22,property-2196,,apartment,yes,175,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP12,R22,property-2072,,house,yes,190,4,2,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP12,R22,property-2028,YES,condo,yes,230,8,1,4.0,6,"parking, pool, washer, wifi",cancellation:2
+AP12,R22,property-2016,,apartment,yes,250,8,2,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP12,R22,property-2156,,apartment,yes,260,6,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP12,R22,property-2132,,house,yes,270,4,4,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP12,R22,property-2148,,condo,yes,290,8,3,4.0,6,"kitchen, parking, washer, wifi",cancellation:2
+AP13,R24,property-2098,,condo,yes,115,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP13,R24,property-2094,YES,cabin,yes,130,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP13,R24,property-2186,,apartment,yes,130,6,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP13,R24,property-2070,,room,no (shared),145,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP13,R24,property-2138,,condo,yes,150,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP13,R24,property-2106,,apartment,yes,165,8,3,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP13,R24,property-2142,,house,yes,200,6,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP13,R24,property-2014,,cabin,yes,205,6,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP13,R24,property-2166,,apartment,yes,205,8,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP13,R24,property-2026,,apartment,yes,230,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP13,R24,property-2146,,apartment,yes,245,8,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP13,R24,property-2158,,condo,yes,275,6,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP13,R24,property-2006,,apartment,yes,300,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP13,R24,property-2030,,room,no (shared),320,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP14,R26,property-2084,YES,cabin,yes,85,6,3,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP14,R26,property-2160,,room,no (shared),130,8,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP14,R26,property-2196,,apartment,yes,175,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP14,R26,property-2128,,condo,yes,230,6,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP14,R26,property-2016,,apartment,yes,250,8,2,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP14,R26,property-2156,,apartment,yes,260,6,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP14,R26,property-2060,,room,no (shared),325,8,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP14,R26,property-2176,,apartment,yes,355,8,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP14,R26,property-2124,,cabin,yes,370,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP14,R26,property-2184,,cabin,yes,385,6,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP14,R26,property-2088,,condo,yes,390,6,3,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP14,R26,property-2116,,apartment,yes,390,6,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP15,R27,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP15,R27,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP15,R27,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP15,R27,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP15,R27,property-2005,,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP15,R27,property-2069,,cabin,yes,210,6,3,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP15,R27,property-2149,YES,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP15,R27,property-2061,,apartment,yes,255,6,4,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP15,R27,property-2101,,apartment,yes,290,8,4,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP15,R27,property-2089,,cabin,yes,310,6,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP15,R27,property-2109,,cabin,yes,310,8,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP15,R27,property-2017,,house,yes,335,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP15,R27,property-2085,,room,no (shared),340,6,2,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP16,R30,property-2084,,cabin,yes,85,6,3,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP16,R30,property-2160,,room,no (shared),130,8,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP16,R30,property-2196,YES,apartment,yes,175,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP16,R30,property-2128,,condo,yes,230,6,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP16,R30,property-2016,,apartment,yes,250,8,2,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP16,R30,property-2156,,apartment,yes,260,6,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP16,R30,property-2060,,room,no (shared),325,8,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP16,R30,property-2176,,apartment,yes,355,8,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP16,R30,property-2124,,cabin,yes,370,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP16,R30,property-2184,,cabin,yes,385,6,1,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP16,R30,property-2088,,condo,yes,390,6,3,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP16,R30,property-2116,,apartment,yes,390,6,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP17,R31,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP17,R31,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP17,R31,property-2157,YES,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP17,R31,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP17,R31,property-2005,,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP17,R31,property-2069,,cabin,yes,210,6,3,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP17,R31,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP17,R31,property-2061,,apartment,yes,255,6,4,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP17,R31,property-2101,,apartment,yes,290,8,4,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP17,R31,property-2089,,cabin,yes,310,6,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP17,R31,property-2109,,cabin,yes,310,8,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP17,R31,property-2017,,house,yes,335,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP17,R31,property-2085,,room,no (shared),340,6,2,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP18,R32,property-2098,,condo,yes,115,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP18,R32,property-2094,YES,cabin,yes,130,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP18,R32,property-2186,,apartment,yes,130,6,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP18,R32,property-2070,,room,no (shared),145,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP18,R32,property-2138,,condo,yes,150,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP18,R32,property-2106,,apartment,yes,165,8,3,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP18,R32,property-2142,,house,yes,200,6,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP18,R32,property-2014,,cabin,yes,205,6,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP18,R32,property-2166,,apartment,yes,205,8,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP18,R32,property-2026,,apartment,yes,230,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP18,R32,property-2146,,apartment,yes,245,8,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP18,R32,property-2158,,condo,yes,275,6,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP18,R32,property-2006,,apartment,yes,300,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP18,R32,property-2030,,room,no (shared),320,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP19,R37,property-2098,,condo,yes,115,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP19,R37,property-2134,,cabin,yes,125,4,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP19,R37,property-2094,,cabin,yes,130,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP19,R37,property-2186,,apartment,yes,130,6,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP19,R37,property-2070,,room,no (shared),145,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP19,R37,property-2182,,house,yes,145,4,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP19,R37,property-2138,,condo,yes,150,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP19,R37,property-2090,,room,no (shared),165,4,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP19,R37,property-2106,,apartment,yes,165,8,3,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP19,R37,property-2010,,room,no (shared),190,4,3,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP19,R37,property-2190,,room,no (shared),190,4,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP19,R37,property-2142,,house,yes,200,6,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP19,R37,property-2014,,cabin,yes,205,6,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP19,R37,property-2166,YES,apartment,yes,205,8,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP19,R37,property-2026,,apartment,yes,230,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP19,R37,property-2146,,apartment,yes,245,8,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP20,R38,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP20,R38,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP20,R38,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP20,R38,property-2081,,apartment,yes,165,4,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP20,R38,property-2001,YES,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP20,R38,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP20,R38,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP20,R38,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP20,R38,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP20,R38,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP20,R38,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP20,R38,property-2165,,room,no (shared),190,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP20,R38,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP20,R38,property-2069,,cabin,yes,210,6,3,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP20,R38,property-2169,,cabin,yes,225,4,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP20,R38,property-2121,,apartment,yes,245,4,3,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP20,R38,property-2061,,apartment,yes,255,6,4,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP20,R38,property-2141,,apartment,yes,260,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP20,R38,property-2193,,condo,yes,265,4,4,4.0,3,"kitchen, parking, washer, wifi",cleanliness:1
+AP21,R39,property-2098,,condo,yes,115,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP21,R39,property-2134,,cabin,yes,125,4,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP21,R39,property-2094,,cabin,yes,130,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP21,R39,property-2186,,apartment,yes,130,6,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP21,R39,property-2070,,room,no (shared),145,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP21,R39,property-2182,,house,yes,145,4,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP21,R39,property-2138,,condo,yes,150,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP21,R39,property-2090,,room,no (shared),165,4,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP21,R39,property-2106,,apartment,yes,165,8,3,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP21,R39,property-2010,,room,no (shared),190,4,3,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP21,R39,property-2190,,room,no (shared),190,4,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP21,R39,property-2142,,house,yes,200,6,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP21,R39,property-2014,,cabin,yes,205,6,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP21,R39,property-2166,YES,apartment,yes,205,8,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP21,R39,property-2026,,apartment,yes,230,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP21,R39,property-2146,,apartment,yes,245,8,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP21,R39,property-2158,,condo,yes,275,6,3,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP21,R39,property-2042,,house,yes,280,4,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP21,R39,property-2194,,cabin,yes,290,4,4,3.5,4,"kitchen, pool, washer, wifi",missing_amenity:2
+AP22,R40,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP22,R40,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP22,R40,property-2157,YES,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP22,R40,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP22,R40,property-2005,,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP22,R40,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP22,R40,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP22,R40,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP22,R40,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP22,R40,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP22,R40,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP22,R40,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP22,R40,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP22,R40,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP22,R40,property-2169,,cabin,yes,225,4,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP22,R40,property-2121,,apartment,yes,245,4,3,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP23,R41,property-2162,,house,yes,100,2,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP23,R41,property-2034,,cabin,yes,110,2,2,4.0,6,"kitchen, parking, washer, wifi",cancellation:2
+AP23,R41,property-2098,,condo,yes,115,8,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP23,R41,property-2134,,cabin,yes,125,4,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP23,R41,property-2094,,cabin,yes,130,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP23,R41,property-2186,,apartment,yes,130,6,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP23,R41,property-2066,,apartment,yes,135,2,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP23,R41,property-2018,,condo,yes,145,2,4,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP23,R41,property-2070,YES,room,no (shared),145,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP23,R41,property-2182,,house,yes,145,4,4,3.5,4,"kitchen, parking, pool, wifi",missing_amenity:2
+AP23,R41,property-2138,,condo,yes,150,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP23,R41,property-2090,,room,no (shared),165,4,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP23,R41,property-2106,,apartment,yes,165,8,3,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP23,R41,property-2010,,room,no (shared),190,4,3,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP23,R41,property-2190,,room,no (shared),190,4,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP23,R41,property-2142,,house,yes,200,6,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP24,R42,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP24,R42,property-2041,,apartment,yes,105,2,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP24,R42,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP24,R42,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP24,R42,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP24,R42,property-2005,,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP24,R42,property-2125,,room,no (shared),175,2,4,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP24,R42,property-2001,YES,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP24,R42,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP24,R42,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP24,R42,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP24,R42,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP24,R42,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP24,R42,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP24,R42,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP24,R42,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP24,R42,property-2169,,cabin,yes,225,4,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP24,R42,property-2121,,apartment,yes,245,4,3,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP24,R42,property-2061,,apartment,yes,255,6,4,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP24,R42,property-2193,,condo,yes,265,4,4,4.0,3,"kitchen, parking, washer, wifi",cleanliness:1
+AP25,R43,property-2162,,house,yes,100,2,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP25,R43,property-2034,,cabin,yes,110,2,2,4.0,6,"kitchen, parking, washer, wifi",cancellation:2
+AP25,R43,property-2094,,cabin,yes,130,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP25,R43,property-2186,,apartment,yes,130,6,1,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP25,R43,property-2066,YES,apartment,yes,135,2,1,3.88,8,"kitchen, parking, washer, wifi",price_mismatch:3
+AP25,R43,property-2018,,condo,yes,145,2,4,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP25,R43,property-2070,,room,no (shared),145,8,4,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP25,R43,property-2138,,condo,yes,150,6,2,3.88,8,"kitchen, pool, washer, wifi",price_mismatch:3
+AP25,R43,property-2090,,room,no (shared),165,4,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP25,R43,property-2106,,apartment,yes,165,8,3,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP25,R43,property-2010,,room,no (shared),190,4,3,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP25,R43,property-2190,,room,no (shared),190,4,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP25,R43,property-2142,,house,yes,200,6,2,4.0,6,"kitchen, pool, washer, wifi",cancellation:2
+AP25,R43,property-2166,,apartment,yes,205,8,1,4.0,6,"kitchen, parking, pool, wifi",cancellation:2
+AP25,R43,property-2114,,cabin,yes,210,2,1,3.88,8,"kitchen, parking, pool, wifi",price_mismatch:3
+AP25,R43,property-2154,,cabin,yes,225,2,2,4.0,6,"kitchen, parking, washer, wifi",cancellation:2
+AP26,R44,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP26,R44,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP26,R44,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP26,R44,property-2181,,apartment,yes,120,6,1,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP26,R44,property-2005,,room,no (shared),145,8,1,3.71,7,"kitchen, pool, washer, wifi",host_unresponsive:3
+AP26,R44,property-2129,,cabin,yes,160,4,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP26,R44,property-2081,,apartment,yes,165,4,4,3.8,5,"kitchen, parking, pool, wifi",noise:2
+AP26,R44,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP26,R44,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP26,R44,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP26,R44,property-2044,YES,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP26,R44,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP26,R44,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP26,R44,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP26,R44,property-2165,,room,no (shared),190,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP26,R44,property-2057,,house,yes,195,6,2,3.8,5,"kitchen, parking, washer, wifi",noise:2
+AP26,R44,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP26,R44,property-2069,,cabin,yes,210,6,3,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP26,R44,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP26,R44,property-2169,,cabin,yes,225,4,1,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP26,R44,property-2121,,apartment,yes,245,4,3,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP26,R44,property-2061,,apartment,yes,255,6,4,4.0,3,"kitchen, pool, washer, wifi",cleanliness:1
+AP26,R44,property-2141,,apartment,yes,260,4,2,3.8,5,"kitchen, pool, washer, wifi",noise:2
+AP26,R44,property-2193,,condo,yes,265,4,4,4.0,3,"kitchen, parking, washer, wifi",cleanliness:1
+AP27,R45,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP27,R45,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP27,R45,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP27,R45,property-2001,YES,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP27,R45,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP27,R45,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP27,R45,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP27,R45,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP27,R45,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP27,R45,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP27,R45,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP28,R48,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP28,R48,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP28,R48,property-2157,YES,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP28,R48,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP28,R48,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP28,R48,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP28,R48,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP28,R48,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP28,R48,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP28,R48,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP28,R48,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP29,R49,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP29,R49,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP29,R49,property-2157,,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP29,R49,property-2001,YES,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP29,R49,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP29,R49,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP29,R49,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP29,R49,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP29,R49,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP29,R49,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP29,R49,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP30,R50,property-2077,,house,yes,100,8,3,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP30,R50,property-2161,,apartment,yes,110,6,1,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3
+AP30,R50,property-2157,YES,house,yes,115,6,3,4.0,3,"kitchen, parking, pool, wifi",cleanliness:1
+AP30,R50,property-2001,,apartment,yes,180,4,2,5.0,8,"kitchen, parking, wifi",
+AP30,R50,property-2007,,house,yes,180,4,3,4.3,10,"kitchen, parking, wifi",cancellation:1; cleanliness:1; missing_amenity:1
+AP30,R50,property-2012,,house,yes,180,4,3,3.88,8,"kitchen, parking, wifi",price_mismatch:3
+AP30,R50,property-2044,,cabin,yes,180,4,3,5.0,2,"kitchen, parking, wifi",
+AP30,R50,property-2045,,room,no (shared),180,4,2,new,0,"kitchen, parking, wifi",
+AP30,R50,property-2049,,cabin,yes,180,4,2,5.0,1,"kitchen, parking, wifi",
+AP30,R50,property-2053,,condo,yes,180,4,4,5.0,2,"kitchen, parking, wifi",
+AP30,R50,property-2197,,house,yes,200,6,3,3.71,7,"kitchen, parking, washer, wifi",host_unresponsive:3
+AP30,R50,property-2149,,cabin,yes,210,8,2,3.71,7,"kitchen, parking, pool, wifi",host_unresponsive:3

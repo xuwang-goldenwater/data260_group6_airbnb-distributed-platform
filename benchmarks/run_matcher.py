@@ -9,6 +9,8 @@ rejects gets an empty ranking (counted as a miss by eval.py).
 Usage (from repo root):
     python3 benchmarks/run_matcher.py --parse expected
     python3 benchmarks/run_matcher.py --parse parser   # needs Ollama unless all cached
+    python3 benchmarks/run_matcher.py --parse parser --matcher matcher-v2
+                                                       # -> single_agent_matcher-v2
 Output:
     benchmarks/results/<config>.csv
 """
@@ -31,8 +33,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--parse", choices=["expected", "parser"], default="expected",
                     help="where the structured request comes from")
+    ap.add_argument("--matcher", choices=matching.VERSIONS, default=matching.SCORING_VERSION)
     args = ap.parse_args()
     config = "single_agent" if args.parse == "parser" else "matcher_expected_parse"
+    if args.matcher != matching.SCORING_VERSION:
+        config += f"_{args.matcher}"
     cache = parser_agent.load_cache()
 
     bench = json.loads(REQUESTS.read_text())
@@ -46,7 +51,7 @@ def main():
             q, cache_hit = parsed["request"], parsed["llm_cache_hit"]
         else:
             q, cache_hit = req["expected_parse"], ""
-        out = matching.rank(q, props, blocked) if q else {"ranked_properties": [],
+        out = matching.rank(q, props, blocked, args.matcher) if q else {"ranked_properties": [],
               "scoring_version": matching.SCORING_VERSION}
         ranked = out["ranked_properties"]
         rows.append({

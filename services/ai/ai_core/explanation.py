@@ -19,7 +19,8 @@ Explainer = Callable[[dict[str, Any]], dict[str, Any]]
 
 
 def context(winner_prop: dict[str, Any] | None, winner_entry: dict[str, Any], runner_up: dict[str, Any] | None,
-            risk_flags: list[dict[str, Any]], dissent: list[dict[str, Any]], limitations: list[str]) -> dict[str, Any]:
+            risk_flags: list[dict[str, Any]], dissent: list[dict[str, Any]], limitations: list[str],
+            alternative: dict[str, Any] | None = None) -> dict[str, Any]:
     """The only facts the Explanation step may use."""
     p = winner_prop or {}
     return {
@@ -32,6 +33,9 @@ def context(winner_prop: dict[str, Any] | None, winner_entry: dict[str, Any], ru
         "runner_up": runner_up,
         "dissent": [f"{d['agent_id']} preferred another listing ({d['reason']})" for d in dissent][:2],
         "limitations": limitations,
+        # explanation-v2: entire-place option shown next to a private-room pick
+        # (services/agents/alternatives.py); None keeps the v1 text unchanged
+        "entire_place_alternative": alternative,
     }
 
 
@@ -55,6 +59,11 @@ def template_text(ctx: dict[str, Any]) -> str:
         text += " Worth checking: " + "; ".join(ctx["risk_notes"]) + "."
     if ctx.get("runner_up"):
         text += f" Next best option: {ctx['runner_up']['property_id']}."
+    alt = ctx.get("entire_place_alternative")
+    if alt:
+        rated = f"rated {alt['rating']:.1f}" if alt.get("rating") is not None else "new listing"
+        text += (f" An entire place at a similar price is also available: {alt['property_id']} "
+                 f"({alt['property_type']}, ${alt['nightly_price']:.0f}, {rated}).")
     if ctx.get("dissent"):
         text += " Dissent: " + ctx["dissent"][0] + "."
     if ctx.get("limitations"):

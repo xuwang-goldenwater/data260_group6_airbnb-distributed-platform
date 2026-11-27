@@ -1,0 +1,282 @@
+{
+  "explanation_version": "explanation-v2",
+  "edited_reviews": 7,
+  "reviewer_pick_shown_v1": 0,
+  "reviewer_pick_shown_v2": 2,
+  "edited_with_any_alternative_v2": 7,
+  "approved_reviews": 23,
+  "approved_explanations_changed_v2": 0,
+  "ranking_changed": false,
+  "cases": [
+    {
+      "review_id": "AP01",
+      "request_id": "R01",
+      "decision": "edited",
+      "reviewer_pick": "property-2181",
+      "alternative_v2": "property-2041",
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP02",
+      "request_id": "R04",
+      "decision": "edited",
+      "reviewer_pick": "property-2084",
+      "alternative_v2": "property-2084",
+      "pick_shown_v1": false,
+      "pick_shown_v2": true
+    },
+    {
+      "review_id": "AP03",
+      "request_id": "R05",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP04",
+      "request_id": "R07",
+      "decision": "edited",
+      "reviewer_pick": "property-2167",
+      "alternative_v2": "property-2183",
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP05",
+      "request_id": "R12",
+      "decision": "edited",
+      "reviewer_pick": "property-2036",
+      "alternative_v2": "property-2084",
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP06",
+      "request_id": "R13",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP07",
+      "request_id": "R14",
+      "decision": "edited",
+      "reviewer_pick": "property-2064",
+      "alternative_v2": "property-2084",
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP08",
+      "request_id": "R15",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP09",
+      "request_id": "R17",
+      "decision": "edited",
+      "reviewer_pick": "property-2157",
+      "alternative_v2": "property-2157",
+      "pick_shown_v1": false,
+      "pick_shown_v2": true
+    },
+    {
+      "review_id": "AP10",
+      "request_id": "R18",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP11",
+      "request_id": "R21",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP12",
+      "request_id": "R22",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP13",
+      "request_id": "R24",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP14",
+      "request_id": "R26",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP15",
+      "request_id": "R27",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP16",
+      "request_id": "R30",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP17",
+      "request_id": "R31",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP18",
+      "request_id": "R32",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP19",
+      "request_id": "R37",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP20",
+      "request_id": "R38",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP21",
+      "request_id": "R39",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP22",
+      "request_id": "R40",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP23",
+      "request_id": "R41",
+      "decision": "edited",
+      "reviewer_pick": "property-2094",
+      "alternative_v2": "property-2034",
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP24",
+      "request_id": "R42",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP25",
+      "request_id": "R43",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP26",
+      "request_id": "R44",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP27",
+      "request_id": "R45",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP28",
+      "request_id": "R48",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP29",
+      "request_id": "R49",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    },
+    {
+      "review_id": "AP30",
+      "request_id": "R50",
+      "decision": "approved",
+      "reviewer_pick": null,
+      "alternative_v2": null,
+      "pick_shown_v1": false,
+      "pick_shown_v2": false
+    }
+  ]
+}

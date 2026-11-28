@@ -8,7 +8,9 @@ single_agent), so all agent configurations see the same parse. The Chair
 logic is services/agents/chair.py.
 
 Usage (from repo root):
-    python3 benchmarks/run_debate.py
+    python3 benchmarks/run_debate.py             # no reflection
+    python3 benchmarks/run_debate.py --reflect   # every agent reflects on its
+                                                 # Round 0 output (7.5.3); configs get "_reflect"
 Output:
     benchmarks/results/debate_without_auditor.csv, full_debate.csv
         same columns as baseline.csv, plus the adjudication outcome
@@ -27,6 +29,7 @@ import chair  # noqa: E402
 import fairness  # noqa: E402
 import matching  # noqa: E402
 import parser as parser_agent  # noqa: E402
+import reflection  # noqa: E402
 import risk  # noqa: E402
 
 REQUESTS = Path("benchmarks/requests.json")
@@ -36,6 +39,8 @@ CONFIGS = {"debate_without_auditor": ["matching", "risk"],
 
 
 def main():
+    use_reflection = "--reflect" in sys.argv
+    suffix = "_reflect" if use_reflection else ""
     bench = json.loads(REQUESTS.read_text())
     props, blocked = matching.load_seed()
     reviews, cancels = risk.load_evidence()
@@ -54,19 +59,22 @@ def main():
         round0_all = {"matching": matching.rank(q, props, blocked),
                       "risk": risk.rank(q, props, blocked, reviews, cancels),
                       "fairness": fairness.rank(q, props, blocked)}
+        if use_reflection:
+            round0_all = {a: reflection.reflect(p, q, props, blocked, reviews, cancels)
+                          for a, p in round0_all.items()}
         agents_ms = (time.perf_counter() - t0) * 1000
         matcher_top1 = round0_all["matching"]["ranked_properties"][0]["property_id"]
 
         decided = {}
         for config, agents in CONFIGS.items():
             t1 = time.perf_counter()
-            out = chair.run({a: round0_all[a] for a in agents}, config)
+            out = chair.run({a: round0_all[a] for a in agents if round0_all[a].get("status") != "error"}, config)
             decided[config] = out["recommendation"]
             adj = out["adjudication"]
             rows[config].append({
                 "request_id": rid,
-                "config": config,
-                "trace_id": f"tr-bench-{config}-{rid}",
+                "config": config + suffix,
+                "trace_id": f"tr-bench-{config}{suffix}-{rid}",
                 "scoring_version": "+".join(out["scoring_versions"].values()),
                 "parser_cache_hit": parsed["llm_cache_hit"],
                 "final_ranking": ";".join(out["final_ranking"]),
@@ -78,8 +86,11 @@ def main():
                 "challenge_required": out["disagreement"]["challenge_required"],
                 "changed_matcher_top1": out["recommendation"] != matcher_top1,
                 "auditor_changed_outcome": "",
+                **({"reflection_revised": sum(round0_all[a]["reflection"]["decision"] == "revise" for a in agents),
+                    "reflection_rejected": sum(round0_all[a]["reflection"]["decision"] == "reject" for a in agents)}
+                   if use_reflection else {}),
             })
-            traces[config].append(dict(out, request_id=rid, trace_id=f"tr-bench-{config}-{rid}",
+            traces[config].append(dict(out, request_id=rid, trace_id=f"tr-bench-{config}{suffix}-{rid}",
                                        parse=q, round0={a: round0_all[a] for a in agents}))
         # did adding the Auditor change the final recommendation?
         rows["full_debate"][-1]["auditor_changed_outcome"] = (
@@ -87,12 +98,12 @@ def main():
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     for config in CONFIGS:
-        path = RESULTS_DIR / f"{config}.csv"
+        path = RESULTS_DIR / f"{config}{suffix}.csv"
         with path.open("w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(rows[config][0].keys()))
             w.writeheader()
             w.writerows(rows[config])
-        tpath = RESULTS_DIR / f"traces_{config}.jsonl"
+        tpath = RESULTS_DIR / f"traces_{config}{suffix}.jsonl"
         tpath.write_text("".join(json.dumps(t, sort_keys=True) + "\n" for t in traces[config]))
         changed = sum(r["changed_matcher_top1"] for r in rows[config])
         print(f"Wrote {path} and {tpath}: {len(rows[config])} requests, "

@@ -16,3 +16,8 @@ The service does not regenerate seed, reserve dates, or silently fall back to JS
 
 Consume `review.created` to maintain rating/count safely. See
 [`RATINGS.md`](RATINGS.md) for baseline initialization, tests and worker commands.
+
+## View events
+
+Guest detail reads queue `property.viewed` through the existing outbox. See
+[`VIEWS.md`](VIEWS.md) for retry semantics, tests and live verification.

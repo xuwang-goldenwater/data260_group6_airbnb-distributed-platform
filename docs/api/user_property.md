@@ -593,6 +593,15 @@ Errors:
 
 A successful guest-facing request publishes `property.viewed` when an authenticated guest is present.
 
+Guest detail reads queue the event transactionally in the Property outbox. An
+optional `Idempotency-Key: <uuid>` suppresses repeated events for retries of the
+same Guest/property view; existing clients may omit it, creating one view per
+successful request. Reusing a key for another property returns 409. Responses
+to authenticated Guest reads include `Idempotent-Replay`, but always read current
+listing details and enforce current visibility. Anonymous and non-Guest detail
+reads do not emit a Guest view. MySQL/outbox failures prevent a successful Guest
+view response; delivery to Kafka is handled by the existing acknowledged relay.
+
 ## POST `/properties/update`
 
 Updates a property owned by the authenticated host.

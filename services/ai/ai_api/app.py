@@ -27,6 +27,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 
+from ai_core import ai_dashboard
 from ai_core import envelope as env
 from ai_core.auth import AuthError, Principal, bearer, verify
 from ai_core.config import EXPECTED_AGENTS, T_APPROVALS, T_REQUESTS, Settings, settings
@@ -34,6 +35,7 @@ from ai_core.config import EXPECTED_AGENTS, T_APPROVALS, T_REQUESTS, Settings, s
 from ai_core.store import MongoStore, Store
 
 PANEL = Path(__file__).with_name("panel.html")
+DASHBOARD = Path(__file__).with_name("ai_dashboard.html")
 STREAM_TYPES = {"ai.parsed", "debate.round.0", "debate.round.1", "debate.round.2", "ai.results", "ai.approvals"}
 DECISION_STATUS = {"approved": "approved", "edited": "edited", "rejected": "rejected"}
 
@@ -303,6 +305,15 @@ def create_app(store: Store | None = None, publisher=None, settings_obj: Setting
     @app.get("/ai/panel", response_class=HTMLResponse)
     def panel():
         return PANEL.read_text(encoding="utf-8")
+
+    # AI dashboard (section 8, Role E): live MongoDB records + fixed benchmark results
+    @app.get("/ai/dashboard", response_class=HTMLResponse)
+    def dashboard_page():
+        return DASHBOARD.read_text(encoding="utf-8")
+
+    @app.get("/ai/dashboard/data")
+    def dashboard_data(trace_id: str | None = None):
+        return ai_dashboard.dashboard(get_store(), trace_id)
 
     @app.get("/ai/health")
     def health():

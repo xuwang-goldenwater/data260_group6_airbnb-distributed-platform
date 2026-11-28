@@ -9,7 +9,7 @@ make platform-venv
 docker compose -f infra/docker-compose.yml up -d kafka mongodb redis
 make platform-topics platform-init platform-seed
 export JWT_SECRET='use-the-same-local-secret-as-booking-and-ai'
-make platform-api       # terminal 1, http://127.0.0.1:8005/platform
+make platform-api       # terminal 1, http://127.0.0.1:8006/platform
 make platform-worker    # terminal 2; use the same environment
 ```
 
@@ -19,7 +19,7 @@ Environment: `MONGO_URI` defaults to `mongodb://localhost:27017`, `MONGO_DATABAS
 
 ## Booking integration
 
-Set `ANALYTICS_SERVICE_URL=http://127.0.0.1:8005` in Booking. Its existing service JWT client can call:
+Set `ANALYTICS_SERVICE_URL=http://127.0.0.1:8006` in Booking. Its existing service JWT client can call:
 
 `GET /analytics/host/{host_id}?days=30&property_id=property-2001`
 

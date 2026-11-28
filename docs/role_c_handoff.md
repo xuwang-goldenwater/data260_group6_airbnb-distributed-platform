@@ -10,7 +10,7 @@ Messaging and Analytics are packaged together under `services/platform` to share
 
 ## Teammate integration
 
-Ayushi: set `ANALYTICS_SERVICE_URL=http://127.0.0.1:8005` and the same JWT_SECRET. `GET /analytics/host/{host_id}?days=30&property_id=...` returns the existing client's expected `funnel.views` and `funnel.saves`. Analytics consumes `booking.updated` using `to_status`/`version`; highest version wins. Booking updates also create guest/host conversations idempotently when reservation/participant IDs are present.
+Ayushi: set `ANALYTICS_SERVICE_URL=http://127.0.0.1:8006` and the same JWT_SECRET. `GET /analytics/host/{host_id}?days=30&property_id=...` returns the existing client's expected `funnel.views` and `funnel.saves`. Analytics consumes `booking.updated` using `to_status`/`version`; highest version wins. Booking updates also create guest/host conversations idempotently when reservation/participant IDs are present.
 
 Carol: original conversation/message seed fields and IDs are preserved. Property view/save events are validated and counted once. Ownership currently resolves against the fixed 200-property pool; newly created listings need a live ownership lookup before general use.
 

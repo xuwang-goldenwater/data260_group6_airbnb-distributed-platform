@@ -95,7 +95,7 @@ booking-perf: ## task 5.2: e2e latency at concurrency 1/10/25/50, retry timing, 
 
 # --- Role C: Platform (Matthew) ---
 PLATFORM_RUN := PYTHONPATH=.:services/platform $(PY)
-PLATFORM_PORT ?= 8005
+PLATFORM_PORT ?= 8006
 .PHONY: platform-venv test-venv platform-init platform-seed platform-topics platform-api platform-worker test-platform test kafka-perf
 platform-venv:
 	@test -x $(PY) || python3 -m venv .venv

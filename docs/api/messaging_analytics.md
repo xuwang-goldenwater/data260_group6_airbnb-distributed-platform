@@ -140,7 +140,7 @@ Analytics consumes `booking.updated`, `property.viewed`, `property.saved`, `prop
 
 ## Implemented minimum endpoint compatibility
 
-The Role C runtime is at `services/platform`, port 8005. In addition to the conversation routes above, the assignment's §6 minimum routes are implemented:
+The Role C runtime is at `services/platform`, port 8006. In addition to the conversation routes above, the assignment's §6 minimum routes are implemented:
 
 | Endpoint | Request or query | Result |
 |---|---|---|

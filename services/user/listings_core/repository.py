@@ -50,7 +50,7 @@ class MySQLRepository:
         self.settings = settings
 
     @contextmanager
-    def connection(self):
+    def connection(self, *, write=False):
         s = self.settings
         conn = None
         try:
@@ -61,12 +61,20 @@ class MySQLRepository:
                                    write_timeout=5, init_command="SET time_zone = '+00:00'")
             conn.begin()
             yield conn
-        except pymysql.MySQLError:
-            raise unavailable("MySQL") from None
+            if write:
+                conn.commit()
+        except pymysql.MySQLError as exc:
+            error = unavailable("MySQL")
+            # Retain only the numeric code internally so writes can distinguish
+            # rolled-back lock failures from auth/network/ambiguous-commit errors.
+            error.mysql_code = exc.args[0] if exc.args and isinstance(exc.args[0], int) else None
+            if hasattr(error, "add_note"):
+                error.add_note(f"MySQL error code: {error.mysql_code}")
+            raise error from None
         finally:
             if conn is not None:
                 with suppress(pymysql.MySQLError):
-                    conn.rollback()  # all endpoints in this slice are read-only
+                    conn.rollback()  # also cleans up a failed write transaction
                 with suppress(pymysql.MySQLError):
                     conn.close()
 

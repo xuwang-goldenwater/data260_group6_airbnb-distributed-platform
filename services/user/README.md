@@ -1,4 +1,8 @@
-# User and Property read APIs (Role A)
+# User and Property APIs (Role A)
+
+Property create/update/archive and the transactional Kafka outbox are documented
+in [`../property/WRITES.md`](../property/WRITES.md). The read API instructions below
+remain applicable.
 
 This first implementation slice connects the existing MySQL schema and imported
 seed to two FastAPI services. It does not create or reset tables. It does not
@@ -155,10 +159,12 @@ AI also continues its existing seed-based bridge until D/E explicitly switch it.
 
 ## Scope still to implement
 
-Create/update/archive, guest deletion, saved-property mutations, HTTP idempotency,
-Kafka view/update/save events, review aggregation/deduplication, Redis invalidation,
+Guest deletion, saved-property mutations, user-profile mutations,
+Kafka view/save events, review aggregation/deduplication, Redis invalidation,
 frontend pages, login/registration and search load tests are later slices.
-In particular, authenticated property reads do not yet emit `property.viewed`.
+Property writes now implement HTTP idempotency and enqueue create/update/archive
+events; the separate outbox relay must run to deliver them. Authenticated property
+reads do not yet emit `property.viewed`.
 The presence of these read APIs is not completion of the whole User/Property spec.
 
 The common Role A code lives in `services/user/listings_core`; both app entrypoints

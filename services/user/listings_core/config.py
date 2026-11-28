@@ -15,6 +15,8 @@ class Settings:
     jwt_secret: str = ""
     jwt_issuer: str = ""
     booking_url: str = "http://127.0.0.1:8002"
+    user_url: str = "http://127.0.0.1:8001"
+    kafka_bootstrap: str = "localhost:9092"
     timeout_s: float = 3.0
     seed_dir: Path = ROOT / "data/seed/generated"
 
@@ -35,5 +37,7 @@ class Settings:
                    mysql_database=os.getenv("MYSQL_DATABASE", "airbnb"),
                    jwt_secret=os.getenv("JWT_SECRET", ""), jwt_issuer=os.getenv("JWT_ISSUER", ""),
                    booking_url=os.getenv("BOOKING_SERVICE_URL", "http://127.0.0.1:8002").rstrip("/"),
+                   user_url=os.getenv("USER_SERVICE_URL", "http://127.0.0.1:8001").rstrip("/"),
+                   kafka_bootstrap=os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
                    timeout_s=float(os.getenv("HTTP_TIMEOUT_S", "3")),
                    seed_dir=Path(os.getenv("SEED_DIR", str(ROOT / "data/seed/generated"))))

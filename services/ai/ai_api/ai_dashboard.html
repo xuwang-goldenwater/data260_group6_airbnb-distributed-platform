@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Dashboard</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2430; --muted:#667085; --line:#e4e7ec; --a:#3b6fd8; --b:#d9822b; --c:#2e9e6b; --d:#c2453b; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--ink); }
+  header { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:16px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  h1 { font-size:18px; margin:0; } h2 { font-size:15px; margin:0 0 10px; } h3 { font-size:13px; margin:12px 0 6px; color:var(--muted); font-weight:600; }
+  main { padding:16px 20px; display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(min(380px, 100%), 1fr)); }
+  section { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px 16px; min-width:0; }
+  .wide { grid-column:1 / -1; }
+  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  td.num, th.num { text-align:right; }
+  .scroll { overflow-x:auto; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:10px; }
+  .kpi { border:1px solid var(--line); border-radius:6px; padding:8px 10px; }
+  .kpi b { display:block; font-size:20px; } .kpi span { color:var(--muted); font-size:12px; }
+  .bar { display:flex; align-items:center; gap:8px; margin:4px 0; }
+  .bar .label { width:150px; color:var(--muted); font-size:12px; flex:none; }
+  .bar .track { flex:1; background:#eef1f5; border-radius:4px; height:16px; position:relative; }
+  .bar .fill { height:100%; border-radius:4px; }
+  .bar .val { width:60px; text-align:right; font-variant-numeric:tabular-nums; flex:none; }
+  .muted { color:var(--muted); } .tag { display:inline-block; padding:1px 6px; border-radius:10px; background:#eef1f5; font-size:12px; }
+  input { padding:6px 8px; border:1px solid var(--line); border-radius:6px; width:min(320px, 70vw); }
+  button { padding:6px 12px; border:1px solid var(--a); background:var(--a); color:#fff; border-radius:6px; cursor:pointer; }
+  a.trace { color:var(--a); cursor:pointer; text-decoration:underline; }
+  .tl { position:relative; height:10px; background:#eef1f5; border-radius:4px; }
+  .tl i { position:absolute; top:-2px; width:4px; height:14px; border-radius:2px; }
+</style>
+</head>
+<body>
+<header>
+  <div><h1>AI Dashboard</h1><div class="muted">Multi-agent recommendation quality, debate behaviour and human approval</div></div>
+  <form id="f"><input id="trace" placeholder="Filter by trace_id"> <button>Show journey</button></form>
+</header>
+<main>
+  <section class="wide" id="journey" hidden><h2>Recommendation journey <span id="jt" class="tag"></span></h2><div id="jbody"></div></section>
+  <section><h2>Live system <span class="muted">(MongoDB: ai_results, ai_events, ai_approvals)</span></h2><div id="live"></div></section>
+  <section><h2>Benchmark debates <span class="muted">(full debate, 50 fixed requests)</span></h2><div id="bdeb"></div></section>
+  <section class="wide"><h2>Recommendation quality <span class="muted">(50 fixed requests, two labelers + adjudication)</span></h2><div id="quality" class="scroll"></div></section>
+  <section><h2>Human approval categories</h2><div id="approval"></div></section>
+  <section><h2>Recent live recommendations</h2><div id="recent" class="scroll"></div></section>
+</main>
+<script>
+const COLORS = ["var(--a)", "var(--b)", "var(--c)", "var(--d)"];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const kpi = (v, l) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+function bars(obj, max, fmt = v => v) {
+  const m = max ?? Math.max(1, ...Object.values(obj));
+  return Object.entries(obj).map(([k, v], i) =>
+    `<div class="bar"><span class="label">${esc(k)}</span><span class="track"><span class="fill" style="display:block;width:${Math.min(100, 100 * v / m)}%;background:${COLORS[i % 4]}"></span></span><span class="val">${esc(fmt(v))}</span></div>`).join("");
+}
+function debateBlock(d) {
+  if (!d || !d.debates) return `<p class="muted">No completed debates yet.</p>`;
+  return `<div class="kpis">${kpi(d.debates, "debates")}${kpi(d.challenges, "challenges")}${kpi((100 * d.dissent_rate).toFixed(0) + "%", "dissent rate")}${kpi(d.mean_top10_overlap, "mean top-10 overlap")}</div>
+    <h3>Disagreement size (distinct top-1 across agents)</h3>${bars(Object.fromEntries(Object.entries(d.top1_distinct).map(([k, v]) => [k + (k === "1" ? " (agree)" : " distinct"), v])))}
+    <h3>Votes</h3>${bars(d.votes)}
+    <h3>Decision method</h3>${bars(d.methods)}`;
+}
+function render(data) {
+  const L = data.live, B = data.benchmark;
+  document.getElementById("live").innerHTML =
+    `<div class="kpis">${kpi(L.results, "results")}${kpi(L.mean_latency_s ?? "–", "mean latency (s)")}${Object.entries(L.by_status).map(([k, v]) => kpi(v, k)).join("")}</div>` + debateBlock(L.debate);
+  document.getElementById("bdeb").innerHTML = debateBlock(B.full_debate);
+
+  const q = B.quality || [], h = B.human_ceiling || {};
+  const maxRank = Math.max(...q.map(r => r.mean_top_pick_rank), h.final_top1_rank || 0, 1);
+  document.getElementById("quality").innerHTML = q.length ? `<table>
+    <tr><th>Configuration</th><th class="num">precision@10</th><th class="num">P@10 vs one labeler</th><th class="num">recall@10</th><th class="num">human top pick in top 10</th><th>mean rank of human top pick (lower is better)</th></tr>
+    ${q.map(r => `<tr><td>${esc(r.config)}</td><td class="num">${r.precision_at_10.toFixed(3)}</td><td class="num">${isNaN(r.precision_at_10_single) ? "–" : r.precision_at_10_single.toFixed(3)}</td><td class="num">${r.recall_at_10.toFixed(3)}</td><td class="num">${r.top_pick_in_top10}/${r.requests}</td>
+      <td>${bars({"": r.mean_top_pick_rank}, maxRank, v => v.toFixed(2))}</td></tr>`).join("")}
+    ${h.p10_vs_other_labeler !== undefined ? `<tr><td><b>Human agreement ceiling</b></td><td class="num">–</td><td class="num">${h.p10_vs_other_labeler.toFixed(3)}</td><td class="num">${h.r10_vs_union.toFixed(3)}</td><td class="num">–</td><td>${bars({"": h.final_top1_rank}, maxRank, v => v.toFixed(2))}</td></tr>` : ""}
+    </table><p class="muted">Random top 10 from the candidates scores precision@10 ≈ ${(B.chance_precision_at_10 ?? 0).toFixed(3)}; compare against that, not 0.</p>` : `<p class="muted">Run benchmarks/eval.py to fill this table.</p>`;
+
+  const A = (B.approval_study || {}).decisions;
+  document.getElementById("approval").innerHTML =
+    (A ? `<h3>Approval study (${B.approval_study.reviewed} recommendations, approval rate ${(100 * B.approval_study.approval_rate).toFixed(0)}%)</h3>${bars(A)}
+      ${B.approval_study.edit_patterns ? `<h3>Edits</h3>${bars(B.approval_study.edit_patterns)}` : ""}` : "") +
+    `<h3>Live decisions (POST /ai/results/{id}/approve | edit | reject)</h3>${bars(L.approvals)}`;
+
+  document.getElementById("recent").innerHTML = L.recent.length ? `<table><tr><th>trace_id</th><th>config</th><th>status</th><th>recommendation</th><th>method</th></tr>
+    ${L.recent.map(r => `<tr><td><a class="trace" data-t="${esc(r.trace_id)}">${esc(r.trace_id)}</a></td><td>${esc(r.config)}</td><td>${esc(r.status)}</td><td>${esc(r.recommendation)}</td><td>${esc(r.method)}</td></tr>`).join("")}</table>`
+    : `<p class="muted">No live recommendations yet. Send one with POST /ai/requests.</p>`;
+  document.querySelectorAll("a.trace").forEach(a => a.onclick = () => { document.getElementById("trace").value = a.dataset.t; load(a.dataset.t); });
+
+  const J = document.getElementById("journey");
+  if (data.trace === undefined) { J.hidden = true; return; }
+  J.hidden = false;
+  document.getElementById("jt").textContent = document.getElementById("trace").value;
+  const T = data.trace;
+  if (!T) { document.getElementById("jbody").innerHTML = `<p class="muted">No events or result stored for this trace_id.</p>`; return; }
+  const end = Math.max(1, ...T.events.map(e => e.offset_ms));
+  const agents = [...new Set(T.events.map(e => e.agent))];
+  document.getElementById("jbody").innerHTML =
+    `<div class="kpis">${kpi(T.recommendation ?? "–", "recommendation")}${kpi((T.adjudication || {}).method ?? "–", "decision")}${kpi((T.human_decision || {}).decision ?? "pending", "human decision")}${kpi(T.timings_s.done ?? "–", "total (s)")}</div>
+    <h3>Agent publication timeline (ms after the first event)</h3>
+    ${agents.map((a, i) => `<div class="bar"><span class="label">${esc(a)}</span><span class="track tl">${T.events.filter(e => e.agent === a).map(e => `<i title="${esc(e.event_type)} @ ${e.offset_ms} ms" style="left:${100 * e.offset_ms / end}%;background:${COLORS[i % 4]}"></i>`).join("")}</span><span class="val"></span></div>`).join("")}
+    <div class="scroll"><table><tr><th class="num">+ms</th><th>event</th><th>agent</th><th>detail</th></tr>
+    ${T.events.map(e => `<tr><td class="num">${e.offset_ms}</td><td>${esc(e.event_type)}</td><td>${esc(e.agent)}</td><td>${esc(e.detail)}</td></tr>`).join("")}</table></div>
+    <h3>Plan</h3><div class="scroll"><table><tr><th>step</th><th>status</th><th>note</th></tr>${T.plan.map(s => `<tr><td>${esc(s.step_id)}</td><td>${esc(s.status)}</td><td>${esc(s.note)}</td></tr>`).join("")}</table></div>`;
+}
+async function load(trace) {
+  const url = "/ai/dashboard/data" + (trace ? "?trace_id=" + encodeURIComponent(trace) : "");
+  render(await (await fetch(url)).json());
+}
+document.getElementById("f").onsubmit = e => { e.preventDefault(); load(document.getElementById("trace").value.trim()); };
+const initial = new URLSearchParams(location.search).get("trace_id");
+if (initial) document.getElementById("trace").value = initial;
+load(initial);
+setInterval(() => load(document.getElementById("trace").value.trim()), 10000);
+</script>
+</body>
+</html>

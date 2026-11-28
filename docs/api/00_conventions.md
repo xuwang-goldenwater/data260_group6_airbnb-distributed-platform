@@ -89,6 +89,8 @@ The Kafka record key is not duplicated in the envelope. Domain events use the ke
 | `booking.updated` | Booking worker/API | WebSocket gateway, Analytics, Messaging | `property_id` | `booking-status`, `analytics`, `messaging` |
 | `property.viewed` | Property service | Analytics | `property_id` | `analytics` |
 | `property.saved` | Property service | Analytics | `property_id` | `analytics` |
+| `property.created` | Property service | Analytics | `property_id` | `analytics` |
+| `property.archived` | Property service | Analytics/cache invalidator | `property_id` | `analytics`, `property-cache` |
 | `property.updated` | Property service | Analytics, cache invalidator | `property_id` | `analytics`, `property-cache` |
 | `property.availability.updated` | Booking service | Property/cache, Analytics | `property_id` | `property-cache`, `analytics` |
 | `review.created` | Review service | Property service, Analytics | `property_id` | `property-rating`, `analytics` |

@@ -56,7 +56,7 @@ The service verifies that the caller and recipient are allowed participants in t
 }
 ```
 
-Repeated idempotency key and identical body returns the original message with `200`; the same key with a different body returns `422 IDEMPOTENCY_KEY_REUSED`. Invalid body returns `400`, unauthorized participant `403`, unknown reservation/conversation `404`, and unavailable Kafka `503` with `retryable: true`.
+Repeated idempotency key and identical body returns the original message with `200`; the same key with a different body returns `422 IDEMPOTENCY_KEY_REUSED`. Invalid body returns `400`, unauthorized participant `403`, and unknown reservation/conversation `404`. A durable Mongo message/outbox insert returns `201` even while Kafka is unavailable; its delivery remains `queued` until the worker receives an acknowledgment. Mongo unavailability returns `503` with `retryable: true`.
 
 ### POST `/messages/conversation`
 
@@ -83,7 +83,7 @@ Internal endpoint used by event consumers or replay tooling. It accepts one shar
   "timestamp": "2026-11-10T18:02:00Z",
   "actor_id": "booking-worker",
   "entity": {"entity_type": "reservation", "entity_id": "res-01JBOOK001"},
-  "payload": {"reservation_id": "res-01JBOOK001", "property_id": "property-2001", "status": "confirmed"},
+  "payload": {"reservation_id": "res-01JBOOK001", "property_id": "property-2001", "to_status": "confirmed", "version": 2},
   "idempotency_key": "booking.updated:res-01JBOOK001:v2",
   "attempt": 1,
   "event_id": "ev-01JBOOK002",
@@ -138,7 +138,28 @@ Analytics consumes `booking.updated`, `property.viewed`, `property.saved`, `prop
 - After the retry limit, the consumer publishes a `platform.dlq` record containing the complete original envelope plus `original_topic`, `original_partition`, `original_offset`, `original_key`, `error_code`, `error_message`, `retry_count`, `failed_at`, and `consumer_group`.
 - A source Kafka offset is committed only after projection/message persistence succeeds or the DLQ write succeeds.
 
-## Cross-service dependencies
+## Implemented minimum endpoint compatibility
+
+The Role C runtime is at `services/platform`, port 8005. In addition to the conversation routes above, the assignment's §6 minimum routes are implemented:
+
+| Endpoint | Request or query | Result |
+|---|---|---|
+| `POST /threads/open` | `{ "reservation_id": "res-..." }` | Idempotently opens a participant-only conversation; returns both `thread_id` and `conversation_id` |
+| `POST /threads/get` | `{ "thread_id": "conv-..." }` | Conversation metadata after participant authorization |
+| `POST /messages/list` | `{ "thread_id": "conv-...", "page": 1, "page_size": 20 }` | Same messages/pagination as `/messages/conversation` |
+| `POST /threads/byUser` | `{ "page": 1, "page_size": 20 }` | Conversations for JWT subject only |
+| `GET /analytics/properties/top` | `days`, `limit` | Most-viewed properties from observed events |
+| `GET /analytics/funnel` | `days` | Aggregate observed view/save/unsave activity, service/admin only |
+| `GET /analytics/geo` | none | Observed views grouped by seeded city, service/admin only |
+| `GET /analytics/host/dashboard` | `host_id`, `days` | Host funnel compatible with Booking's Analytics client |
+| `GET /analytics/guest/dashboard` | `days` | Authenticated guest's observed booking-status/save activity |
+| `GET /analytics/traces/{trace_id}` | none | Ordered persisted events, service/admin only |
+
+`thread_id` is a compatibility alias for `conversation_id`; message fields map `receiver_id` → `recipient_id`, `message_text` → `body`, and `timestamp` → `created_datetime`. The send request uses the documented `conversation_id`/`recipient_id`/`body` names. `BOOKING_SERVICE_URL` enables live reservation authorization when opening a thread; without it the response explicitly identifies fixed-seed reservation lookup. Unknown live reservations are never fabricated.
+
+Runtime scope: Booking remains authoritative for occupancy, revenue and calendar data; Platform supplies its missing views/saves funnel. `property_source: fixed-seed-pool` identifies the current ownership lookup limitation. `GET /analytics/platform?include_lag=true` reads actual committed Kafka offsets and high watermarks without joining the group; a broker failure returns `status: unavailable` and `total: null`. Event rate is received records/60 seconds. Trace span is max-min observed event timestamps, not HTTP-to-UI latency. Retry totals identify retries on DLQ failures and do not claim to include successful retries.
+
+## Cross-service dependency registry
 
 | Dependency | Consumer | Interface |
 |---|---|---|

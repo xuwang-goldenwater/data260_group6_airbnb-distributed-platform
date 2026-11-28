@@ -1,0 +1,12 @@
+{
+  "measured_at": "2026-11-28T02:08:35.253Z",
+  "database": "platform_smoke_8f234a487114",
+  "http_send": 201,
+  "http_replay": 200,
+  "message_outbox_delivered": true,
+  "kafka_message_ingested": true,
+  "duplicate_view_count": 1,
+  "booking_host_funnel_http": 200,
+  "guest_platform_access": 403,
+  "dashboard_http": 200
+}

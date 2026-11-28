@@ -9,7 +9,7 @@
 # and set MYSQL_PORT=3307 in services/booking-api/.env
 
 PY ?= .venv/bin/python
-BOOKING_PYTHONPATH := services/booking-api:services/booking-worker
+BOOKING_PYTHONPATH := .:services/booking-api:services/booking-worker
 BOOKING_RUN := PYTHONPATH=$(BOOKING_PYTHONPATH) $(PY)
 BOOKING_COMPOSE_FILES := -f infra/docker-compose.yml $(if $(BOOKING_MYSQL_3307),-f services/booking-api/infra/compose.mysql-3307.yml)
 COMPOSE ?= docker compose $(BOOKING_COMPOSE_FILES)
@@ -92,3 +92,31 @@ booking-perf: ## task 5.2: e2e latency at concurrency 1/10/25/50, retry timing, 
 	set -o pipefail; $(BOOKING_RUN) services/booking-api/scripts/perf_booking.py 2>&1 | tee reports/perf/booking/run_output.txt
 
 # --- end Role B ---------------------------------------------------------------------------------
+
+# --- Role C: Platform (Matthew) ---
+PLATFORM_RUN := PYTHONPATH=.:services/platform $(PY)
+PLATFORM_PORT ?= 8005
+.PHONY: platform-venv test-venv platform-init platform-seed platform-topics platform-api platform-worker test-platform test kafka-perf
+platform-venv:
+	@test -x $(PY) || python3 -m venv .venv
+	$(PY) -m pip install -r services/platform/requirements.txt
+test-venv: platform-venv
+	$(PY) -m pip install -r services/ai/requirements.txt -r services/booking-api/requirements.txt
+platform-init:
+	$(PLATFORM_RUN) -m platform_service.cli init
+platform-seed:
+	$(PLATFORM_RUN) -m platform_service.cli seed
+platform-topics:
+	$(PLATFORM_RUN) -m platform_service.cli topics
+platform-api:
+	$(PLATFORM_RUN) -m uvicorn platform_service.app:app --host 127.0.0.1 --port $(PLATFORM_PORT)
+platform-worker:
+	$(PLATFORM_RUN) -m platform_service.worker
+test-platform:
+	$(PLATFORM_RUN) -m pytest tests/platform -q
+test:
+	PYTHONPATH=.:services/platform $(PY) -m pytest tests/platform tests/test_seed_data.py tests/test_user_property_import.py -q
+	PYTHONPATH=.:services/ai $(PY) -m pytest services/ai/tests -q
+	PYTHONPATH=.:services/booking-api:services/booking-worker $(PY) -m pytest tests/booking -q
+kafka-perf:
+	$(PLATFORM_RUN) scripts/perf_platform.py

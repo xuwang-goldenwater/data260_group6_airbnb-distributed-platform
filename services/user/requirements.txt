@@ -1,0 +1,8 @@
+# Isolated Role A environment; versions used by the API tests.
+fastapi==0.141.1
+uvicorn==0.52.1
+PyJWT==2.13.0
+PyMySQL[rsa]==1.1.2
+httpx==0.28.1
+jsonschema==4.26.0
+confluent-kafka==2.16.2

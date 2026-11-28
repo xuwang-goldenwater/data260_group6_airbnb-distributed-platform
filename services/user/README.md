@@ -162,8 +162,11 @@ AI also continues its existing seed-based bridge until D/E explicitly switch it.
 
 ## Scope still to implement
 
-Guest/host creation, Kafka view events, Redis invalidation,
+Guest/host creation, Kafka view events,
 frontend pages, login/registration and search load tests are later slices.
+Optional Redis search caching/invalidation and a real cache-on/off measurement
+script are documented in [`../property/CACHE.md`](../property/CACHE.md). No
+performance result is claimed until that script is run against live services.
 Property writes now implement HTTP idempotency and enqueue create/update/archive
 events; the separate outbox relay must run to deliver them. Authenticated property
 reads do not yet emit `property.viewed`.

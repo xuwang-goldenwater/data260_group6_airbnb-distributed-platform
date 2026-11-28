@@ -16,3 +16,8 @@ The service does not regenerate seed, reserve dates, or silently fall back to JS
 
 Consume `review.created` to maintain rating/count safely. See
 [`RATINGS.md`](RATINGS.md) for baseline initialization, tests and worker commands.
+
+## Search cache
+
+Optional Redis listing-search caching and the separate event invalidator are
+documented in [`CACHE.md`](CACHE.md), including live checks and measurements.

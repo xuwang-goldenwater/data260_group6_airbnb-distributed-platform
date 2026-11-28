@@ -2,8 +2,9 @@ from .http import ApiError
 
 
 class PropertyService:
-    def __init__(self, repository, booking, pool):
+    def __init__(self, repository, booking, pool, cache=None):
         self.repo, self.booking, self.pool = repository, booking, pool
+        self.cache = cache
 
     def get(self, property_id, actor=None):
         prop = self.repo.property(property_id)
@@ -27,9 +28,11 @@ class PropertyService:
                 "available": free[body.property_id], "checked_datetime": checked,
                 "source": "booking_service"}
 
-    def search(self, body, trace_id):
+    def search(self, body, trace_id, diagnostics=None):
         self.validate_amenities(body)
-        rows = self.repo.search(body)
+        rows, status = self.cache.load(self.repo, body) if self.cache is not None else (self.repo.search(body), "BYPASS")
+        if diagnostics is not None:
+            diagnostics["cache"] = status
         checked = None
         if body.check_in:
             free, checked = self.booking.check([p["property_id"] for p in rows], body.check_in,

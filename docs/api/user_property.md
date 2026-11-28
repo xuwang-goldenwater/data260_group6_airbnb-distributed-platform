@@ -1044,6 +1044,18 @@ A permanently invalid message is moved to the dead-letter topic with the origina
 
 # Redis Cache Contract
 
+The implemented public-search cache stores matching active listing rows before
+availability filtering or pagination. Every dated request still calls Booking,
+including cache hits; availability results and final pages are not cached.
+`X-Search-Cache` reports HIT/MISS/BYPASS/FALLBACK/RACE without changing the JSON
+response. Cache keys include validated filters, dates, pagination/sort, dataset
+identity, current MySQL listing revision and a Redis generation. Committed
+version increments invalidate listing data immediately; group `property-cache`
+also consumes listing, availability and review-created events for namespace
+invalidation. Redis errors fall back to MySQL; Booking errors still return 503.
+Service-only `GET /internal/cache/stats` exposes aggregate cache metrics. See
+`services/property/CACHE.md` for configuration, failure semantics and measurements.
+
 The Property Service may cache normalized property-search results and availability lookups.
 
 Rules:

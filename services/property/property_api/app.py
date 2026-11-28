@@ -15,13 +15,15 @@ from listings_core.write_clients import WriteDependencies
 from listings_core.write_models import CreateProperty, UpdateProperty, ArchiveProperty
 from listings_core.profile_models import SaveProperty
 from listings_core.saved_service import SavedService
+from listings_core.search_cache import SearchCache
 
 
-def create_app(settings=None, repository=None, booking=None, write_dependencies=None):
+def create_app(settings=None, repository=None, booking=None, write_dependencies=None, search_cache=None):
     cfg = settings or Settings.from_env()
     repo = repository if repository is not None else MySQLRepository(cfg)
     availability = booking if booking is not None else BookingClient(cfg)
-    service = PropertyService(repo, availability, FrozenPool(cfg.seed_dir))
+    cache = search_cache if search_cache is not None else SearchCache(cfg)
+    service = PropertyService(repo, availability, FrozenPool(cfg.seed_dir), cache)
     writes = PropertyWrites(repo, write_dependencies or WriteDependencies(cfg))
     saved_service = SavedService(repo, write_dependencies or WriteDependencies(cfg))
     app = make_app("Property Service — Role A")
@@ -53,7 +55,13 @@ def create_app(settings=None, repository=None, booking=None, write_dependencies=
 
     @app.post("/properties/search")
     def search(body: Search, request: Request, actor: Actor | None = Depends(optional_actor)):
-        return service.search(body, request.state.trace_id)
+        diagnostics = {}
+        result = service.search(body, request.state.trace_id, diagnostics)
+        return JSONResponse(result, headers={"X-Search-Cache": diagnostics["cache"]})
+
+    @app.get("/internal/cache/stats")
+    def cache_stats(actor: Actor = Depends(machine)):
+        return cache.stats()
 
     @app.post("/properties/availability")
     def check(body: Availability, request: Request, actor: Actor | None = Depends(optional_actor)):

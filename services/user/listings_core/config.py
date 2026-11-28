@@ -19,6 +19,9 @@ class Settings:
     kafka_bootstrap: str = "localhost:9092"
     timeout_s: float = 3.0
     seed_dir: Path = ROOT / "data/seed/generated"
+    cache_enabled: bool = False
+    redis_url: str = "redis://localhost:6379/0"
+    cache_ttl_s: int = 30
 
     @classmethod
     def from_env(cls):
@@ -30,6 +33,10 @@ class Settings:
                 if line and not line.startswith("#") and "=" in line:
                     key, value = line.split("=", 1)
                     os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+        enabled = os.getenv("PROPERTY_CACHE_ENABLED", "false").lower()
+        ttl = int(os.getenv("PROPERTY_CACHE_TTL_S", "30"))
+        if enabled not in {"true", "false", "1", "0"} or not 1 <= ttl <= 300:
+            raise ValueError("PROPERTY_CACHE_ENABLED must be true/false and TTL must be 1-300 seconds")
         return cls(mysql_host=os.getenv("MYSQL_HOST", "127.0.0.1"),
                    mysql_port=int(os.getenv("MYSQL_PORT", "3306")),
                    mysql_user=os.getenv("MYSQL_USER", "airbnb"),
@@ -40,4 +47,6 @@ class Settings:
                    user_url=os.getenv("USER_SERVICE_URL", "http://127.0.0.1:8001").rstrip("/"),
                    kafka_bootstrap=os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
                    timeout_s=float(os.getenv("HTTP_TIMEOUT_S", "3")),
-                   seed_dir=Path(os.getenv("SEED_DIR", str(ROOT / "data/seed/generated"))))
+                   seed_dir=Path(os.getenv("SEED_DIR", str(ROOT / "data/seed/generated"))),
+                   cache_enabled=enabled in {"true", "1"}, redis_url=os.getenv("PROPERTY_REDIS_URL", "redis://localhost:6379/0"),
+                   cache_ttl_s=ttl)

@@ -45,3 +45,25 @@ class WriteDependencies:
             raise unavailable("Booking reservation validation")
         if active:
             raise ApiError(409, "ACTIVE_RESERVATION_EXISTS", "Active reservations prevent archiving.")
+
+    def require_no_guest_bookings(self, guest_id, trace_id):
+        body = self._get(self.settings.booking_url + f"/internal/guests/{guest_id}/active-reservations", trace_id)
+        count, active = body.get("count"), body.get("has_active_reservations")
+        if body.get("guest_id") != guest_id or type(active) is not bool or type(count) is not int or count < 0 or active != (count > 0):
+            raise unavailable("Booking guest validation")
+        if active:
+            raise ApiError(409, "ACTIVE_RESERVATION_EXISTS", "Active reservations prevent profile deletion.")
+
+    def require_guest(self, guest_id, trace_id):
+        try:
+            with httpx.Client(timeout=self.settings.timeout_s, transport=self.transport, follow_redirects=False) as client:
+                response = client.get(self.settings.user_url + f"/internal/guests/{guest_id}",
+                                      headers={"Authorization": "Bearer " + service_token(self.settings), "X-Trace-Id": trace_id})
+                if response.status_code == 404:
+                    raise ApiError(404, "GUEST_NOT_FOUND", "An active guest profile is required.")
+                response.raise_for_status()
+                body = response.json()
+                if body.get("guest_id") != guest_id or body.get("exists") is not True or body.get("active") is not True:
+                    raise ValueError("Invalid guest validation response")
+        except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError):
+            raise unavailable("User guest validation") from None

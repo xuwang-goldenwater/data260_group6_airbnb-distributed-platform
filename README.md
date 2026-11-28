@@ -15,7 +15,7 @@ make platform-api
 make platform-worker
 ```
 
-UI: `http://127.0.0.1:8005/platform`. Interactive API: `http://127.0.0.1:8005/docs`.
+UI: `http://127.0.0.1:8006/platform`. Interactive API: `http://127.0.0.1:8006/docs`.
 Run `make test-venv test` for the repository checks; Booking integration checks use the isolated
 `airbnb_booking_test` database (`make booking-test-db`) and skip if it is unavailable.
 Run `make kafka-perf` for the measured Kafka comparison and

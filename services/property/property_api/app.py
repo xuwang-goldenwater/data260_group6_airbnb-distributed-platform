@@ -13,6 +13,8 @@ from listings_core.repository import MySQLRepository
 from listings_core.property_writes import PropertyWrites
 from listings_core.write_clients import WriteDependencies
 from listings_core.write_models import CreateProperty, UpdateProperty, ArchiveProperty
+from listings_core.profile_models import SaveProperty
+from listings_core.saved_service import SavedService
 
 
 def create_app(settings=None, repository=None, booking=None, write_dependencies=None):
@@ -21,6 +23,7 @@ def create_app(settings=None, repository=None, booking=None, write_dependencies=
     availability = booking if booking is not None else BookingClient(cfg)
     service = PropertyService(repo, availability, FrozenPool(cfg.seed_dir))
     writes = PropertyWrites(repo, write_dependencies or WriteDependencies(cfg))
+    saved_service = SavedService(repo, write_dependencies or WriteDependencies(cfg))
     app = make_app("Property Service — Role A")
 
     def optional_actor(request: Request):
@@ -72,6 +75,11 @@ def create_app(settings=None, repository=None, booking=None, write_dependencies=
     @app.post("/properties/delete")
     def archive(body: ArchiveProperty, request: Request, actor: Actor = Depends(host_actor)):
         return apply_write("delete", body, request, actor)
+
+    @app.post("/properties/save")
+    def save(body: SaveProperty, request: Request, actor: Actor = Depends(host_actor)):
+        result, replay = saved_service.save(body, actor, request.headers.get("idempotency-key"), request.state.trace_id)
+        return JSONResponse(result, headers={"Idempotent-Replay": "true" if replay else "false"})
 
     @app.post("/internal/properties/candidates")
     def candidates(body: Candidates, request: Request, actor: Actor = Depends(machine)):

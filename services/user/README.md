@@ -4,6 +4,9 @@ Property create/update/archive and the transactional Kafka outbox are documented
 in [`../property/WRITES.md`](../property/WRITES.md). The read API instructions below
 remain applicable.
 
+Profile update/delete/search and property save/unsave are documented in
+[`PROFILE_WRITES.md`](PROFILE_WRITES.md).
+
 This first implementation slice connects the existing MySQL schema and imported
 seed to two FastAPI services. It does not create or reset tables. It does not
 change the CSV labels, benchmark results, Booking service, or AI service.
@@ -159,12 +162,13 @@ AI also continues its existing seed-based bridge until D/E explicitly switch it.
 
 ## Scope still to implement
 
-Guest deletion, saved-property mutations, user-profile mutations,
-Kafka view/save events, review aggregation/deduplication, Redis invalidation,
+Guest/host creation, Kafka view events, review aggregation/deduplication, Redis invalidation,
 frontend pages, login/registration and search load tests are later slices.
 Property writes now implement HTTP idempotency and enqueue create/update/archive
 events; the separate outbox relay must run to deliver them. Authenticated property
 reads do not yet emit `property.viewed`.
+Profile edits/deletion and save/unsave are implemented in the profile-write slice;
+changed saved state enqueues property.saved through the same relay.
 The presence of these read APIs is not completion of the whole User/Property spec.
 
 The common Role A code lives in `services/user/listings_core`; both app entrypoints

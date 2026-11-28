@@ -162,13 +162,15 @@ AI also continues its existing seed-based bridge until D/E explicitly switch it.
 
 ## Scope still to implement
 
-Guest/host creation, Kafka view events, review aggregation/deduplication, Redis invalidation,
+Guest/host creation, Kafka view events, Redis invalidation,
 frontend pages, login/registration and search load tests are later slices.
 Property writes now implement HTTP idempotency and enqueue create/update/archive
 events; the separate outbox relay must run to deliver them. Authenticated property
 reads do not yet emit `property.viewed`.
 Profile edits/deletion and save/unsave are implemented in the profile-write slice;
 changed saved state enqueues property.saved through the same relay.
+Review aggregation and deduplication now have a separate Kafka worker; see
+[`../property/RATINGS.md`](../property/RATINGS.md) for the required baseline and tests.
 The presence of these read APIs is not completion of the whole User/Property spec.
 
 The common Role A code lives in `services/user/listings_core`; both app entrypoints

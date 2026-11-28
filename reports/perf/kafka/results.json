@@ -1,0 +1,48 @@
+{
+  "measured_at": "2026-11-28T02:08:31.805Z",
+  "machine": "macOS-26.5.2-arm64-arm-64bit",
+  "cpu_count": 10,
+  "method": "600 acknowledged publications, Mongo unique insert and synchronous offset commit; elapsed includes publishing, excludes group assignment. Single local broker, 3 partitions. One trial per configuration.",
+  "results": [
+    {
+      "workers": 1,
+      "records": 600,
+      "rejected": 3,
+      "elapsed_s": 1.2725,
+      "records_per_s": 471.53,
+      "partitions": 3,
+      "topic": "platform-bench-4c5e8aa84b9a",
+      "group": "platform-bench-4c5e8aa84b9a",
+      "database": "platform_bench_4c5e8aa84b9a",
+      "assignments": {
+        "0": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "workers": 3,
+      "records": 600,
+      "rejected": 3,
+      "elapsed_s": 1.0254,
+      "records_per_s": 585.14,
+      "partitions": 3,
+      "topic": "platform-bench-3a41909774f2",
+      "group": "platform-bench-3a41909774f2",
+      "database": "platform_bench_3a41909774f2",
+      "assignments": {
+        "1": [
+          0
+        ],
+        "0": [
+          2
+        ],
+        "2": [
+          1
+        ]
+      }
+    }
+  ]
+}
